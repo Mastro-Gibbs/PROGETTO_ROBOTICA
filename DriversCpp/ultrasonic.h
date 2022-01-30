@@ -14,24 +14,28 @@
 
 using std::chrono::duration_cast;
 using std::chrono::microseconds;
+using std::chrono::milliseconds;
 using std::chrono::system_clock;
 using std::sort;
 
 class Ultrasonic
 {
     public:
-        Ultrasonic();
+        Ultrasonic( int echoPin, int triggerPin );
         ~Ultrasonic();
 
-        float distance();
+        float distance( unsigned int samplesAccuracy = 5, unsigned int timeout = 100 );
 
         void send_ping();
 
-        void receive_ping();
+        void receive_ping( unsigned int timeout );
 
     private:
         unsigned long start;
         unsigned long stop;
+
+        int echo;
+        int trigger;
 
 };
 
