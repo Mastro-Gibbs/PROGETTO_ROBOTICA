@@ -15,23 +15,22 @@ if __name__ == '__main__':
             time.sleep(2)
             print("Start")
             vel = 45 * math.pi / 180
-            vel = 10
             while True:
-                #vb.turn(-5, +5)
-                # vb.stop()
-                # time.sleep(0.5)
-                # vb.rotate(vel, Clockwise.RIGHT)
-                # time.sleep(5)
-                # vb.stop()
-                # vb.rotate(vel, Clockwise.LEFT)
-                # time.sleep(5)
+                # vb.turn(-5, +5)
+                vb.stop()
+                time.sleep(0.5)
+                vb.rotate(vel, Clockwise.RIGHT)
+                time.sleep(5)
+                vb.stop()
+                vb.rotate(vel, Clockwise.LEFT)
+                time.sleep(5)
 
                 # print(vb.get_degree_orientation())
 
                 #print("distance: ", vb.get_left_distance())
 
                 # time.sleep(2)
-                vb.move_forward(10)
+                # vb.move_forward(10)
                 # time.sleep(2)
                 # vb.stop()
                 # time.sleep(1)
