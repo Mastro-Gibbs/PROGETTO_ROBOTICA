@@ -36,11 +36,11 @@ void Ultrasonic::receive_ping( unsigned int timeout )
     
     unsigned long maxtime = timeout + currTime;
 
-    while ( bcm2835_gpio_lev( this->echo ) == LOW && currTime <= maxtime)
+    while ( bcm2835_gpio_lev( this->echo ) == LOW && currTime <= maxtime )
     {
         this->start = duration_cast<microseconds>( system_clock::now().time_since_epoch() ).count();
         currTime = duration_cast<milliseconds>( system_clock::now().time_since_epoch() ).count();
-    }
+    }	
 
     currTime = duration_cast<milliseconds>( system_clock::now().time_since_epoch() ).count();
     maxtime = timeout + currTime;
@@ -53,16 +53,18 @@ void Ultrasonic::receive_ping( unsigned int timeout )
     
 }
 
-float Ultrasonic::distance( unsigned int samplesAccuracy, unsigned int timeout )
+float Ultrasonic::distance( unsigned int samplesAccuracy, unsigned int pause, unsigned int timeout )
 {
-	float samples[ sampleAccuracy ];
+	float samples[ samplesAccuracy ];
 
-	for ( int i = 0; i < sampleAccuracy; i++ ) samples[ i ] = 0;
+	for ( unsigned int i = 0; i < samplesAccuracy; i++ ) samples[ i ] = 0;
 
-    for ( int i = 0; i < sampleAccuracy; i++ )
+    for ( unsigned int i = 0; i < samplesAccuracy; i++ )
     {
         send_ping();
-        receive_ping( timeout / sampleAccuracy );
+        receive_ping( timeout );
+
+		bcm2835_delay( pause );
 
         long delta = ( this->stop - this->start ) * SONIC_SPEED;
         delta = delta / 2000.0f;
@@ -71,21 +73,16 @@ float Ultrasonic::distance( unsigned int samplesAccuracy, unsigned int timeout )
         samples[ i ] = res;
     }
 
-    sort( samples, samples + sampleAccuracy );
-	
-	int pos = sampleAccuracy / 2;
-	
-	int sample = 0;
-	
-	for ( int i = 0; i < pos; i++ )
+    sort( samples, samples + samplesAccuracy );
+
+	float average = 0;
+	float div = ( float ) samplesAccuracy;
+
+	for ( unsigned int i = 0; i < samplesAccuracy; i++ ) 
 	{
-		sample = samples[ pos ];
-		if ( sample == 0 ) 
-		{
-			pos++;
-		}
-		else break;
+		if ( samples[ i ] > 2 ) average += samples[ i ];
+		else div--;
 	}
-	
-    return sample - 1.0f;
+
+	return ( average / div ) - 1.0f;
 }

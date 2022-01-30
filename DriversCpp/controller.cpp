@@ -78,7 +78,7 @@ void Controller::eventLoop()
 
 		printf( "LUCE -----> %s\n", (( this->adc.recvADC( LEFT_IDR ) < 1.1f ) && ( this->adc.recvADC( RIGHT_IDR ) < 1.1f )) ? "BUIO" : "GIORNO" ); 
 		printf( "CARICA ---> %.02f\n", this->adc.recvADC( POWER ) );
-        printf( "DISTANCE -> %.02f\n", this->u.distance() );
+        //printf( "DISTANCE -> %.02f\n", this->u.distance() );
     }
     XDestroyWindow( d, win );
     XCloseDisplay( d );

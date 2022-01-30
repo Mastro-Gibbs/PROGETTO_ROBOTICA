@@ -14,7 +14,7 @@
 
 #include "rover.h"
 #include "buzzer.h"
-#include "ultrasonic.h"
+// #include "ultrasonic.h"
 #include "infrared.h"
 #include "adc.h"
 
@@ -51,7 +51,7 @@ class Controller
 
         Rover rover;
 		Buzzer b;
-		Ultrasonic u;
+		//Ultrasonic u;
 		Infrared ir;
 		Adc adc;
 

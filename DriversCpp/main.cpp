@@ -9,6 +9,10 @@
 #include <unistd.h>
 #include "controller.h"
 #include <stdio.h>
+#include <iostream>
+#include <signal.h>
+
+using namespace std;
 
 void testMotor();
 void testServo();
@@ -19,13 +23,36 @@ void testIR();
 void init();
 void close();
 
+bool condition = true;
+
+void bye( int signum )
+{
+	condition = false;
+	cout << "CLOSING LIB" << ", SIGINT COMES" << endl;
+}
 
 int main()
 {
 	init();
-    Controller c;
-	c.eventLoop();
-	close();
+	
+	signal( SIGINT, bye );
+
+	Ultrasonic right( 5, 16 );
+	Ultrasonic left( 6, 26 );
+	Ultrasonic front( 22, 27 );
+
+	
+	while ( condition )
+	{
+		cout << "FRONT: " << front.distance( 5, 20, 20 ) << endl;
+		// cout << "LEFT: " << left.distance( 5, 20 ) << endl;
+		//cout << "RIGHT: " << right.distance( 5, 20 ) << endl;
+
+		cout << "---------------------------" << endl;
+		bcm2835_delay(200);
+	}
+
+    close();
 }
 
 

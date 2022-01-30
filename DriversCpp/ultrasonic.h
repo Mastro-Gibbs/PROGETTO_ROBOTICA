@@ -24,7 +24,7 @@ class Ultrasonic
         Ultrasonic( int echoPin, int triggerPin );
         ~Ultrasonic();
 
-        float distance( unsigned int samplesAccuracy = 5, unsigned int timeout = 100 );
+        float distance( unsigned int samplesAccuracy = 5, unsigned int pause = 25, unsigned int timeout = 50 );
 
         void send_ping();
 
