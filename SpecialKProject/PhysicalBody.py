@@ -10,6 +10,8 @@ class PhysicalBody:
 
     def __init__(self, api: CSim):
         self._api = api
+        self.clientID = api._id
+        # print(self.clientID)
 
         # SENSORS
         self._front_camera = api.sensor.vision("cam1")
@@ -20,6 +22,18 @@ class PhysicalBody:
         self._left_proximity_sensor = api.sensor.proximity('lps')
         self._right_proximity_sensor = api.sensor.proximity('rps')
 
+        # ACCELEROMETRO
+        self.accelerometer = \
+            s.simxGetObjectHandle(self.clientID, 'Accelerometer_forceSensor', s.simx_opmode_blocking)
+        self.mass_object = \
+            s.simxGetObjectHandle(self.clientID, 'Accelerometer_mass', s.simx_opmode_streaming)
+        # print(type(self.mass_object))
+        self.mass = \
+            s.simxGetObjectFloatParam(self.clientID, self.mass_object[1], s.sim_shapefloatparam_mass,
+                                      s.simx_opmode_streaming)
+        ret, value, arr1, arr2 = \
+            s.simxReadForceSensor(self.clientID, self.accelerometer[1], s.simx_opmode_streaming)
+
         # MOTORS
         self._front_left_motor = api.joint.with_velocity_control("joint_front_left_wheel")
         self._front_right_motor = api.joint.with_velocity_control("joint_front_right_wheel")
@@ -27,11 +41,8 @@ class PhysicalBody:
         self._rear_right_motor = api.joint.with_velocity_control("joint_rear_right_wheel")
 
         # READING INITIAL ORIENTATION OF THE ROBOT
-        self.clientID = api._id
-        # print(self.clientID)
-        self.def_op_mode = sc.simx_opmode_oneshot_wait
         self.code_r, self.handle_r = \
-            s.simxGetObjectHandle(self.clientID, FREENOVE, self.def_op_mode)
+            s.simxGetObjectHandle(self.clientID, FREENOVE, s.simx_opmode_oneshot_wait)
         self.handle_parent = s.sim_handle_parent
         self.c, self.orientation = \
             s.simxGetObjectOrientation(self.code_r, self.handle_r, self.handle_parent, s.simx_opmode_streaming)
@@ -109,6 +120,21 @@ class PhysicalBody:
     # SENSE
     def get_lvs_values(self):
         return self._left_vision_sensor.read()
+
+    def get_accelerometer(self):
+        code, state, force, torque = s.simxReadForceSensor(self.clientID, self.accelerometer[1], s.simx_opmode_buffer)
+        # print(force)
+        # print(type(force[0]))
+        # print(self.mass)
+        # print(type(self.mass))
+        accel = None
+        if state:
+            x = force[0] / self.mass[0]
+            y = force[1] / self.mass[0]
+            z = force[2] / self.mass[0]
+            e = pow(10, 3)
+            accel = [x * e, y * e, z * e]
+        return accel
 
     # Funzione da spostare
     def black_color_detected(self):

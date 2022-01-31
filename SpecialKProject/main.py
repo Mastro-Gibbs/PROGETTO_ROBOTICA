@@ -23,12 +23,13 @@ if __name__ == '__main__':
             pb = PhysicalBody(api)
             pb.stop()
             GO = True
-            time.sleep(2)
+            # time.sleep(2)
             print("Start")
             vel = 45 * math.pi / 180
 
             while GO:
                 pb.move_forward(4)
+                print(pb.get_accelerometer())
                 if pb.black_color_detected():
                     print("Black color detected")
                     GO = False
