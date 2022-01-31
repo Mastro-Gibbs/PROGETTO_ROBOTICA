@@ -5,7 +5,7 @@ import redis
 class VirtualBody:
     def __init__(self, redis_instance: redis.Redis):
         self.redis = redis_instance
-        self.pubsub = self.redis_instance.pubsub()
+        self.pubsub = self.redis.pubsub()
         self.pubsub.subscribe(Topic.BODY)
 
         self.usonic = [-1.0, -1.0, -1.0]  # left, front, right
@@ -19,7 +19,7 @@ class VirtualBody:
         try:
             if msg["type"] == 'message':
                 key = msg["data"]
-                value = self.redis_instance.get(key)
+                value = self.redis.get(key)
 
                 if key == Key.USONIC:
                     pass
