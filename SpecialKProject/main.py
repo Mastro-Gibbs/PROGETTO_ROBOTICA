@@ -26,8 +26,8 @@ if __name__ == '__main__':
             # time.sleep(2)
             print("Start")
             vel = 45 * math.pi / 180
-
-            while GO:
+            vel = 10
+            while not GO:
                 pb.move_forward(4)
                 print(pb.get_accelerometer())
                 if pb.black_color_detected():
@@ -35,7 +35,8 @@ if __name__ == '__main__':
                     GO = False
             GO = True
             while GO:
-                rotation_test(pb)
+                pb.rotate_test(vel, Clockwise.RIGHT)
+                time.sleep(5)
 
         except common.NotFoundComponentError as e:
             print(e)

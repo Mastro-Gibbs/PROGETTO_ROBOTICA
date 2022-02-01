@@ -122,7 +122,7 @@ class Controller:
             self.vbody.send_command(Key.MOTOR, self.orientation_target)
             self.vbody.send_command(Key.MOTOR, self.velocity)
 
-    def __adjusts_orientation(self) -> None:
+    def __adjust_orientation(self) -> None:
         if self.action != Action.ROTATE_RIGHT and self.action != Action.ROTATE_LEFT and self.action != Action.STOP:
             if self.orientation == Compass.NORD:
                 self.orientation_target = 0

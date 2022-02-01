@@ -3,6 +3,9 @@ import sim as s
 import simConst as sc
 import utility
 import time
+import math
+import numpy as np
+
 from utility import *
 
 
@@ -160,7 +163,7 @@ class PhysicalBody:
         g = utility.radians_to_degree(arr[2])
         return [a, b, g]
 
-    # ACT
+    # ALCUNE VOLTE NON FUNZIONA
     def rotate(self, vel, c: Clockwise):
         arr1 = self.get_degree_orientation()
         init_g = abs(arr1[2])
@@ -183,5 +186,78 @@ class PhysicalBody:
             elif c == Clockwise.LEFT:
                 self.turn_to_left(vel, vel)
 
+    # FUNZIONE ALTERNATIVA PER LA ROTAZIONE -- DA TERMINARE
+    def rotate_test(self, vel, c: Clockwise):
+        init_g = self.get_degree_orientation()[2]
+        print("Init_g: ", init_g)
+        deg_delta = 2
+        deg_goal = None
+        goal_reached = False
 
+        if c.RIGHT:
+            if -90 < init_g < 180:
+                deg_goal = init_g - 90
+            elif -180 <= init_g <= -90:
+                deg_goal = init_g + 270
+            limit_range = [deg_goal - 3, deg_goal + 3]
+            print("Goal: ", deg_goal)
+            print(limit_range)
 
+        time.sleep(4)
+        stop = False
+        while not stop:
+            # self.stop()
+            curr_g = self.get_degree_orientation()[2]
+            print(curr_g)
+            l = min(limit_range)
+            if deg_goal - deg_delta <= curr_g <= deg_goal + deg_delta:
+                self.stop()
+                stop = True
+                print("Second check if the goal is reached")
+                curr_g = self.get_degree_orientation()[2]
+                if deg_goal - deg_delta <= curr_g <= deg_goal + deg_delta:
+                    goal_reached = True
+                    print("Goal reached")
+                else:
+                    initial_clockwise = c
+                    self.adjust_orientation(deg_goal, initial_clockwise)
+            elif np.sign(curr_g) == np.sign(l) and curr_g < l:
+                print("Goal not reached accurately")
+                self.stop()
+                time.sleep(3)
+                initial_clockwise = c
+                self.adjust_orientation(deg_goal, initial_clockwise)
+                stop = True
+            else:
+                self.turn_to_right(vel, vel)
+
+    def adjust_orientation(self, deg_goal, initial_clockwise: Clockwise):
+        print("Trying to adjust the orientation")
+        print("Goal: ", deg_goal)
+        limit_range = [deg_goal - 3, deg_goal + 3]
+        print(limit_range)
+        time.sleep(3)
+        arr = self.get_degree_orientation()
+        curr_g = arr[2]
+        print(initial_clockwise)
+        c = Clockwise.RIGHT
+        if initial_clockwise.RIGHT:
+            c = Clockwise.LEFT
+        print(c)
+        vel = 45 * math.pi / 180
+        stop = False
+        deg_delta = 2
+        while not stop:
+            # self.stop()
+            curr_g = self.get_degree_orientation()[2]
+            print(curr_g)
+            print("here")
+            if deg_goal - deg_delta <= curr_g <= deg_goal + deg_delta:
+                self.stop()
+                stop = True
+                print("Goal reached")
+                goal_reached = True
+            elif c == Clockwise.RIGHT:
+                self.turn_to_right(vel, vel)
+            elif c == Clockwise.LEFT:
+                self.turn_to_left(vel, vel)
