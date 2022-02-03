@@ -103,7 +103,7 @@ class Controller:
     def __elaborate(self):
         self.__calibrate_position()
 
-    def __algoritm(self):
+    def __algorithm(self):
         pass
 
     def __calibrate_position(self) -> None:

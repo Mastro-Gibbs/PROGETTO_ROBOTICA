@@ -44,11 +44,11 @@ class PhysicalBody:
         self._rear_right_motor = api.joint.with_velocity_control("joint_rear_right_wheel")
 
         # READING INITIAL ORIENTATION OF THE ROBOT
-        self.code_r, self.handle_r = \
+        self.code_robot, self.handle_robot = \
             s.simxGetObjectHandle(self.clientID, FREENOVE, s.simx_opmode_oneshot_wait)
         self.handle_parent = s.sim_handle_parent
         self.c, self.orientation = \
-            s.simxGetObjectOrientation(self.code_r, self.handle_r, self.handle_parent, s.simx_opmode_streaming)
+            s.simxGetObjectOrientation(self.code_robot, self.handle_robot, self.handle_parent, s.simx_opmode_streaming)
         print(self.orientation)
 
         self.stop()
@@ -149,8 +149,8 @@ class PhysicalBody:
 
     def get_orientation(self):
         self.c, self.orientation = \
-            s.simxGetObjectOrientation(self.code_r,
-                                       self.handle_r,
+            s.simxGetObjectOrientation(self.code_robot,
+                                       self.handle_robot,
                                        self.handle_parent,
                                        s.simx_opmode_buffer)
         return self.orientation
@@ -163,28 +163,26 @@ class PhysicalBody:
         g = utility.radians_to_degree(arr[2])
         return [a, b, g]
 
-    # ALCUNE VOLTE NON FUNZIONA
-    def rotate(self, vel, c: Clockwise):
-        arr1 = self.get_degree_orientation()
-        init_g = abs(arr1[2])
-        print(init_g)
-        stop = False
-        while not stop:
-            arr = self.get_degree_orientation()
-            print(arr)
-            curr_g = arr[2]
-            print(f"init_g: {init_g}, curr_g: {curr_g}")
-            diff = abs(abs(curr_g) - init_g)
-            print(f"Difference: {diff}")
-            if 87 < diff < 90:
-                print("90° reached")
-                stop = True
-                self.stop()
-                time.sleep(1)
-            elif c == Clockwise.RIGHT:
-                self.turn_to_right(vel, vel)
-            elif c == Clockwise.LEFT:
-                self.turn_to_left(vel, vel)
+    """Set robot orientation using CoppeliaSimApi"""
+    def set_orientation(self, g):
+        rad = utility.degree_to_radians(g)
+        print(rad)
+        # code_w, handle_w = s.simxGetObjectHandle(self.clientID, "Cylinder15", s.simx_opmode_blocking)
+        # code = s.simxSetObjectOrientation(clientID=self.clientID,
+        #                                   objectHandle=handle_w,
+        #                                   relativeToObjectHandle=-1,
+        #                                   eulerAngles=[degree_to_radians(90), 0, 0],
+        #                                   operationMode=s.simx_opmode_oneshot)
+        init_orient = self.get_orientation()
+        next_orient = init_orient
+        next_orient[2] = rad
+        code = s.simxSetObjectOrientation(clientID=self.clientID,
+                                          objectHandle=self.handle_robot,
+                                          relativeToObjectHandle=self.handle_parent,  # -11
+                                          eulerAngles=next_orient,
+                                          operationMode=s.simx_opmode_oneshot)
+        print(f"Setting orientation to {g}")
+        return code
 
     # FUNZIONE ALTERNATIVA PER LA ROTAZIONE -- DA TERMINARE
     def rotate_test(self, vel, c: Clockwise):
@@ -193,13 +191,20 @@ class PhysicalBody:
         deg_delta = 2
         deg_goal = None
         goal_reached = False
-
+        """
+            deg_gol = 180° (oppure -180°)
+            if -180<curr_g<=-176 or 176<=curr_g<=180:
+                stop 
+        """
+        # [0, -90, -180,  180,  90]
+        # [0,  90,  180, -180, -90]
         if c.RIGHT:
             if -90 < init_g < 180:
                 deg_goal = init_g - 90
             elif -180 <= init_g <= -90:
                 deg_goal = init_g + 270
-            limit_range = [deg_goal - 3, deg_goal + 3]
+            # deg_goal = 180
+            limit_range = [deg_goal - 1, deg_goal + 1]
             print("Goal: ", deg_goal)
             print(limit_range)
 
@@ -261,3 +266,91 @@ class PhysicalBody:
                 self.turn_to_right(vel, vel)
             elif c == Clockwise.LEFT:
                 self.turn_to_left(vel, vel)
+
+    """Function that given vel, Clockwise and rotation degrees permits to rotate the Robot around the z axis"""
+    def rotate(self, vel, c: Clockwise, degrees):
+        if degrees < 4:
+            return
+        orient = self.get_degree_orientation()
+        init_g = orient[2]
+        prev_g = init_g
+        deg = 0
+        delta = 2
+        achieved = False
+        stop = False
+        while not stop:
+            orient = self.get_degree_orientation()
+            # print(orient)
+            curr_g = orient[2]
+            print(f"init_g: {init_g}, curr_g: {curr_g}")
+
+            if prev_g < -90 and curr_g > 90:
+                delta_sx = 180 + prev_g
+                delta_dx = 180 - curr_g
+                deg = delta_sx + delta_dx + deg
+            elif prev_g > 90 and curr_g < -90:
+                delta_dx = 180 - prev_g
+                delta_sx = 180 + curr_g
+                deg = delta_sx + delta_dx + deg
+            else:
+                deg = abs(curr_g - prev_g) + deg
+
+            print("Performed deg: ", deg)
+            print("Round: ", int(deg / 360))
+
+            prev_g = curr_g
+
+            if degrees - delta < deg < degrees + delta:
+                self.stop()
+                performed_deg = deg
+                achieved = True  # ok
+                return achieved, init_g, performed_deg, degrees
+            if deg > degrees + delta:
+                self.stop()
+                print("Error: performed degrees exceeded the target")
+                performed_deg = deg
+                achieved = False  # error
+                return achieved, init_g, performed_deg, degrees
+            if c == Clockwise.RIGHT:
+                self.turn_to_right(vel, vel)
+            elif c == Clockwise.LEFT:
+                self.turn_to_left(vel, vel)
+
+    def check_orientation(self, vel, c, degrees, init_g, performed_deg):
+        print("Checking the orientation ...")
+        orient = self.get_degree_orientation()
+        curr_g = orient[2]
+        deg_g = 0
+
+    def do_rotation(self, vel, c: Clockwise, degrees):
+        self.stop()
+        time.sleep(0.1)
+        init_g = self.get_degree_orientation()[2]
+        final_g = self.compute_final_g(init_g, degrees)
+        achieved, init_g, performed_deg, degrees = self.rotate(vel, c, degrees)
+        self.check_orientation(vel, c, degrees, init_g, performed_deg)
+
+    def compute_final_g(self, init_g, degrees):
+        final_g = 0
+
+
+
+        return final_g
+
+
+"""
+ if c == Clockwise.RIGHT:
+    if prev_g < -90 and curr_g > 90:
+        delta_sx = 180 + prev_g
+        delta_dx = 180 - curr_g
+        deg = delta_sx + delta_dx + deg
+    else:
+        deg = abs(curr_g - prev_g) + deg
+if c == Clockwise.LEFT:
+    if prev_g > 90 and curr_g < -90:
+        delta_dx = 180 - prev_g
+        delta_sx = 180 + curr_g
+        deg = delta_sx + delta_dx + deg
+    else:
+        deg = abs(curr_g - prev_g) + deg
+"""
