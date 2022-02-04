@@ -155,17 +155,17 @@ class PhysicalBody:
                                        s.simx_opmode_buffer)
         return self.orientation
 
-    def get_degree_orientation(self):
+    def get_orientation_degrees(self):
         self.orientation = self.get_orientation()
         arr = self.orientation
-        a = utility.radians_to_degree(arr[0])
-        b = utility.radians_to_degree(arr[1])
-        g = utility.radians_to_degree(arr[2])
+        a = utility.radians_to_degrees(arr[0])
+        b = utility.radians_to_degrees(arr[1])
+        g = utility.radians_to_degrees(arr[2])
         return [a, b, g]
 
     """Set robot orientation using CoppeliaSimApi"""
     def set_orientation(self, g):
-        rad = utility.degree_to_radians(g)
+        rad = utility.degrees_to_radians(g)
         print(rad)
         # code_w, handle_w = s.simxGetObjectHandle(self.clientID, "Cylinder15", s.simx_opmode_blocking)
         # code = s.simxSetObjectOrientation(clientID=self.clientID,
@@ -184,105 +184,26 @@ class PhysicalBody:
         print(f"Setting orientation to {g}")
         return code
 
-    # FUNZIONE ALTERNATIVA PER LA ROTAZIONE -- DA TERMINARE
-    def rotate_test(self, vel, c: Clockwise):
-        init_g = self.get_degree_orientation()[2]
-        print("Init_g: ", init_g)
-        deg_delta = 2
-        deg_goal = None
-        goal_reached = False
-        """
-            deg_gol = 180° (oppure -180°)
-            if -180<curr_g<=-176 or 176<=curr_g<=180:
-                stop 
-        """
-        # [0, -90, -180,  180,  90]
-        # [0,  90,  180, -180, -90]
-        if c.RIGHT:
-            if -90 < init_g < 180:
-                deg_goal = init_g - 90
-            elif -180 <= init_g <= -90:
-                deg_goal = init_g + 270
-            # deg_goal = 180
-            limit_range = [deg_goal - 1, deg_goal + 1]
-            print("Goal: ", deg_goal)
-            print(limit_range)
+    """TO DO:
+        Funzione rotate alternativa che permette di far ruotare il robot fino a che non raggiunge final_g
+    """
 
-        time.sleep(4)
-        stop = False
-        while not stop:
-            # self.stop()
-            curr_g = self.get_degree_orientation()[2]
-            print(curr_g)
-            l = min(limit_range)
-            if deg_goal - deg_delta <= curr_g <= deg_goal + deg_delta:
-                self.stop()
-                stop = True
-                print("Second check if the goal is reached")
-                curr_g = self.get_degree_orientation()[2]
-                if deg_goal - deg_delta <= curr_g <= deg_goal + deg_delta:
-                    goal_reached = True
-                    print("Goal reached")
-                else:
-                    initial_clockwise = c
-                    self.adjust_orientation(deg_goal, initial_clockwise)
-            elif np.sign(curr_g) == np.sign(l) and curr_g < l:
-                print("Goal not reached accurately")
-                self.stop()
-                time.sleep(3)
-                initial_clockwise = c
-                self.adjust_orientation(deg_goal, initial_clockwise)
-                stop = True
-            else:
-                self.turn_to_right(vel, vel)
-
-    def adjust_orientation(self, deg_goal, initial_clockwise: Clockwise):
-        print("Trying to adjust the orientation")
-        print("Goal: ", deg_goal)
-        limit_range = [deg_goal - 3, deg_goal + 3]
-        print(limit_range)
-        time.sleep(3)
-        arr = self.get_degree_orientation()
-        curr_g = arr[2]
-        print(initial_clockwise)
-        c = Clockwise.RIGHT
-        if initial_clockwise.RIGHT:
-            c = Clockwise.LEFT
-        print(c)
-        vel = 45 * math.pi / 180
-        stop = False
-        deg_delta = 2
-        while not stop:
-            # self.stop()
-            curr_g = self.get_degree_orientation()[2]
-            print(curr_g)
-            print("here")
-            if deg_goal - deg_delta <= curr_g <= deg_goal + deg_delta:
-                self.stop()
-                stop = True
-                print("Goal reached")
-                goal_reached = True
-            elif c == Clockwise.RIGHT:
-                self.turn_to_right(vel, vel)
-            elif c == Clockwise.LEFT:
-                self.turn_to_left(vel, vel)
-
-    """Function that given vel, Clockwise and rotation degrees permits to rotate the Robot around the z axis"""
+    """Function that given vel, Clockwise and rotation degrees computes the rotation of the Robot around the z axis"""
     def rotate(self, vel, c: Clockwise, degrees):
+        degrees = abs(degrees)
         if degrees < 4:
-            return
-        orient = self.get_degree_orientation()
+            return [None] * 5
+        orient = self.get_orientation_degrees()
         init_g = orient[2]
         prev_g = init_g
         deg = 0
         delta = 2
-        achieved = False
         stop = False
         while not stop:
-            orient = self.get_degree_orientation()
+            orient = self.get_orientation_degrees()
             # print(orient)
             curr_g = orient[2]
-            print(f"init_g: {init_g}, curr_g: {curr_g}")
+            print(f"[init_g, curr_g, degrees] = [{init_g}, {curr_g}, {degrees}]")
 
             if prev_g < -90 and curr_g > 90:
                 delta_sx = 180 + prev_g
@@ -295,62 +216,89 @@ class PhysicalBody:
             else:
                 deg = abs(curr_g - prev_g) + deg
 
-            print("Performed deg: ", deg)
-            print("Round: ", int(deg / 360))
+            print(f"[Performed deg, Round] = [{deg}, {int(deg / 360)}]")
 
             prev_g = curr_g
 
             if degrees - delta < deg < degrees + delta:
                 self.stop()
+                print("Maybe the orientation is correct ...")
                 performed_deg = deg
-                achieved = True  # ok
-                return achieved, init_g, performed_deg, degrees
+                last_sampled_g = prev_g
+                achieved = True  # Problema: se il robot ha slittato i gradi raggiunti
+                                 # non sono giusti e quindi serve sempre il check dell'orientation
+                return achieved, init_g, last_sampled_g, performed_deg, degrees
             if deg > degrees + delta:
                 self.stop()
                 print("Error: performed degrees exceeded the target")
                 performed_deg = deg
-                achieved = False  # error
-                return achieved, init_g, performed_deg, degrees
+                last_sampled_g = prev_g
+                achieved = False  # error, serve il check dell'orientation
+                return achieved, init_g, last_sampled_g, performed_deg, degrees
             if c == Clockwise.RIGHT:
                 self.turn_to_right(vel, vel)
             elif c == Clockwise.LEFT:
                 self.turn_to_left(vel, vel)
 
-    def check_orientation(self, vel, c, degrees, init_g, performed_deg):
-        print("Checking the orientation ...")
-        orient = self.get_degree_orientation()
-        curr_g = orient[2]
-        deg_g = 0
-
     def do_rotation(self, vel, c: Clockwise, degrees):
+        degrees = abs(degrees)
         self.stop()
         time.sleep(0.1)
-        init_g = self.get_degree_orientation()[2]
-        final_g = self.compute_final_g(init_g, degrees)
-        achieved, init_g, performed_deg, degrees = self.rotate(vel, c, degrees)
-        self.check_orientation(vel, c, degrees, init_g, performed_deg)
+        init_g = self.get_orientation_degrees()[2]
+        final_g = self.compute_final_g(c, init_g, degrees)
+        time.sleep(5)
+        achieved, init_g, last_sampled_g, performed_deg, degrees = self.rotate(vel, c, degrees)
+        ok, curr_g, limit_range = self.check_orientation(c, init_g, final_g, performed_deg, degrees)
+        if not ok:
+            self.adjust_orientation(c, init_g, final_g, limit_range, performed_deg)
 
-    def compute_final_g(self, init_g, degrees):
-        final_g = 0
+    def check_orientation(self, c, init_g, final_g, performed_deg, degrees):
+        print("Checking if the orientation is correct ...")
+        time.sleep(3)
+        curr_g = self.get_orientation_degrees()[2]
+        delta = 2
+        ok = False
+        if abs(final_g) + delta > 180:
+            limit_g_dx = 180 - delta
+            limit_g_sx = - 180 + delta
+            if curr_g < limit_g_sx or curr_g > limit_g_dx:
+                print("Perfect orientation")
+                ok = True
+            else:
+                print("Bad orientation")
+        else:
+            limit_g_dx = final_g - delta
+            limit_g_sx = final_g + delta
+            if limit_g_dx <= curr_g <= limit_g_sx:
+                print("Perfect orientation")
+                ok = True
+            else:
+                print("Bad orientation")
 
+        limit_range = [limit_g_sx, limit_g_dx]
+        print(f"Limit range:{limit_range}, curr_g: {curr_g}")
+        time.sleep(4)
+        return ok, curr_g, limit_range
 
+    # Ovviamente da finire
+    def adjust_orientation(self, initial_clockwise, init_g, final_g, limit_range, performed_deg):
+        print("Adjusting orientation ...")
+        time.sleep(4)
+        vel = 45 * math.pi / 180
+        curr_g = self.get_orientation_degrees()[2]
+        c = Clockwise.RIGHT
+        if initial_clockwise.RIGHT:
+            c = Clockwise.LEFT
+        #degrees =
+        #self.rotate(vel, c, final_g, degrees)
+        ...
 
+    def compute_final_g(self, c: Clockwise, init_g, degrees):
+        print(c)
+        if c == Clockwise.RIGHT:
+            degrees = -1 * degrees
+        init_g_360 = normalize_angle(init_g, 0)
+        final_g_360 = init_g_360 + degrees
+        final_g = normalize_angle(final_g_360, 1)
+        print(f"[init_g, final_g, degrees] = [{init_g}, {final_g}, {degrees}]")
         return final_g
-
-
-"""
- if c == Clockwise.RIGHT:
-    if prev_g < -90 and curr_g > 90:
-        delta_sx = 180 + prev_g
-        delta_dx = 180 - curr_g
-        deg = delta_sx + delta_dx + deg
-    else:
-        deg = abs(curr_g - prev_g) + deg
-if c == Clockwise.LEFT:
-    if prev_g > 90 and curr_g < -90:
-        delta_dx = 180 - prev_g
-        delta_sx = 180 + curr_g
-        deg = delta_sx + delta_dx + deg
-    else:
-        deg = abs(curr_g - prev_g) + deg
-"""

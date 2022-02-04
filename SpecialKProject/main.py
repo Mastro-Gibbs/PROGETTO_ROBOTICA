@@ -1,3 +1,4 @@
+import utility
 from pycsim import CSim, common
 
 from PhysicalBody import PhysicalBody, Clockwise
@@ -26,7 +27,7 @@ if __name__ == '__main__':
             # time.sleep(2)
             print("Start")
             vel = 45 * math.pi / 180
-            #vel = 10
+            vel = 10
             while not GO:
                 pb.move_forward(4)
                 print(pb.get_accelerometer())
@@ -36,9 +37,9 @@ if __name__ == '__main__':
             GO = True
 
             while GO:
-                # pb.rotate_test(vel, Clockwise.RIGHT)
-                pb.do_rotation(10, Clockwise.LEFT, 90)
+                pb.do_rotation(vel, Clockwise.RIGHT, 90)
                 time.sleep(5)
+
 
         except common.NotFoundComponentError as e:
             print(e)
