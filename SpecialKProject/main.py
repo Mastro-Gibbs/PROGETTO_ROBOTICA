@@ -35,8 +35,16 @@ if __name__ == '__main__':
                     print("Black color detected")
                     GO = False
             GO = True
-
-            while GO:
+            pb.compute_min_angle_degrees(40, -110)
+            pb.compute_min_angle_degrees(-110, 180)
+            pb.compute_min_angle_degrees(-90, 40)
+            #pb.rotate_to_final_g(vel, 180)
+            pb.rotate_to_final_g(vel, 0)
+            pb.rotate_to_final_g(vel, 90)
+            pb.rotate_to_final_g(vel, -180)
+            pb.rotate_to_final_g(vel, 90)
+            pb.rotate_to_final_g(vel, -90)
+            while not GO:
                 pb.do_rotation(vel, Clockwise.RIGHT, 90)
                 time.sleep(5)
 
