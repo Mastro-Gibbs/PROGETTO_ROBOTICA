@@ -173,12 +173,6 @@ class PhysicalBody:
     def set_orientation(self, g):
         rad = utility.degrees_to_radians(g)
         print(rad)
-        # code_w, handle_w = s.simxGetObjectHandle(self.clientID, "Cylinder15", s.simx_opmode_blocking)
-        # code = s.simxSetObjectOrientation(clientID=self.clientID,
-        #                                   objectHandle=handle_w,
-        #                                   relativeToObjectHandle=-1,
-        #                                   eulerAngles=[degree_to_radians(90), 0, 0],
-        #                                   operationMode=s.simx_opmode_oneshot)
         init_orient = self.get_orientation()
         next_orient = init_orient
         next_orient[2] = rad
@@ -196,42 +190,24 @@ class PhysicalBody:
         the rotation of the Robot around the z axis
         """
         degrees = abs(degrees)
-        """if degrees < 3:
-            return [None] * 5"""
-        orient = self.get_orientation_degrees()
-        init_g = orient[2]
+        init_g = self.get_orientation_degrees()[2]
         prev_g = init_g
         deg = 0.0
         delta = 1.5
         stop = False
         while not stop:
-            orient = self.get_orientation_degrees()
-            # print(orient)
-            curr_g = orient[2]
+            curr_g = self.get_orientation_degrees()[2]
+            deg = self.compute_performed_degrees(c, prev_g, curr_g) + deg
             print(f"[init_g, curr_g, degrees] = [{init_g}, {curr_g}, {degrees}]")
-
-            if prev_g < -90 and curr_g > 90:
-                delta_sx = 180 + prev_g
-                delta_dx = 180 - curr_g
-                deg = round(delta_sx + delta_dx + deg, ROUND_DIGITS)
-            elif prev_g > 90 and curr_g < -90:
-                delta_dx = 180 - prev_g
-                delta_sx = 180 + curr_g
-                deg = round(delta_sx + delta_dx + deg, ROUND_DIGITS)
-            else:
-                deg = round(abs(curr_g - prev_g) + deg, ROUND_DIGITS)
-            # deg = self.compute_angle_degrees(c, prev_g, curr_g) + deg
             print(f"[Performed deg, Round] = [{deg}, {int(deg / 360)}]")
-
             prev_g = curr_g
-
             if degrees - delta < deg < degrees + delta:
                 self.stop()
                 print("Maybe the orientation is correct ...")
                 performed_deg = deg
                 last_sampled_g = prev_g
                 achieved = True  # Problema: se il robot ha slittato i gradi raggiunti
-                # non sono giusti e quindi serve sempre il check dell'orientation
+                                 # non sono giusti e quindi serve sempre il check dell'orientation
                 return achieved, init_g, last_sampled_g, performed_deg, degrees
             if deg > degrees + delta:
                 self.stop()
@@ -244,6 +220,31 @@ class PhysicalBody:
                 self.turn_to_right(vel, vel)
             elif c == Clockwise.LEFT:
                 self.turn_to_left(vel, vel)
+
+    def compute_performed_degrees(self, c, init_g, curr_g):
+        """Calcola l'angolo tra init_g e curr_g che il robot ha eseguito in base al senso di rotazione"""
+
+        if init_g == curr_g:
+            return 0
+        # Trasformo gli angoli compresi tra [-180,180] ai corrispondenti angoli tra [0,360]
+        init_g_360 = normalize_angle(init_g, 0)
+        curr_g_360 = normalize_angle(curr_g, 0)
+        # Calcolo la differenza
+        first_angle = curr_g_360 - init_g_360
+        second_angle = -1 * first_angle / abs(first_angle) * (360 - abs(first_angle))
+        performed_degrees = 0
+
+        if c == Clockwise.RIGHT:
+            if first_angle < 0:
+                performed_degrees = abs(first_angle)
+            else:
+                performed_degrees = abs(second_angle)
+        else:
+            if first_angle > 0:
+                performed_degrees = abs(first_angle)
+            else:
+                performed_degrees = abs(second_angle)
+        return round(performed_degrees, ROUND_DIGITS)
 
     def rotate_to_final_g(self, vel, final_g):
         """
@@ -348,19 +349,8 @@ class PhysicalBody:
 
     def compute_min_angle_degrees(self, init_g, final_g):
         """Calcola l'angolo minimo tra init_g e final_g"""
-
-        """if init_g < -90 and final_g > 90:
-            delta_sx = 180 + init_g
-            delta_dx = 180 - final_g
-            degrees = delta_sx + delta_dx
-        elif init_g > 90 and final_g < -90:
-            delta_dx = 180 - init_g
-            delta_sx = 180 + final_g
-            degrees = delta_sx + delta_dx
-        else:
-            degrees = abs(final_g - init_g)
-        print("grezzo:", degrees)"""
-
+        if init_g == final_g:
+            return 0
         # Trasformo gli angoli compresi tra [-180,180] ai corrispondenti angoli tra [0,360]
         init_g_360 = normalize_angle(init_g, 0)
         final_g_360 = normalize_angle(final_g, 0)
@@ -380,6 +370,3 @@ class PhysicalBody:
 
         return round(smallest, ROUND_DIGITS)
 
-    def compute_angle_degrees(self, c, init_g, final_g):
-        """Calcola l'angolo tra init_g e final_g che il robot ha eseguito in base al senso di rotazione"""
-        ...

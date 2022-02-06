@@ -44,6 +44,7 @@ if __name__ == '__main__':
             pb.rotate_to_final_g(vel, -180)
             pb.rotate_to_final_g(vel, 90)
             pb.rotate_to_final_g(vel, -90)
+            print(pb.compute_performed_degrees(Clockwise.LEFT, -180, 175))
             while not GO:
                 pb.do_rotation(vel, Clockwise.RIGHT, 90)
                 time.sleep(5)
@@ -53,5 +54,4 @@ if __name__ == '__main__':
             print(e)
             print("Have you opened the right scene inside Coppelia SIM?")
             exit(-1)
-
 
