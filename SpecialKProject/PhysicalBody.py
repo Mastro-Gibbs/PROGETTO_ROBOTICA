@@ -5,11 +5,9 @@ import utility
 import time
 import math
 import numpy as np
-
 from utility import *
 
-ROUND_DIGITS = 4
-
+DEBUG = False
 
 class PhysicalBody:
 
@@ -163,9 +161,6 @@ class PhysicalBody:
         a = utility.radians_to_degrees(arr[0])
         b = utility.radians_to_degrees(arr[1])
         g = utility.radians_to_degrees(arr[2])
-        a = round(a, ROUND_DIGITS)
-        b = round(b, ROUND_DIGITS)
-        g = round(g, ROUND_DIGITS)
         return [a, b, g]
 
     """Set robot orientation using CoppeliaSimApi"""
@@ -184,7 +179,41 @@ class PhysicalBody:
         print(f"Setting orientation to {g}")
         return code
 
+    # CONTROLLER
+    def rotate_to_final_g(self, vel, final_g):
+        """
+           Funzione rotate che permette di far ruotare il robot fino a che non raggiunge final_g
+        """
+        init_g = self.get_orientation_degrees()[2]
+        degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
+        self.do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
+
+    # CONTROLLER
     def rotate_degrees(self, vel, c: Clockwise, degrees):
+        """
+            Funzione rotate che permette di far ruotare il robot di degrees gradi
+        """
+        init_g = self.get_orientation_degrees()[2]
+        final_g = self.compute_final_g(c, init_g, degrees)
+        self.do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
+
+    # CONTROLLER
+    def do_rotation(self, vel, c: Clockwise, degrees, final_g):
+        self.stop()
+        degrees = abs(degrees)
+        print("final_g: ", round_v(final_g))
+        if DEBUG:
+            time.sleep(5)
+        self.__rotate(vel, c, degrees)
+        ok, curr_g, limit_range = self.check_orientation(final_g)
+        if not ok:
+            ok, it = self.adjust_orientation(final_g)
+        if not ok:
+            print("ERROR")
+            exit()
+
+    # CONTROLLER
+    def __rotate(self, vel, c: Clockwise, degrees):
         """
         Function that given vel, Clockwise and rotation degrees computes
         the rotation of the Robot around the z axis
@@ -192,27 +221,25 @@ class PhysicalBody:
         degrees = abs(degrees)
         init_g = self.get_orientation_degrees()[2]
         prev_g = init_g
-        deg = 0.0
+        performed_deg = 0.0
         delta = 1.5
         stop = False
         while not stop:
             curr_g = self.get_orientation_degrees()[2]
-            deg = self.compute_performed_degrees(c, prev_g, curr_g) + deg
-            print(f"[init_g, curr_g, degrees] = [{init_g}, {curr_g}, {degrees}]")
-            print(f"[Performed deg, Round] = [{deg}, {int(deg / 360)}]")
+            performed_deg = self.compute_performed_degrees(c, prev_g, curr_g) + performed_deg
             prev_g = curr_g
-            if degrees - delta < deg < degrees + delta:
+            print(f"[init_g, curr_g, degrees] = [{round_v(init_g)}, {round_v(curr_g)}, {round_v(degrees)}]")
+            print(f"[Performed deg, Round] = [{round_v(performed_deg)}, {round_v(int(performed_deg / 360))}]")
+            if degrees - delta < performed_deg < degrees + delta:
                 self.stop()
                 print("Maybe the orientation is correct ...")
-                performed_deg = deg
                 last_sampled_g = prev_g
                 achieved = True  # Problema: se il robot ha slittato i gradi raggiunti
-                                 # non sono giusti e quindi serve sempre il check dell'orientation
+                # non sono giusti e quindi serve sempre il check dell'orientation
                 return achieved, init_g, last_sampled_g, performed_deg, degrees
-            if deg > degrees + delta:
+            if performed_deg > degrees + delta:
                 self.stop()
                 print("Error: performed degrees exceeded the target")
-                performed_deg = deg
                 last_sampled_g = prev_g
                 achieved = False  # error, serve il check dell'orientation
                 return achieved, init_g, last_sampled_g, performed_deg, degrees
@@ -221,64 +248,8 @@ class PhysicalBody:
             elif c == Clockwise.LEFT:
                 self.turn_to_left(vel, vel)
 
-    def compute_performed_degrees(self, c, init_g, curr_g):
-        """Calcola l'angolo tra init_g e curr_g che il robot ha eseguito in base al senso di rotazione"""
-
-        if init_g == curr_g:
-            return 0
-        # Trasformo gli angoli compresi tra [-180,180] ai corrispondenti angoli tra [0,360]
-        init_g_360 = normalize_angle(init_g, 0)
-        curr_g_360 = normalize_angle(curr_g, 0)
-        # Calcolo la differenza
-        first_angle = curr_g_360 - init_g_360
-        second_angle = -1 * first_angle / abs(first_angle) * (360 - abs(first_angle))
-        performed_degrees = 0
-
-        if c == Clockwise.RIGHT:
-            if first_angle < 0:
-                performed_degrees = abs(first_angle)
-            else:
-                performed_degrees = abs(second_angle)
-        else:
-            if first_angle > 0:
-                performed_degrees = abs(first_angle)
-            else:
-                performed_degrees = abs(second_angle)
-        return round(performed_degrees, ROUND_DIGITS)
-
-    def rotate_to_final_g(self, vel, final_g):
-        """
-           Funzione rotate che permette di far ruotare il robot fino a che non raggiunge final_g
-        """
-        init_g = self.get_orientation_degrees()[2]
-        degrees = self.compute_min_angle_degrees(init_g, final_g)
-        if degrees < 0:
-            print(f"Ruotare in senso orario (RIGHT) di {abs(degrees)} gradi")
-            c = Clockwise.RIGHT
-        else:
-            print(f"Ruotare in senso antorario (LEFT) di {abs(degrees)} gradi")
-            c = Clockwise.LEFT
-        self.do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
-
-    def do_rotation(self, vel, c: Clockwise, degrees, final_g=None):
-        degrees = abs(degrees)
-        self.stop()
-        time.sleep(0.1)
-        init_g = self.get_orientation_degrees()[2]
-        if final_g is None:
-            final_g = self.compute_final_g(c, init_g, degrees)
-        time.sleep(5)
-
-        self.rotate_degrees(vel, c, degrees)
-        ok, curr_g, limit_range = self.check_orientation(c, final_g)
-
-        if not ok:
-            ok, it = self.adjust_orientation(c, final_g)
-        if not ok:
-            print("ERROR")
-            exit()
-
-    def check_orientation(self, c, final_g):
+    # CONTROLLER
+    def check_orientation(self, final_g):
         print("Checking if the orientation is correct ...")
         time.sleep(3)
         curr_g = self.get_orientation_degrees()[2]
@@ -300,42 +271,35 @@ class PhysicalBody:
                 ok = True
             else:
                 print("Bad orientation")
-        limit_g_sx = round(limit_g_sx, ROUND_DIGITS)
-        limit_g_dx = round(limit_g_dx, ROUND_DIGITS)
+
+        print(f"Limit range:[{round_v(limit_g_sx)}, {round_v(limit_g_dx)}], curr_g: {round_v(curr_g)}")
         limit_range = [limit_g_sx, limit_g_dx]
-        print(f"Limit range:{limit_range}, curr_g: {curr_g}")
-        time.sleep(4)
+
+        if DEBUG:
+            time.sleep(4)
         return ok, curr_g, limit_range
 
-    def adjust_orientation(self, c, final_g):
+    # CONTROLLER
+    def adjust_orientation(self, final_g):
         ok = False
         it = 0
         max_attempts = 4
         while not ok and it < max_attempts:
-            print(f"Adjusting orientation, attempts: {it + 1} / {max_attempts}")
             curr_g = self.get_orientation_degrees()[2]
-            degrees = self.compute_min_angle_degrees(curr_g, final_g)
-            print(f"[Degrees_to_do, curr_g, final_g] = [{degrees}, {curr_g}, {final_g}]")
-            time.sleep(8)
-
-            if degrees < 0:
-                print(f"Ruotare in senso orario (RIGHT) di {abs(degrees)} gradi")
-                c = Clockwise.RIGHT
-            else:
-                print(f"Ruotare in senso antorario (LEFT) di {abs(degrees)} gradi")
-                c = Clockwise.LEFT
-            """ if c == Clockwise.RIGHT:
-                c = Clockwise.LEFT
-            else:
-                c = Clockwise.RIGHT"""
+            degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
+            print(f"Adjusting orientation, attempts: {it + 1} / {max_attempts}")
+            print(f"[Degrees_to_do, curr_g, final_g] = [{round_v(degrees)}, {round_v(curr_g)}, {round_v(final_g)}]")
+            if DEBUG:
+                time.sleep(8)
             if abs(degrees) < 4:
-                self.rotate_degrees(0.5, c, abs(degrees))
+                self.__rotate(0.5, c, abs(degrees))
             else:
-                self.rotate_degrees(45 * math.pi / 180, c, abs(degrees))
-            ok, curr_g, limit_range = self.check_orientation(c, final_g)
+                self.__rotate(45 * math.pi / 180, c, abs(degrees))
+            ok, curr_g, limit_range = self.check_orientation(final_g)
             it += 1
         return ok, it
 
+    # CONTROLLER
     def compute_final_g(self, c: Clockwise, init_g, degrees):
         print("Computing final_g ...")
         if c == Clockwise.RIGHT:
@@ -343,12 +307,36 @@ class PhysicalBody:
         init_g_360 = normalize_angle(init_g, 0)
         final_g_360 = init_g_360 + degrees
         final_g = normalize_angle(final_g_360, 1)
-        final_g = round(final_g, ROUND_DIGITS)
-        print(f"[init_g, final_g, degrees, clockwise] = [{init_g}, {final_g}, {abs(degrees)}, {c}]")
+        print(f"[init_g, final_g, degrees, clockwise] = [{round_v(init_g)}, {round_v(final_g)}, {abs(degrees)}, {c}]")
         return final_g
 
-    def compute_min_angle_degrees(self, init_g, final_g):
-        """Calcola l'angolo minimo tra init_g e final_g"""
+    # CONTROLLER
+    def compute_performed_degrees(self, c, init_g, curr_g):
+        """Calcola l'angolo tra init_g e curr_g che il robot ha eseguito in base al senso di rotazione"""
+
+        if init_g == curr_g:
+            return 0
+        # Trasformo gli angoli compresi tra [-180,180] ai corrispondenti angoli tra [0,360]
+        init_g_360 = normalize_angle(init_g, 0)
+        curr_g_360 = normalize_angle(curr_g, 0)
+        # Calcolo la differenza
+        first_angle = curr_g_360 - init_g_360
+        second_angle = -1 * first_angle / abs(first_angle) * (360 - abs(first_angle))
+        if c == Clockwise.RIGHT:
+            if first_angle < 0:
+                performed_degrees = abs(first_angle)
+            else:
+                performed_degrees = abs(second_angle)
+        else:
+            if first_angle > 0:
+                performed_degrees = abs(first_angle)
+            else:
+                performed_degrees = abs(second_angle)
+        return performed_degrees
+
+    # CONTROLLER
+    def best_angle_and_rotation_way(self, init_g, final_g):
+        """Calcola l'angolo migliore (minimo) tra init_g e final_g e il modo in cui bisogna ruotare"""
         if init_g == final_g:
             return 0
         # Trasformo gli angoli compresi tra [-180,180] ai corrispondenti angoli tra [0,360]
@@ -361,12 +349,11 @@ class PhysicalBody:
         smallest = first_angle
         if abs(first_angle) > 180:
             smallest = second_angle
-
-        print(f"[{init_g_360}, {final_g_360}, {first_angle}, {second_angle}]")
-        """if smallest < 0:
-            print(f"Ruotare in senso orario (RIGHT) di {abs(smallest)} gradi")
+        if smallest < 0:
+            print(f"Ruotare in senso orario (RIGHT) di {abs(round_v(smallest))} gradi")
+            c = Clockwise.RIGHT
         else:
-            print(f"Ruotare in senso antorario (LEFT) di {abs(smallest)} gradi")"""
+            print(f"Ruotare in senso antirario (LEFT) di {abs(round_v(smallest))} gradi")
+            c = Clockwise.LEFT
 
-        return round(smallest, ROUND_DIGITS)
-
+        return smallest, c

@@ -1,4 +1,5 @@
 from enum import Enum
+from math import pi
 
 
 class Key(Enum):
@@ -27,3 +28,10 @@ class Action(Enum):
     ROTATE_LEFT = 3
     ROTATE_RIGHT = 4
     STOP = 5
+
+
+class MotorsSpeed(Enum):
+    LOW = 0.5
+    MEDIUM = 45 * pi / 180
+    HIGH = 2
+    MAX = 5

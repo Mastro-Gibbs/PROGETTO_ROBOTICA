@@ -2,11 +2,16 @@ from math import pi
 from enum import Enum
 
 FREENOVE = "Freenove4wd"
+ROUND_DIGITS = 4
 
 
 class Clockwise(Enum):
     RIGHT = 0
     LEFT = 1
+
+
+def round_v(value):
+    return round(value, ROUND_DIGITS)
 
 
 def radians_to_degrees(rad):
@@ -53,5 +58,3 @@ g = []
 for i in angles:
     g.append(normalize_angle(i, 1))
 print(g)"""
-
-
