@@ -1,5 +1,6 @@
 import math
-import simConst as sc
+import RemoteApiPython.sim as s
+import RemoteApiPython.simConst as sc
 
 
 class Vec3:

@@ -1,5 +1,5 @@
-import sim as s
-import simConst as sc
+import RemoteApiPython.sim as s
+import RemoteApiPython.simConst as sc
 from .common import MatchObjTypeError, NotFoundComponentError
 
 

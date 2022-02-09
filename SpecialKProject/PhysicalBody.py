@@ -1,13 +1,13 @@
 from pycsim import CSim
-import sim as s
-import simConst as sc
+import RemoteApiPython.sim as s
+import RemoteApiPython.simConst as sc
 import utility
 import time
 import math
 import numpy as np
 from utility import *
 
-DEBUG = False
+DEBUG = True
 
 class PhysicalBody:
 

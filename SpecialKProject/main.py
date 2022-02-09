@@ -4,16 +4,45 @@ from pycsim import CSim, common
 from PhysicalBody import PhysicalBody, Clockwise
 import time
 import math
+from enum import Enum
 
 
-def rotation_test(pb):
-    pb.stop()
-    time.sleep(0.5)
-    pb.rotate(vel, Clockwise.RIGHT)
-    time.sleep(5)
-    pb.stop()
-    pb.rotate(vel, Clockwise.LEFT)
-    time.sleep(5)
+class Action(Enum):
+    GO_FORWARD = 1
+    GO_BACKWARD = 2
+    ROTATE_LEFT = 3
+    ROTATE_RIGHT = 4
+    STOP = 5
+
+
+actions = [1, 3, 1, 4, 1, 3, 1, 3, 1, 4, 1, 4, 1, 4, 1, 3]
+actions = [1, 180, 1, 90, 1, 180, 1, -90, 1, 180, 1, 90, 1, 0, 1, 90, 1, 0, 1, 90, 1, 180,
+           1, -90, 1, 180, 1, -90, 1, 180, 1, -90, 1, 180, 1, 90, 1, 0, 1, 90, 1, 180, 1,
+           90, 1, 0, 1, 90, 1, 180, 1, 90, 1]
+
+
+def rotation_test(pb, vel):
+    pb.rotate_to_final_g(vel, 0)
+    pb.rotate_to_final_g(vel, 90)
+    pb.rotate_to_final_g(vel, -180)
+    pb.rotate_to_final_g(vel, 90)
+    pb.rotate_to_final_g(vel, -90)
+
+
+def algorithm(pb):
+    vel = 2
+    vel_rot = 45 * math.pi / 180
+    i = 0
+    print(Action.GO_FORWARD)
+    while len(actions) != i:
+        print("f")
+        if actions[i] == 1:
+            while pb.get_front_distance() > 0.35:
+                pb.move_forward(vel)
+            pb.stop()
+        elif actions[i] != 1:
+            pb.rotate_to_final_g(vel_rot, actions[i])
+        i += 1
 
 
 if __name__ == '__main__':
@@ -28,30 +57,9 @@ if __name__ == '__main__':
             print("Start")
             vel = 45 * math.pi / 180
             vel = 10
-            while not GO:
-                pb.move_forward(4)
-                print(pb.get_accelerometer())
-                if pb.black_color_detected():
-                    print("Black color detected")
-                    GO = False
-            GO = True
-            """pb.best_angle_and_rotation_way(40, -110)
-            pb.best_angle_and_rotation_way(-110, 180)
-            pb.best_angle_and_rotation_way(-90, 40)"""
-            #pb.rotate_to_final_g(vel, 180)
-            pb.rotate_to_final_g(vel, 0)
-            pb.rotate_to_final_g(vel, 90)
-            pb.rotate_to_final_g(vel, -180)
-            pb.rotate_to_final_g(vel, 90)
-            pb.rotate_to_final_g(vel, -90)
-            # print(pb.compute_performed_degrees(Clockwise.LEFT, -180, 175))
-            while not GO:
-                pb.do_rotation(vel, Clockwise.RIGHT, 90)
-                time.sleep(5)
-
-
+            # algorithm(pb)
+            rotation_test(pb, vel)
         except common.NotFoundComponentError as e:
             print(e)
             print("Have you opened the right scene inside Coppelia SIM?")
             exit(-1)
-
