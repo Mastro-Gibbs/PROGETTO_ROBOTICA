@@ -5,9 +5,20 @@ import utility
 import time
 import math
 import numpy as np
+from multiprocessing import Process, Manager, Value
+from threading import Thread
 from utility import *
 
 DEBUG = True
+
+
+class Joiner(Thread):
+    def __init__(self, q):
+        super().__init__()
+        self.child = q
+
+    def run(self):
+        self.child.join()
 
 
 class PhysicalBody:
@@ -52,8 +63,25 @@ class PhysicalBody:
             s.simxGetObjectOrientation(self.code_robot, self.handle_robot, self.handle_parent, s.simx_opmode_streaming)
         print(self.orientation)
 
+        self.manager = Manager()
+        self.curr_g = self.manager.Value('g', 0)
+
+        # PROCESS
+        self.poll_g = Process(target=self.polling_g_degrees, args=(self.curr_g,))
+
         self.stop()
         time.sleep(0.2)
+
+    def start_proc(self):
+        self.poll_g.start()
+        thread = Joiner(self.poll_g)
+
+    def polling_g_degrees(self, g):
+        while True:
+            curr_g = self.get_orientation_degrees()[2]
+            g.value = curr_g
+            # print("curr_g", g.value)
+            time.sleep(0.1)
 
     # ACT
     def move_forward(self, velocity):
@@ -164,6 +192,9 @@ class PhysicalBody:
         g = utility.radians_to_degrees(arr[2])
         return [a, b, g]
 
+    def get_g(self):
+        return self.curr_g.value
+
     """Set robot orientation using CoppeliaSimApi"""
 
     def set_orientation(self, g):
@@ -185,18 +216,20 @@ class PhysicalBody:
         """
            Funzione rotate che permette di far ruotare il robot fino a che non raggiunge final_g
         """
-        init_g = self.get_orientation_degrees()[2]
+        init_g = self.curr_g.value
+        print(type(init_g))
+        print(init_g)
         degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
-        self.do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
+        self.do_rotation(vel=vel, c=c, degrees=degrees, final_g=final_g)
 
     # CONTROLLER
     def rotate_degrees(self, vel, c: Clockwise, degrees):
         """
             Funzione rotate che permette di far ruotare il robot di degrees gradi
         """
-        init_g = self.get_orientation_degrees()[2]
+        init_g = self.curr_g.value
         final_g = self.compute_final_g(c, init_g, degrees)
-        self.do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
+        self.do_rotation(vel=vel, c=c, degrees=degrees, final_g=final_g)
 
     # CONTROLLER
     def do_rotation(self, vel, c: Clockwise, degrees, final_g):
@@ -220,13 +253,13 @@ class PhysicalBody:
         the rotation of the Robot around the z axis
         """
         degrees = abs(degrees)
-        init_g = self.get_orientation_degrees()[2]
+        init_g = self.curr_g.value
         prev_g = init_g
         performed_deg = 0.0
         delta = 1.5
         stop = False
         while not stop:
-            curr_g = self.get_orientation_degrees()[2]
+            curr_g = self.curr_g.value
             performed_deg = self.compute_performed_degrees(c, prev_g, curr_g) + performed_deg
             prev_g = curr_g
             print(f"[init_g, curr_g, degrees] = [{round_v(init_g)}, {round_v(curr_g)}, {round_v(degrees)}]")
@@ -253,7 +286,7 @@ class PhysicalBody:
     def check_orientation(self, final_g):
         print("Checking if the orientation is correct ...")
         time.sleep(3)
-        curr_g = self.get_orientation_degrees()[2]
+        curr_g = self.curr_g.value
         delta = 2
         ok = False
         if abs(final_g) + delta > 180:
@@ -286,7 +319,7 @@ class PhysicalBody:
         it = 0
         max_attempts = 4
         while not ok and it < max_attempts:
-            curr_g = self.get_orientation_degrees()[2]
+            curr_g = self.curr_g.value
             degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
             print(f"Adjusting orientation, attempts: {it + 1} / {max_attempts}")
             print(f"[Degrees_to_do, curr_g, final_g] = [{round_v(degrees)}, {round_v(curr_g)}, {round_v(final_g)}]")

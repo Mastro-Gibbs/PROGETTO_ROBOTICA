@@ -1,5 +1,6 @@
 import utility
 from pycsim import CSim, common
+
 from PhysicalBody import PhysicalBody, Clockwise
 import time
 import math
@@ -57,7 +58,25 @@ if __name__ == '__main__':
             vel = 45 * math.pi / 180
             vel = 10
             # algorithm(pb)
-            rotation_test(pb, vel)
+
+            time.sleep(2)
+            pb.start_proc()
+            print(type(pb.get_g()))
+            #rotation_test(pb, vel)
+            while True:
+                print("prc", pb.get_g())
+                print(pb.get_orientation_degrees()[2])
+                time.sleep(2)
+
+            """ # rotation_test(pb, vel)
+            pb.start_proc()
+            # time.sleep(3)
+            print("--------------", pb.get_g())
+            # rotation_test(pb, vel)
+            while True:
+                print("--------------", pb.get_g())
+                #time.sleep(3)"""
+
         except common.NotFoundComponentError as e:
             print(e)
             print("Have you opened the right scene inside Coppelia SIM?")
