@@ -7,7 +7,8 @@ import math
 import numpy as np
 from utility import *
 
-DEBUG = True
+DEBUG = False
+
 
 
 class PhysicalBody:

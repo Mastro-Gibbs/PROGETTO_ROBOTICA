@@ -13,7 +13,9 @@ import redis
 from queue import Queue
 from math import pi
 from time import sleep
-from multiprocessing import Process
+import threading
+import inspect
+import ctypes
 
 from controller_enums import Action, Key, Compass
 from virtualbody import VirtualBody
@@ -29,17 +31,17 @@ class Controller:
         self.ir_mid = None
         self.ir_right = None
 
-        self.orientation = Compass()    # orientazione corrente, utile solo al controller per l'algoritmo
-        self.orientation_raw = None     # valore crudo della orientazione
+        self.orientation = Compass()  # orientazione corrente, utile solo al controller per l'algoritmo
+        self.orientation_raw = None  # valore crudo della orientazione
         self.orientation_target = None  # target di orientazione
         self.balance_target = None
 
         self.action = Action()  # azione da compiere
 
         self.rotate_speed = (45 * pi) / 180  # velocità di rotazione
-        self.movement_speed = 1.5            # velocità di movimento
-        self.stop = 0                        # non c'è bisogno di commento :D
-        self.velocity = 0                    # velocità corrente da inviare
+        self.movement_speed = 1.5  # velocità di movimento
+        self.stop = 0  # non c'è bisogno di commento :D
+        self.velocity = 0  # velocità corrente da inviare
 
         self.goal: bool = False
 
@@ -48,18 +50,27 @@ class Controller:
         self.redis = redis
         self.vbody = VirtualBody(redis)
 
-        self.setupper = Process(target=self.__setup)
+        self.setupper = threading.Thread(target=self.__setup)
         self.setupper.start()
 
-        self.setupper.join()
-
     def events(self) -> None:
-        if not self.setupper.is_alive():
-            self.setupper.start()
-            self.setupper.join()
-
         self.__elaborate()
         self.__send()
+
+    def stop_thread(self, thread):
+        self._async_raise(thread.ident, SystemExit)
+
+    def _async_raise(self, tid, exctype):
+        """raises the exception, performs cleanup if needed"""
+        tid = ctypes.c_long(tid)
+        if not inspect.isclass(exctype):
+            exctype = type(exctype)
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+        if res == 0:
+            raise ValueError("invalid thread id")
+        elif res != 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+            raise SystemError("PyThreadState_SetAsyncExc failed")
 
     def __setup(self) -> None:
         while True:
@@ -146,6 +157,7 @@ class Controller:
         da migliorare.. calcolare staticamente la start pos della 4wd, -> autobilanciamento!
         ci mancano i valori...
     """
+
     def __balance(self) -> None:
         orientation = None
 
@@ -166,7 +178,3 @@ class Controller:
             self.action = Action.ROTATE_LEFT
         elif self.action == Action.ROTATE_LEFT:
             self.action = Action.ROTATE_RIGHT
-
-
-
-

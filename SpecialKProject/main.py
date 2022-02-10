@@ -56,8 +56,8 @@ if __name__ == '__main__':
             print("Start")
             vel = 45 * math.pi / 180
             vel = 10
-            # algorithm(pb)
-            rotation_test(pb, vel)
+            algorithm(pb)
+            # rotation_test(pb, vel)
         except common.NotFoundComponentError as e:
             print(e)
             print("Have you opened the right scene inside Coppelia SIM?")
