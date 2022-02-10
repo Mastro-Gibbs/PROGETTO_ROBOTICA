@@ -29,18 +29,21 @@ def rotation_test(pb, vel):
 
 
 def algorithm(pb):
-    vel = 2
+    vel = 5
     vel_rot = 45 * math.pi / 180
     i = 0
+    direction = 90
     print(Action.GO_FORWARD)
     while len(actions) != i:
         print("f")
         if actions[i] == 1:
-            while pb.get_front_distance() > 0.35:
+            while pb.get_front_distance() > 0.45:
                 pb.move_forward(vel)
+                pb.balance(direction)
             pb.stop()
         elif actions[i] != 1:
             pb.rotate_to_final_g(vel_rot, actions[i])
+            direction = actions[i]
         i += 1
 
 
@@ -51,13 +54,20 @@ if __name__ == '__main__':
             print(api._id)
             pb = PhysicalBody(api)
             pb.stop()
+            pb.setup_reference_system()
             GO = True
             # time.sleep(2)
             print("Start")
             vel = 45 * math.pi / 180
             vel = 10
-            algorithm(pb)
+            # algorithm(pb)
             # rotation_test(pb, vel)
+            while True:
+                print(f"[{pb.get_left_distance()},{pb.get_front_distance()}, {pb.get_right_distance()}]")
+                pb.move_forward(2)
+                pb.balance(90)
+
+
         except common.NotFoundComponentError as e:
             print(e)
             print("Have you opened the right scene inside Coppelia SIM?")

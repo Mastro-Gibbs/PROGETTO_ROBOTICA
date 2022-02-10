@@ -4,6 +4,7 @@ from enum import Enum
 FREENOVE = "Freenove4wd"
 ROUND_DIGITS = 4
 
+CRITICAL_SIDE_DISTANCE = 0.070
 
 class Clockwise(Enum):
     RIGHT = 0

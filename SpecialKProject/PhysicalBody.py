@@ -10,7 +10,6 @@ from utility import *
 DEBUG = False
 
 
-
 class PhysicalBody:
 
     def __init__(self, api: CSim):
@@ -56,6 +55,23 @@ class PhysicalBody:
         self.stop()
         time.sleep(0.2)
 
+    def setup_reference_system(self):
+        init_g = self.get_orientation_degrees()[2]
+        if 45 < init_g < 135:
+            NORD = 90
+        elif -45 <= init_g <= 45:
+            NORD = 0
+        elif -135 < init_g < -45:
+            NORD = -90
+        else:
+            NORD = 180
+        EST   = NORD - 90
+        OVEST = NORD + 90
+        SUD   = NORD - 180
+
+        print(f"[N,E,S,O] = [{NORD}, {EST}, {SUD}, {OVEST}]")
+
+
     # ACT
     def move_forward(self, velocity):
         self._set_left_motors(velocity)
@@ -99,19 +115,19 @@ class PhysicalBody:
     # SENSE
     def get_front_distance(self):
         _, vec3 = self._front_proximity_sensor.read()
-        print(vec3)
+        # print(vec3)
         return vec3.distance()
 
     # SENSE
     def get_left_distance(self):
         _, vec3 = self._left_proximity_sensor.read()
-        print(vec3)
+        # print(vec3)
         return vec3.distance()
 
     # SENSE
     def get_right_distance(self):
         _, vec3 = self._right_proximity_sensor.read()
-        print(vec3)
+        # print(vec3)
         return vec3.distance()
 
     # SENSE
@@ -128,10 +144,6 @@ class PhysicalBody:
 
     def get_accelerometer(self):
         code, state, force, torque = s.simxReadForceSensor(self.clientID, self.accelerometer[1], s.simx_opmode_buffer)
-        # print(force)
-        # print(type(force[0]))
-        # print(self.mass)
-        # print(type(self.mass))
         accel = None
         if state:
             x = force[0] / self.mass[0]
@@ -251,11 +263,11 @@ class PhysicalBody:
                 self.turn_to_left(vel, vel)
 
     # CONTROLLER
-    def check_orientation(self, final_g):
+    def check_orientation(self, final_g, delta=2):
         print("Checking if the orientation is correct ...")
         time.sleep(3)
         curr_g = self.get_orientation_degrees()[2]
-        delta = 2
+        # delta = 2
         ok = False
         if abs(final_g) + delta > 180:
             limit_g_dx = 180 - delta
@@ -300,6 +312,44 @@ class PhysicalBody:
             ok, curr_g, limit_range = self.check_orientation(final_g)
             it += 1
         return ok, it
+
+    def balance(self, direction):
+        ok, curr_g, limit_range = self.check_orientation(direction, delta=2)
+        if not ok:
+            ok, it = self.adjust_orientation(direction)
+        if not ok:
+            print("ERROR")
+            exit()
+        critical, side, distance = self.check_side_distances()
+        if critical:
+            self.adjust_position(side, distance, direction)
+
+    def check_side_distances(self):
+        ld = self.get_left_distance()
+        rd = self.get_right_distance()
+        critical = False
+        if ld < CRITICAL_SIDE_DISTANCE:
+            critical = True
+            return critical, "LEFT", ld
+        elif rd < CRITICAL_SIDE_DISTANCE:
+            critical = True
+            return critical, "RIGHT", rd
+        else:
+            return critical, None, None
+
+    def adjust_position(self, side, distance, direction):
+        print("--------------START: Adjusting position------------")
+        if side == "RIGHT":
+            new_g = direction + 90
+        else:
+            new_g = direction - 90
+        self.rotate_to_final_g(vel=45 * math.pi / 180, final_g=new_g)
+        # sarebbe meglio usare i metri
+        while self.get_front_distance() > 0.125:
+            self.move_forward(0.4)
+        self.stop()
+        self.rotate_to_final_g(vel=45 * math.pi / 180, final_g=direction)
+        print("--------------END: Adjusting position------------")
 
     # CONTROLLER
     def compute_final_g(self, c: Clockwise, init_g, degrees):
