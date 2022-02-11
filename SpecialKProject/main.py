@@ -65,7 +65,7 @@ if __name__ == '__main__':
             while True:
                 print(f"[{pb.get_left_distance()},{pb.get_front_distance()}, {pb.get_right_distance()}]")
                 pb.move_forward(2)
-                pb.balance1(90)
+                pb.balance_line(90)
 
 
         except common.NotFoundComponentError as e:

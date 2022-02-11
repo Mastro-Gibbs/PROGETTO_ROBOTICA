@@ -65,12 +65,11 @@ class PhysicalBody:
             NORD = -90
         else:
             NORD = 180
-        EST   = NORD - 90
+        EST = NORD - 90
         OVEST = NORD + 90
-        SUD   = NORD - 180
+        SUD = NORD - 180
 
         print(f"[N,E,S,O] = [{NORD}, {EST}, {SUD}, {OVEST}]")
-
 
     # ACT
     def move_forward(self, velocity):
@@ -153,11 +152,21 @@ class PhysicalBody:
             accel = [x * e, y * e, z * e]
         return accel
 
-    # Funzione da spostare
-    def black_color_detected(self):
-        # print("Nero" if self._front_vision_sensor.read()[2][0][11] < 0.5 else "bianco")
+    def black_color_detected_right(self):
         detected = False
         if self._right_vision_sensor.read()[2][0][11] < 0.5:
+            detected = True
+        return detected
+
+    def black_color_detected_left(self):
+        detected = False
+        if self._left_vision_sensor.read()[2][0][11] < 0.5:
+            detected = True
+        return detected
+
+    def black_color_detected_front(self):
+        detected = False
+        if self._front_vision_sensor.read()[2][0][11] < 0.5:
             detected = True
         return detected
 
@@ -262,52 +271,6 @@ class PhysicalBody:
             elif c == Clockwise.LEFT:
                 self.turn_to_left(vel, vel)
 
-
-
-    # ############################################### TEST DANGER ZONE 1 ###############################################
-
-
-    def balance1(self, direction):
-        ok, curr_g, limit_range = self.check_orientation(direction, delta=2)
-
-        if not ok:
-            self.stop()
-            self.adjust_orientation1(direction, curr_g, 1)
-            self.method3()
-            _, curr_g, _ = self.check_orientation(direction, delta=2)
-            self.adjust_orientation1(direction, curr_g, 0)
-
-
-
-
-    def adjust_orientation1(self, direction, curr_g, flag):
-        if flag:
-            new_dir = direction + (direction - curr_g)
-            degrees, c = self.best_angle_and_rotation_way(curr_g, new_dir)
-        else:
-            degrees, c = self.best_angle_and_rotation_way(curr_g, direction)
-
-        self.__rotate(0.5, c, abs(degrees))
-
-
-    def method3(self):
-        while True:
-            self.move_forward(1)
-
-            if self.black_color_detected():
-                break
-
-
-        self.stop()
-
-
-
-    # ############################################ END TEST DANGER ZONE 1 ##############################################
-
-
-
-
-
     # CONTROLLER
     def check_orientation(self, final_g, delta=2):
         print("Checking if the orientation is correct ...")
@@ -390,7 +353,7 @@ class PhysicalBody:
         else:
             new_g = direction - 90
         self.rotate_to_final_g(vel=45 * math.pi / 180, final_g=new_g)
-        # sarebbe meglio usare i metri
+        # sarebbe meglio usare i metri o usare il sensore di dietro
         while self.get_front_distance() > 0.125:
             self.move_forward(0.4)
         self.stop()
@@ -455,3 +418,38 @@ class PhysicalBody:
             c = Clockwise.LEFT
 
         return smallest, c
+
+    # ################# METHODS FOR LINE FOLLOWING #####################
+
+    def balance_line(self, direction):
+        ok, curr_g, limit_range = self.check_orientation(direction, delta=2)
+
+        if not ok:
+            self.stop()
+            self.adjust_orientation_line(direction, curr_g, 1)
+            self.go_to_line()
+            ok, curr_g, _ = self.check_orientation(direction, delta=2)
+            if not ok:
+                self.adjust_orientation_line(direction, curr_g, 0)
+
+    def adjust_orientation_line(self, direction, curr_g, flag):
+        if flag:
+            if direction == 180:
+                ...
+            new_dir = direction + (direction - curr_g)
+            degrees, c = self.best_angle_and_rotation_way(curr_g, new_dir)
+        else:
+            degrees, c = self.best_angle_and_rotation_way(curr_g, direction)
+
+        self.__rotate(0.5, c, abs(degrees))
+
+    def go_to_line(self):
+        while True:
+            self.move_forward(1)
+
+            if self.black_color_detected_right():
+                break
+
+        self.stop()
+
+    # ##################### END METHODS FOR LINE FOLLOWING#################
