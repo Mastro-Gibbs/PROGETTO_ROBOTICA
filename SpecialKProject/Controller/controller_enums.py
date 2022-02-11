@@ -2,7 +2,7 @@ from enum import Enum
 from math import pi
 
 
-class Key(Enum):
+class Key(str, Enum):
     USONIC = 'US'
     IRED = 'IR'
     POS = 'OR'
@@ -10,19 +10,19 @@ class Key(Enum):
     BUZZER = 'BU'
 
 
-class Topic(Enum):
+class Topic(str, Enum):
     BODY = 'BODY'
     CONTROLLER = 'CTRL'
 
 
-class Compass(Enum):
+class Compass(str, Enum):
     NORD = 'N'
     EST = 'E'
     OVEST = 'O'
     SUD = 'S'
 
 
-class Action(Enum):
+class Action(int, Enum):
     GO_FORWARD = 1
     GO_BACKWARD = 2
     ROTATE_LEFT = 3

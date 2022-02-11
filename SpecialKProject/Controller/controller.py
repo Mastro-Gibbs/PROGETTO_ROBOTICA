@@ -31,12 +31,12 @@ class Controller:
         self.ir_mid = None
         self.ir_right = None
 
-        self.orientation = Compass()  # orientazione corrente, utile solo al controller per l'algoritmo
+        self.orientation = Compass  # orientazione corrente, utile solo al controller per l'algoritmo
         self.orientation_raw = None  # valore crudo della orientazione
         self.orientation_target = None  # target di orientazione
         self.balance_target = None
 
-        self.action = Action()  # azione da compiere
+        self.action = Action # azione da compiere
 
         self.rotate_speed = (45 * pi) / 180  # velocità di rotazione
         self.movement_speed = 1.5  # velocità di movimento
@@ -57,8 +57,11 @@ class Controller:
         self.__elaborate()
         self.__send()
 
-    def stop_thread(self, thread):
-        self._async_raise(thread.ident, SystemExit)
+    def stop_thread(self):
+        self._async_raise(self.setupper.ident, SystemExit)
+
+    def test_polling(self):
+        return self.us_left, self.us_front, self.us_right
 
     def _async_raise(self, tid, exctype):
         """raises the exception, performs cleanup if needed"""

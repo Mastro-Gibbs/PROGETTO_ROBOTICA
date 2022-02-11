@@ -13,7 +13,6 @@ class VirtualBody:
         self.orientation = None
 
     def get_perceptions(self):
-        value = None
         key = None
         msg = self.pubsub.get_message()
         try:
@@ -22,14 +21,19 @@ class VirtualBody:
                 value = self.redis.get(key)
 
                 if key == Key.USONIC:
-                    pass
+                    a, b, c = value.split('-')
+                    self.usonic[0] = float(a)
+                    self.usonic[1] = float(b)
+                    self.usonic[2] = float(c)
                 elif key == Key.IRED:
-                    pass
+                    a, b, c = value.split('-')
+                    self.ired[0] = bool(a)
+                    self.ired[1] = bool(b)
+                    self.ired[2] = bool(c)
                 elif key == Key.POS:
-                    pass
+                    self.orientation = float(value)
         except TypeError:
             pass
-
         return key
 
     def get_usonic(self) -> tuple:
