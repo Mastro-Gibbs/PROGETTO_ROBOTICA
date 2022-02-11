@@ -17,8 +17,8 @@ while EXIT:
         print("LEFT: {:.2f}".format(a), end=', FRONT: ')
         print("{:.2f}".format(b), end=', RIGHT: ')
         print("{:.2f}".format(c))
-        time.sleep(0.1)
-    except  TypeError:
+        time.sleep(0.01)
+    except TypeError:
         pass
     except KeyboardInterrupt:
         controller.stop_thread()

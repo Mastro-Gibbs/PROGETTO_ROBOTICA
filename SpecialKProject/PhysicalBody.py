@@ -157,7 +157,7 @@ class PhysicalBody:
     def black_color_detected(self):
         # print("Nero" if self._front_vision_sensor.read()[2][0][11] < 0.5 else "bianco")
         detected = False
-        if self._front_vision_sensor.read()[2][0][11] < 0.5:
+        if self._right_vision_sensor.read()[2][0][11] < 0.5:
             detected = True
         return detected
 
@@ -261,6 +261,52 @@ class PhysicalBody:
                 self.turn_to_right(vel, vel)
             elif c == Clockwise.LEFT:
                 self.turn_to_left(vel, vel)
+
+
+
+    # ############################################### TEST DANGER ZONE 1 ###############################################
+
+
+    def balance1(self, direction):
+        ok, curr_g, limit_range = self.check_orientation(direction, delta=2)
+
+        if not ok:
+            self.stop()
+            self.adjust_orientation1(direction, curr_g, 1)
+            self.method3()
+            _, curr_g, _ = self.check_orientation(direction, delta=2)
+            self.adjust_orientation1(direction, curr_g, 0)
+
+
+
+
+    def adjust_orientation1(self, direction, curr_g, flag):
+        if flag:
+            new_dir = direction + (direction - curr_g)
+            degrees, c = self.best_angle_and_rotation_way(curr_g, new_dir)
+        else:
+            degrees, c = self.best_angle_and_rotation_way(curr_g, direction)
+
+        self.__rotate(0.5, c, abs(degrees))
+
+
+    def method3(self):
+        while True:
+            self.move_forward(1)
+
+            if self.black_color_detected():
+                break
+
+
+        self.stop()
+
+
+
+    # ############################################ END TEST DANGER ZONE 1 ##############################################
+
+
+
+
 
     # CONTROLLER
     def check_orientation(self, final_g, delta=2):
