@@ -1,11 +1,9 @@
 from pycsim import CSim
 import RemoteApiPython.sim as s
-import RemoteApiPython.simConst as sc
+from utility import *
 import utility
 import time
 import math
-import numpy as np
-from utility import *
 
 DEBUG = False
 
@@ -50,7 +48,11 @@ class PhysicalBody:
         self.handle_parent = s.sim_handle_parent
         self.c, self.orientation = \
             s.simxGetObjectOrientation(self.code_robot, self.handle_robot, self.handle_parent, s.simx_opmode_streaming)
-        print(self.orientation)
+        if DEBUG:
+            print(self.orientation)
+
+        self.target = float()
+        self.curr_speed = float()
 
         self.stop()
         time.sleep(0.2)
@@ -71,8 +73,22 @@ class PhysicalBody:
 
         print(f"[N,E,S,O] = [{NORD}, {EST}, {SUD}, {OVEST}]")
 
+    def detect_target(self):
+        g = self.get_orientation_degrees()[2]
+
+        if 65.0 < g < 115.0:
+            self.target = 90.0
+        elif -25.0 < g < 25.0:
+            self.target = 0.0
+        elif -65.0 > g > -115.0:
+            self.target = -90.0
+        else:
+            self.target = -180.0
+
     # ACT
     def move_forward(self, velocity):
+        self.detect_target()
+        self.curr_speed = velocity
         self._set_left_motors(velocity)
         self._set_right_motors(velocity)
 
@@ -241,6 +257,8 @@ class PhysicalBody:
         Function that given vel, Clockwise and rotation degrees computes
         the rotation of the Robot around the z axis
         """
+        debug = StringBuilder()
+
         degrees = abs(degrees)
         init_g = self.get_orientation_degrees()[2]
         prev_g = init_g
@@ -251,29 +269,39 @@ class PhysicalBody:
             curr_g = self.get_orientation_degrees()[2]
             performed_deg = self.compute_performed_degrees(c, prev_g, curr_g) + performed_deg
             prev_g = curr_g
-            print(f"[init_g, curr_g, degrees] = [{round_v(init_g)}, {round_v(curr_g)}, {round_v(degrees)}]")
-            print(f"[Performed deg, Round] = [{round_v(performed_deg)}, {round_v(int(performed_deg / 360))}]")
+            debug.concat(f"[init_g, curr_g, degrees] = [{round_v(init_g)}, {round_v(curr_g)}, {round_v(degrees)}]",
+                         end="\n")
+            debug.concat(f"[Performed deg, Round] = [{round_v(performed_deg)}, {round_v(int(performed_deg / 360))}]",
+                         end="\n")
             if degrees - delta < performed_deg < degrees + delta:
                 self.stop()
-                print("Maybe the orientation is correct ...")
+                debug.concat("Maybe the orientation is correct ...")
                 last_sampled_g = prev_g
                 achieved = True  # Problema: se il robot ha slittato i gradi raggiunti
                 # non sono giusti e quindi serve sempre il check dell'orientation
                 return achieved, init_g, last_sampled_g, performed_deg, degrees
+
             if performed_deg > degrees + delta:
                 self.stop()
-                print("Error: performed degrees exceeded the target")
+                debug.concat("Error: performed degrees exceeded the target")
                 last_sampled_g = prev_g
                 achieved = False  # error, serve il check dell'orientation
                 return achieved, init_g, last_sampled_g, performed_deg, degrees
+
             if c == Clockwise.RIGHT:
                 self.turn_to_right(vel, vel)
             elif c == Clockwise.LEFT:
                 self.turn_to_left(vel, vel)
 
+            if DEBUG:
+                print(debug)
+                debug.erase()
+
     # CONTROLLER
     def check_orientation(self, final_g, delta=2):
-        print("Checking if the orientation is correct ...")
+        debug = StringBuilder()
+        debug.concat("Checking if the orientation is correct ...", end="\n")
+
         time.sleep(3)
         curr_g = self.get_orientation_degrees()[2]
         # delta = 2
@@ -282,23 +310,25 @@ class PhysicalBody:
             limit_g_dx = 180 - delta
             limit_g_sx = - 180 + delta
             if curr_g < limit_g_sx or curr_g > limit_g_dx:
-                print("Perfect orientation")
+                debug.concat("Perfect orientation", end="\n")
                 ok = True
             else:
-                print("Bad orientation")
+                debug.concat("Bad orientation", end="\n")
         else:
             limit_g_dx = final_g - delta
             limit_g_sx = final_g + delta
             if limit_g_dx <= curr_g <= limit_g_sx:
-                print("Perfect orientation")
+                debug.concat("Perfect orientation", end="\n")
                 ok = True
             else:
-                print("Bad orientation")
+                debug.concat("Bad orientation", end="\n")
 
-        print(f"Limit range:[{round_v(limit_g_sx)}, {round_v(limit_g_dx)}], curr_g: {round_v(curr_g)}")
+        debug.concat(f"Limit range:[{round_v(limit_g_sx)}, {round_v(limit_g_dx)}], curr_g: {round_v(curr_g)}")
+
         limit_range = [limit_g_sx, limit_g_dx]
 
         if DEBUG:
+            print(debug)
             time.sleep(4)
         return ok, curr_g, limit_range
 
@@ -400,6 +430,8 @@ class PhysicalBody:
         """Calcola l'angolo migliore (minimo) tra init_g e final_g e il modo in cui bisogna ruotare"""
         if init_g == final_g:
             return 0
+
+        debug = StringBuilder()
         # Trasformo gli angoli compresi tra [-180,180] ai corrispondenti angoli tra [0,360]
         init_g_360 = normalize_angle(init_g, 0)
         final_g_360 = normalize_angle(final_g, 0)
@@ -411,45 +443,107 @@ class PhysicalBody:
         if abs(first_angle) > 180:
             smallest = second_angle
         if smallest < 0:
-            print(f"Ruotare in senso orario (RIGHT) di {abs(round_v(smallest))} gradi")
+            debug.concat(f"Ruotare in senso orario (RIGHT) di {abs(round_v(smallest))} gradi")
             c = Clockwise.RIGHT
         else:
-            print(f"Ruotare in senso antirario (LEFT) di {abs(round_v(smallest))} gradi")
+            debug.concat(f"Ruotare in senso antirario (LEFT) di {abs(round_v(smallest))} gradi")
             c = Clockwise.LEFT
 
+        if DEBUG:
+            print(debug)
         return smallest, c
 
     # ################# METHODS FOR LINE FOLLOWING #####################
 
-    def balance_line(self, direction):
-        ok, curr_g, limit_range = self.check_orientation(direction, delta=2)
+    def balance_line(self):
+        curr_g = self.get_orientation_degrees()[2]
 
-        if not ok:
-            self.stop()
-            self.adjust_orientation_line(direction, curr_g, 1)
-            self.go_to_line()
-            ok, curr_g, _ = self.check_orientation(direction, delta=2)
-            if not ok:
-                self.adjust_orientation_line(direction, curr_g, 0)
+        if abs(curr_g) > abs(self.target + 3) or abs(curr_g) < abs(self.target - 3):
+            c = self.adjust_orientation_line(curr_g)
 
-    def adjust_orientation_line(self, direction, curr_g, flag):
-        if flag:
-            if direction == 180:
-                ...
-            new_dir = direction + (direction - curr_g)
-            degrees, c = self.best_angle_and_rotation_way(curr_g, new_dir)
+            self.go_to_line(c)
+
+            curr_g = self.get_orientation_degrees()[2]
+            self.adjust_orientation_line(curr_g, prev_overflow=True)
+
+    def adjust_orientation_line(self, curr_g, prev_overflow=False):
+        overflow = abs(abs(self.target) - abs(curr_g))
+        c = Clockwise
+
+        if self.target > 0:                # case target = 90
+            if abs(curr_g) > abs(self.target):
+                c = Clockwise.RIGHT
+            else:
+                c = Clockwise.LEFT
+
+        elif self.target == 0:             # case target = 0
+            if curr_g > self.target:
+                c = Clockwise.RIGHT
+            else:
+                c = Clockwise.LEFT
+
+        elif self.target == -90:           # case target = 0
+            if abs(curr_g) > abs(self.target):
+                c = Clockwise.LEFT
+            else:
+                c = Clockwise.RIGHT
+
+        else:                              # case target = -180/180
+            if curr_g > 0:
+                c = Clockwise.LEFT
+            else:
+                c = Clockwise.RIGHT
+
+        if not prev_overflow:
+            self.rotate_without_blocking(self.curr_speed, c, overflow * 2)
         else:
-            degrees, c = self.best_angle_and_rotation_way(curr_g, direction)
+            self.rotate_without_blocking(self.curr_speed, c, overflow)
 
-        self.__rotate(0.5, c, abs(degrees))
+        return c
 
-    def go_to_line(self):
+    def go_to_line(self, c):
         while True:
-            self.move_forward(1)
+            self.move_forward(self.curr_speed)
 
-            if self.black_color_detected_right():
+            if c == Clockwise.LEFT and self.black_color_detected_right():
                 break
 
-        self.stop()
+            elif c == Clockwise.RIGHT and self.black_color_detected_left():
+                break
 
+    def rotate_without_blocking(self, vel, c: Clockwise, degrees):
+        init_g = self.get_orientation_degrees()[2]
+        prev_g = init_g
+
+        performed_deg = 0.0
+        delta = 1.5
+
+        vel_trailL = vel
+        vel_trailR = vel
+        delta_vel = (vel * ((pi * 3) / 7)) - vel
+
+        if c == Clockwise.RIGHT:
+            vel_trailL += delta_vel
+            vel_trailR -= delta_vel
+        elif c == Clockwise.LEFT:
+            vel_trailL -= delta_vel
+            vel_trailR += delta_vel
+
+        while True:
+            curr_g = self.get_orientation_degrees()[2]
+
+            performed_deg = self.compute_performed_degrees(c, prev_g, curr_g) + performed_deg
+            prev_g = curr_g
+
+            if degrees - delta < performed_deg < degrees + delta:
+                achieved = True
+                break
+            elif performed_deg > degrees + delta:
+                achieved = False
+                break
+
+            self.turn(vel_trailR, vel_trailL)
+
+        last_sampled_g = prev_g
+        return achieved, init_g, last_sampled_g, performed_deg, degrees
     # ##################### END METHODS FOR LINE FOLLOWING#################

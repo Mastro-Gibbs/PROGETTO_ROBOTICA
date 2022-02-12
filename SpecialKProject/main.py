@@ -5,6 +5,8 @@ import time
 import math
 from enum import Enum
 
+DEBUG = False
+
 
 class Action(Enum):
     GO_FORWARD = 1
@@ -51,7 +53,7 @@ if __name__ == '__main__':
     with CSim.connect("127.0.0.1", 19997) as api:
         api.simulation.start()
         try:
-            print(api._id)
+            # print(api._id)
             pb = PhysicalBody(api)
             pb.stop()
             pb.setup_reference_system()
@@ -62,13 +64,21 @@ if __name__ == '__main__':
             vel = 10
             # algorithm(pb)
             # rotation_test(pb, vel)
+            i = 0
             while True:
-                print(f"[{pb.get_left_distance()},{pb.get_front_distance()}, {pb.get_right_distance()}]")
-                pb.move_forward(2)
-                pb.balance_line(90)
+                if DEBUG:
+                    print(f"[{pb.get_left_distance()},{pb.get_front_distance()}, {pb.get_right_distance()}]")
 
+                pb.move_forward(2)
+                i += 2
+
+                if i % 50 == 0:
+                    pb.balance_line()
 
         except common.NotFoundComponentError as e:
             print(e)
             print("Have you opened the right scene inside Coppelia SIM?")
             exit(-1)
+        except KeyboardInterrupt:
+            print("\n\nSHUT DOWN!")
+            exit(0)
