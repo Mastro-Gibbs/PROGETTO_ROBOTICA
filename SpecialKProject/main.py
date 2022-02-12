@@ -1,7 +1,6 @@
-import utility
 from pycsim import CSim, common
-from PhysicalBody import PhysicalBody, Clockwise
-import time
+from Controller.ControllerTest import ControllerTest
+
 import math
 from enum import Enum
 
@@ -54,26 +53,9 @@ if __name__ == '__main__':
         api.simulation.start()
         try:
             # print(api._id)
-            pb = PhysicalBody(api)
-            pb.stop()
-            pb.setup_reference_system()
-            GO = True
-            # time.sleep(2)
             print("Start")
-            vel = 45 * math.pi / 180
-            vel = 3
-            # algorithm(pb)
-            # rotation_test(pb, vel)
-            i = 0
-            while True:
-                if DEBUG:
-                    print(f"[{pb.get_left_distance()},{pb.get_front_distance()}, {pb.get_right_distance()}]")
-
-                pb.move_forward(vel)
-                i += 2
-
-                if i % (50 // vel) == 0:
-                    pb.balance_line()
+            ctrl = ControllerTest(api)
+            ctrl.fakemain()
 
         except common.NotFoundComponentError as e:
             print(e)
