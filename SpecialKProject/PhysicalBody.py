@@ -458,7 +458,7 @@ class PhysicalBody:
     def balance_line(self):
         curr_g = self.get_orientation_degrees()[2]
 
-        if abs(curr_g) > abs(self.target + 3) or abs(curr_g) < abs(self.target - 3):
+        if abs(curr_g) > abs(self.target + 2) or abs(curr_g) < abs(self.target - 2):
             c = self.adjust_orientation_line(curr_g)
 
             self.go_to_line(c)
@@ -470,7 +470,7 @@ class PhysicalBody:
         overflow = abs(abs(self.target) - abs(curr_g))
         c = Clockwise
 
-        if self.target > 0:                # case target = 90
+        if self.target == 90:                # case target = 90
             if abs(curr_g) > abs(self.target):
                 c = Clockwise.RIGHT
             else:
@@ -518,16 +518,16 @@ class PhysicalBody:
         performed_deg = 0.0
         delta = 1.5
 
-        vel_trailL = vel
-        vel_trailR = vel
+        vel_railL = vel
+        vel_railR = vel
         delta_vel = (vel * ((pi * 3) / 7)) - vel
 
         if c == Clockwise.RIGHT:
-            vel_trailL += delta_vel
-            vel_trailR -= delta_vel
+            vel_railL += delta_vel
+            vel_railR -= delta_vel
         elif c == Clockwise.LEFT:
-            vel_trailL -= delta_vel
-            vel_trailR += delta_vel
+            vel_railL -= delta_vel
+            vel_railR += delta_vel
 
         while True:
             curr_g = self.get_orientation_degrees()[2]
@@ -542,8 +542,9 @@ class PhysicalBody:
                 achieved = False
                 break
 
-            self.turn(vel_trailR, vel_trailL)
+            self.turn(vel_railR, vel_railL)
 
         last_sampled_g = prev_g
         return achieved, init_g, last_sampled_g, performed_deg, degrees
+
     # ##################### END METHODS FOR LINE FOLLOWING#################

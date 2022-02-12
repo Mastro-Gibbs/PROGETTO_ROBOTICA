@@ -61,7 +61,7 @@ if __name__ == '__main__':
             # time.sleep(2)
             print("Start")
             vel = 45 * math.pi / 180
-            vel = 10
+            vel = 3
             # algorithm(pb)
             # rotation_test(pb, vel)
             i = 0
@@ -69,10 +69,10 @@ if __name__ == '__main__':
                 if DEBUG:
                     print(f"[{pb.get_left_distance()},{pb.get_front_distance()}, {pb.get_right_distance()}]")
 
-                pb.move_forward(2)
+                pb.move_forward(vel)
                 i += 2
 
-                if i % 50 == 0:
+                if i % (50 // vel) == 0:
                     pb.balance_line()
 
         except common.NotFoundComponentError as e:

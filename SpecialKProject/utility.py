@@ -44,14 +44,13 @@ def normalize_angle(ang, type):
     return bang
 
 
-
 class StringBuilder:
     _file_str = None
 
     def __init__(self):
         self._file_str = StringIO()
 
-    def concat(self, str, end=""):
+    def concat(self, str, end=''):
         self._file_str.write(str)
         self._file_str.write(end)
 
