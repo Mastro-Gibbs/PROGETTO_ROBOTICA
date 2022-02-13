@@ -19,7 +19,7 @@ class PhysicalBody:
         self._right_vision_sensor = api.sensor.vision("rvs")
         self._left_vision_sensor = api.sensor.vision("lvs")
         self._front_proximity_sensor = api.sensor.proximity('fps')
-        self._back_proximity_sensor = api.sensor.proximity('bps')
+        # self._back_proximity_sensor = api.sensor.proximity('bps')
         self._left_proximity_sensor = api.sensor.proximity('lps')
         self._right_proximity_sensor = api.sensor.proximity('rps')
 
@@ -56,9 +56,20 @@ class PhysicalBody:
     # ACT
     def move_forward(self, velocity):
         self._front_left_motor.set_target_velocity(velocity)
-        self._rear_left_motor.set_target_velocity(velocity)
         self._front_right_motor.set_target_velocity(velocity)
+        self._rear_left_motor.set_target_velocity(velocity)
         self._rear_right_motor.set_target_velocity(velocity)
+
+    def move_forward_(self, velocity):
+        i = 0.5
+        while i <= velocity:
+            self._front_left_motor.set_target_velocity(i)
+            self._front_right_motor.set_target_velocity(i)
+            self._rear_left_motor.set_target_velocity(i)
+            self._rear_right_motor.set_target_velocity(i)
+            # time.sleep(0.1)
+            print(i)
+            i += 0.25
 
     # ACT
     def move_backward(self, velocity):
@@ -77,9 +88,9 @@ class PhysicalBody:
     # ACT
     def stop(self):
         self._front_left_motor.set_target_velocity(0)
-        self._rear_left_motor.set_target_velocity(0)
-        self._front_right_motor.set_target_velocity(0)
         self._rear_right_motor.set_target_velocity(0)
+        self._front_right_motor.set_target_velocity(0)
+        self._rear_left_motor.set_target_velocity(0)
 
     # SENSE
     def get_front_distance(self):

@@ -22,6 +22,12 @@ class Compass(str, Enum):
     SUD = 'S'
 
 
+class Semaphore(float, Enum):
+    GREEN = 0.40
+    YELLOW = 0.30
+    RED = 0.15
+
+
 class Action(int, Enum):
     GO_FORWARD = 1
     GO_BACKWARD = 2

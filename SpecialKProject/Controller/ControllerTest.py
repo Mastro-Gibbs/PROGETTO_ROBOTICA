@@ -1,5 +1,6 @@
 from PhysicalBody import PhysicalBody
 # from utility import Clockwise, StringBuilder
+from Controller.controller_enums import Action, Key, Compass, Semaphore
 from utility import *
 import time
 from math import pi
@@ -11,10 +12,10 @@ class ControllerTest:
     def __init__(self, api):
 
         self.pb = PhysicalBody(api)
-
         # physicalbody
         self.target = float()
-        self.curr_speed = float()
+        self.curr_speed = 5.0
+        self.rotation_speed = 45 * pi / 180
 
     def setup_reference_system(self):
         init_g = self.pb.get_orientation_degrees()[2]
@@ -292,7 +293,7 @@ class ControllerTest:
         self.detect_target()
         curr_g = self.pb.get_orientation_degrees()[2]
 
-        if abs(curr_g) > abs(self.target + 2) or abs(curr_g) < abs(self.target - 2):
+        if abs(curr_g) > abs(self.target + 3) or abs(curr_g) < abs(self.target - 3):
             c = self.adjust_orientation_line(curr_g)
 
             self.go_to_line(c)
@@ -381,7 +382,54 @@ class ControllerTest:
         last_sampled_g = prev_g
         return achieved, init_g, last_sampled_g, performed_deg, degrees
 
-    # ##################### END METHODS FOR LINE FOLLOWING#################
+    # ##################### END METHODS FOR LINE FOLLOWING###############
+
+    def go_forw(self):
+        while self.pb.get_front_distance() > Semaphore.RED:
+            if self.pb.get_front_distance() > Semaphore.GREEN:
+                self.pb.move_forward(self.curr_speed)
+            elif self.pb.get_front_distance() <= Semaphore.YELLOW:
+                self.pb.move_forward(self.curr_speed / 2)
+            self.balance_line()
+        self.pb.stop()
+
+    def algorithm(self):
+
+        self.go_forw()
+        self.rotate_to_final_g(self.rotation_speed, 180)
+        self.go_forw()
+        self.rotate_to_final_g(self.rotation_speed, 90)
+        self.rotate_to_final_g(self.rotation_speed, 180)
+        self.go_forw()
+        self.rotate_to_final_g(self.rotation_speed, -90)
+        self.go_forw()
+        self.rotate_to_final_g(self.rotation_speed, 180)
+        self.go_forw()
+        self.rotate_to_final_g(self.rotation_speed, 90)
+        self.go_forw()
+
+
+
+    def algorithm_(self):
+        actions = [1, 180, 1, 90, 1, 180, 1, -90, 1, 180, 1, 90, 1, 0, 1, 90, 1, 0, 1, 90, 1, 180,
+                   1, -90, 1, 180, 1, -90, 1, 180, 1, -90, 1, 180, 1, 90, 1, 0, 1, 90, 1, 180, 1,
+                   90, 1, 0, 1, 90, 1, 180, 1, 90, 1]
+        vel = 5
+        vel_rot = 45 * pi / 180
+        i = 0
+        direction = 90
+        print(Action.GO_FORWARD)
+        while len(actions) != i:
+            print("f")
+            if actions[i] == 1:
+                while self.pb.get_front_distance() > 0.15:
+                    self.pb.move_forward(vel)
+                    self.balance(direction)
+                self.pb.stop()
+            elif actions[i] != 1:
+                self.rotate_to_final_g(vel_rot, actions[i])
+                direction = actions[i]
+            i += 1
 
     def fakemain(self):
         GO = True
@@ -413,3 +461,4 @@ class ControllerTest:
             self.pb.move_forward(vel)
             # self.pb.turn(vel, -vel)
             self.balance(90)
+
