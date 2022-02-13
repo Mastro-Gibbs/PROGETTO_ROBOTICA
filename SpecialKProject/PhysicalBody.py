@@ -19,6 +19,7 @@ class PhysicalBody:
         self._right_vision_sensor = api.sensor.vision("rvs")
         self._left_vision_sensor = api.sensor.vision("lvs")
         self._front_proximity_sensor = api.sensor.proximity('fps')
+        self._back_proximity_sensor = api.sensor.proximity('bps')
         self._left_proximity_sensor = api.sensor.proximity('lps')
         self._right_proximity_sensor = api.sensor.proximity('rps')
 
@@ -86,6 +87,11 @@ class PhysicalBody:
         # print(vec3)
         return vec3.distance()
 
+    def get_back_distance(self):
+        _, vec3 = self._back_proximity_sensor.read()
+        # print(vec3)
+        return vec3.distance()
+
     # SENSE
     def get_left_distance(self):
         _, vec3 = self._left_proximity_sensor.read()
@@ -121,16 +127,14 @@ class PhysicalBody:
             accel = [x * e, y * e, z * e]
         return accel
 
-    def black_color_detected(self):
-        detected = [False, False, False]
-        if self._left_vision_sensor.read()[2][0][11] < 0.5:
-            detected[0] = True
-        if self._front_vision_sensor.read()[2][0][11] < 0.5:
-            detected[1] = True
-        if self._right_vision_sensor.read()[2][0][11] < 0.5:
-            detected[2] = True
+    def black_color_detected_left(self):
+        return self._left_vision_sensor.read()[2][0][11] < 0.5
 
-        return detected
+    def black_color_detected_front(self):
+        return self._front_vision_sensor.read()[2][0][11] < 0.5
+
+    def black_color_detected_right(self):
+        return self._right_vision_sensor.read()[2][0][11] < 0.5
 
     def get_orientation(self):
         self.c, self.orientation = \

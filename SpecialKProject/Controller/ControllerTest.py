@@ -51,7 +51,7 @@ class ControllerTest:
         """
         init_g = self.pb.get_orientation_degrees()[2]
         degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
-        self.do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
+        self.__do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
 
     # CONTROLLER
     def rotate_degrees(self, vel, c: Clockwise, degrees):
@@ -60,10 +60,10 @@ class ControllerTest:
         """
         init_g = self.pb.get_orientation_degrees()[2]
         final_g = self.compute_final_g(c, init_g, degrees)
-        self.do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
+        self.__do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
 
     # CONTROLLER
-    def do_rotation(self, vel, c: Clockwise, degrees, final_g):
+    def __do_rotation(self, vel, c: Clockwise, degrees, final_g):
         self.pb.stop()
         degrees = abs(degrees)
         print("final_g: ", round_v(final_g))
@@ -91,9 +91,12 @@ class ControllerTest:
         performed_deg = 0.0
         delta = 1.5
         stop = False
+        it_is_rotating = False  # it is not rotating
+
         while not stop:
             curr_g = self.pb.get_orientation_degrees()[2]
-            performed_deg = self.compute_performed_degrees(c, prev_g, curr_g) + performed_deg
+            if it_is_rotating:
+                performed_deg = self.compute_performed_degrees(c, prev_g, curr_g) + performed_deg
             prev_g = curr_g
             debug.concat(f"[init_g, curr_g, degrees] = [{round_v(init_g)}, {round_v(curr_g)}, {round_v(degrees)}]",
                          end="\n")
@@ -101,6 +104,7 @@ class ControllerTest:
                          end="\n")
             if degrees - delta < performed_deg < degrees + delta:
                 self.pb.stop()
+                it_is_rotating = False
                 debug.concat("Maybe the orientation is correct ...")
                 last_sampled_g = prev_g
                 achieved = True  # Problema: se il robot ha slittato i gradi raggiunti
@@ -109,15 +113,18 @@ class ControllerTest:
 
             if performed_deg > degrees + delta:
                 self.pb.stop()
+                it_is_rotating = False
                 debug.concat("Error: performed degrees exceeded the target")
                 last_sampled_g = prev_g
                 achieved = False  # error, serve il check dell'orientation
                 return achieved, init_g, last_sampled_g, performed_deg, degrees
 
             if c == Clockwise.RIGHT:
-                self.pb.turn(-vel, vel)
-            elif c == Clockwise.LEFT:
                 self.pb.turn(vel, -vel)
+                it_is_rotating = True
+            elif c == Clockwise.LEFT:
+                self.pb.turn(-vel, vel)
+                it_is_rotating = True
 
             if DEBUG:
                 print(debug)
@@ -160,6 +167,7 @@ class ControllerTest:
 
     # CONTROLLER
     def adjust_orientation(self, final_g):
+        self.pb.stop()
         ok = False
         it = 0
         max_attempts = 4
@@ -181,6 +189,7 @@ class ControllerTest:
     def balance(self, direction):
         ok, curr_g, limit_range = self.check_orientation(direction, delta=2)
         if not ok:
+            self.pb.stop()
             ok, it = self.adjust_orientation(direction)
         if not ok:
             print("ERROR")
@@ -209,8 +218,7 @@ class ControllerTest:
         else:
             new_g = direction - 90
         self.rotate_to_final_g(vel=45 * pi / 180, final_g=new_g)
-        # sarebbe meglio usare i metri o usare il sensore di dietro
-        while self.pb.get_front_distance() > 0.125:
+        while self.pb.get_back_distance() < 0.125:
             self.pb.move_forward(0.4)
         self.pb.stop()
         self.rotate_to_final_g(vel=45 * pi / 180, final_g=direction)
@@ -227,7 +235,6 @@ class ControllerTest:
         print(f"[init_g, final_g, degrees, clockwise] = [{round_v(init_g)}, {round_v(final_g)}, {abs(degrees)}, {c}]")
         return final_g
 
-    # CONTROLLER
     def compute_performed_degrees(self, c, init_g, curr_g):
         """Calcola l'angolo tra init_g e curr_g che il robot ha eseguito in base al senso di rotazione"""
 
@@ -332,10 +339,10 @@ class ControllerTest:
         while True:
             self.pb.move_forward(self.curr_speed)
 
-            if c == Clockwise.LEFT and self.pb.black_color_detected()[2]:
+            if c == Clockwise.LEFT and self.pb.black_color_detected_right():
                 break
 
-            elif c == Clockwise.RIGHT and self.pb.black_color_detected()[0]:
+            elif c == Clockwise.RIGHT and self.pb.black_color_detected_left():
                 break
 
     def rotate_without_blocking(self, vel, c: Clockwise, degrees):
@@ -394,3 +401,15 @@ class ControllerTest:
 
             if i % (50 // vel) == 0:
                 self.balance_line()
+
+    def fakemain2(self):
+
+        vel = 45 * pi / 180
+        vel = 2
+        while True:
+            if DEBUG:
+                print(f"[{self.pb.get_left_distance()},{self.pb.get_front_distance()}, {self.pb.get_right_distance()}]")
+
+            self.pb.move_forward(vel)
+            # self.pb.turn(vel, -vel)
+            self.balance(90)

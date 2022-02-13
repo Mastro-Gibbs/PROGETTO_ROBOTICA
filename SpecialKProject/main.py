@@ -55,7 +55,7 @@ if __name__ == '__main__':
             # print(api._id)
             print("Start")
             ctrl = ControllerTest(api)
-            ctrl.fakemain()
+            ctrl.fakemain2()
 
         except common.NotFoundComponentError as e:
             print(e)
