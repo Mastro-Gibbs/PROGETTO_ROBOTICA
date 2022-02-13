@@ -1,7 +1,9 @@
 from pycsim import CSim
 import RemoteApiPython.sim as s
-import time
 from utility import *
+
+import time
+
 
 DEBUG = False
 
@@ -19,7 +21,7 @@ class PhysicalBody:
         self._right_vision_sensor = api.sensor.vision("rvs")
         self._left_vision_sensor = api.sensor.vision("lvs")
         self._front_proximity_sensor = api.sensor.proximity('fps')
-        # self._back_proximity_sensor = api.sensor.proximity('bps')
+        self._back_proximity_sensor = api.sensor.proximity('bps')
         self._left_proximity_sensor = api.sensor.proximity('lps')
         self._right_proximity_sensor = api.sensor.proximity('rps')
 
@@ -61,15 +63,15 @@ class PhysicalBody:
         self._rear_right_motor.set_target_velocity(velocity)
 
     def move_forward_(self, velocity):
-        i = 0.5
-        while i <= velocity:
-            self._front_left_motor.set_target_velocity(i)
-            self._front_right_motor.set_target_velocity(i)
-            self._rear_left_motor.set_target_velocity(i)
-            self._rear_right_motor.set_target_velocity(i)
+        vel = 0.5
+        while vel <= velocity:
+            self._front_left_motor.set_target_velocity(vel)
+            self._front_right_motor.set_target_velocity(vel)
+            self._rear_left_motor.set_target_velocity(vel)
+            self._rear_right_motor.set_target_velocity(vel)
             # time.sleep(0.1)
-            print(i)
-            i += 0.25
+            print(vel)
+            vel += 0.25
 
     # ACT
     def move_backward(self, velocity):

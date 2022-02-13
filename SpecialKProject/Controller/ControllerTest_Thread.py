@@ -19,20 +19,21 @@ class ControllerTest:
         self.pb = PhysicalBody(api)
         # physicalbody
         self.target = float()
-        self.curr_speed = 5.0
+        self.curr_speed = 10.0
         self.rotation_speed = 45 * pi / 180
 
-        self.curr_g = None
-        self.fps_distance = None
-        self.lps_distance = None
-        self.rps_distance = None
-        self.bps_distance = None
+        self.curr_g = self.pb.get_orientation_degrees()[2]
+        self.fps_distance = self.pb.get_front_distance()
+        self.bps_distance = self.pb.get_back_distance()
+        self.lps_distance = self.pb.get_left_distance()
+        self.rps_distance = self.pb.get_right_distance()
 
-        # self.t = threading.Thread(target=self.thread_read_sensors)
-        # self.t.start()
+        self.t = threading.Thread(target=self.thread_read_sensors)
+        self.t.start()
+        time.sleep(0.1)
 
     def setup_reference_system(self):
-        init_g = self.pb.get_orientation_degrees()[2]
+        init_g = self.curr_g
         if 45 < init_g < 135:
             NORD = 90
         elif -45 <= init_g <= 45:
@@ -48,7 +49,7 @@ class ControllerTest:
         print(f"[N,E,S,O] = [{NORD}, {EST}, {SUD}, {OVEST}]")
 
     def detect_target(self):
-        g = self.pb.get_orientation_degrees()[2]
+        g = self.curr_g
 
         if 65.0 < g < 115.0:
             self.target = 90.0
@@ -64,22 +65,18 @@ class ControllerTest:
         """
            Funzione rotate che permette di far ruotare il robot fino a che non raggiunge final_g
         """
-        self.pb.stop()
-        init_g = self.pb.get_orientation_degrees()[2]
+        init_g = self.curr_g
         degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
         self.__do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
-        self.pb.stop()
 
     # CONTROLLER
     def rotate_degrees(self, vel, c: Clockwise, degrees):
         """
             Funzione rotate che permette di far ruotare il robot di degrees gradi
         """
-        self.pb.stop()
-        init_g = self.pb.get_orientation_degrees()[2]
+        init_g = self.curr_g
         final_g = self.compute_final_g(c, init_g, degrees)
         self.__do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
-        self.pb.stop()
 
     # CONTROLLER
     def __do_rotation(self, vel, c: Clockwise, degrees, final_g):
@@ -105,7 +102,7 @@ class ControllerTest:
         debug = StringBuilder()
 
         degrees = abs(degrees)
-        init_g = self.pb.get_orientation_degrees()[2]
+        init_g = self.curr_g
         prev_g = init_g
         performed_deg = 0.0
         delta = 1.5
@@ -113,7 +110,7 @@ class ControllerTest:
         it_is_rotating = False  # it is not rotating
 
         while not stop:
-            curr_g = self.pb.get_orientation_degrees()[2]
+            curr_g = self.curr_g
             if it_is_rotating:
                 performed_deg = self.compute_performed_degrees(c, prev_g, curr_g) + performed_deg
             prev_g = curr_g
@@ -154,7 +151,7 @@ class ControllerTest:
         debug = StringBuilder()
         debug.concat("Checking if the orientation is correct ...", end="\n")
 
-        curr_g = self.pb.get_orientation_degrees()[2]
+        curr_g = self.curr_g
         # delta = 2
         ok = False
         if abs(final_g) + delta > 180:
@@ -190,13 +187,13 @@ class ControllerTest:
         it = 0
         max_attempts = 4
         while not ok and it < max_attempts:
-            curr_g = self.pb.get_orientation_degrees()[2]
+            curr_g = self.curr_g
             degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
             print(f"Adjusting orientation, attempts: {it + 1} / {max_attempts}")
             print(f"[Degrees_to_do, curr_g, final_g] = [{round_v(degrees)}, {round_v(curr_g)}, {round_v(final_g)}]")
             if DEBUG:
                 time.sleep(8)
-            if abs(degrees) < 6:
+            if abs(degrees) < 4:
                 self.__rotate(0.5, c, abs(degrees))
             else:
                 self.__rotate(45 * pi / 180, c, abs(degrees))
@@ -404,18 +401,46 @@ class ControllerTest:
         return achieved, init_g, last_sampled_g, performed_deg, degrees
 
     # ##################### END METHODS FOR LINE FOLLOWING###############
+    def kill_threads(self):
+        self.stop_thread(self.t)
+
+    def _async_raise(self, tid, exctype):
+        """raises the exception, performs cleanup if needed"""
+        tid = ctypes.c_long(tid)
+        if not inspect.isclass(exctype):
+            exctype = type(exctype)
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+        if res == 0:
+            raise ValueError("invalid thread id")
+        elif res != 1:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+            raise SystemError("PyThreadState_SetAsyncExc failed")
+
+    def stop_thread(self, thread):
+        self._async_raise(thread.ident, SystemExit)
+
+    def thread_read_sensors(self):
+        try:
+            while True:
+                self.curr_g = self.pb.get_orientation_degrees()[2]
+                self.fps_distance = self.pb.get_front_distance()
+                self.bps_distance = self.pb.get_back_distance()
+                self.lps_distance = self.pb.get_left_distance()
+                self.rps_distance = self.pb.get_right_distance()
+        except KeyboardInterrupt:
+            self.stop_thread(self.t)
 
     def go_forw(self):
         stop = False
         while not stop:
-            if self.pb.get_front_distance() <= Semaphore.RED.value:
+            if self.fps_distance <= Semaphore.RED.value:
                 self.pb.stop()
                 return
-            elif Semaphore.RED.value < self.pb.get_front_distance() <= Semaphore.GREEN.value:
+            elif Semaphore.RED.value < self.fps_distance <= Semaphore.YELLOW.value:
                 self.pb.move_forward(self.curr_speed / 2)
             else:
                 self.pb.move_forward(self.curr_speed)
-            self.balance()
+            # self.balance()
 
     def algorithm(self):
         self.target = 90
@@ -424,22 +449,16 @@ class ControllerTest:
         self.target = 180
         self.go_forw()
         self.rotate_to_final_g(self.rotation_speed, 90)
-        self.target = 90
         self.go_forw()
         self.rotate_to_final_g(self.rotation_speed, 180)
-        self.target = 180
         self.go_forw()
+        """
         self.rotate_to_final_g(self.rotation_speed, -90)
-        self.target = -90
         self.go_forw()
         self.rotate_to_final_g(self.rotation_speed, 180)
-        self.target = 180
         self.go_forw()
         self.rotate_to_final_g(self.rotation_speed, 90)
-        self.target = 90
-        self.go_forw()
-        """
-        """
+        self.go_forw()"""
 
     def algorithm_(self):
         actions = [1, 180, 1, 90, 1, 180, 1, -90, 1, 180, 1, 90, 1, 0, 1, 90, 1, 0, 1, 90, 1, 180,
