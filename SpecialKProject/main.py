@@ -57,6 +57,8 @@ if __name__ == '__main__':
             ctrl = ControllerTest(api)
             ctrl.fakemain2()
 
+            #test
+
         except common.NotFoundComponentError as e:
             print(e)
             print("Have you opened the right scene inside Coppelia SIM?")
