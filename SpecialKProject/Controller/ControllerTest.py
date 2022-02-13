@@ -14,7 +14,7 @@ class ControllerTest:
         self.pb = PhysicalBody(api)
         # physicalbody
         self.target = float()
-        self.curr_speed = 5.0
+        self.curr_speed = 10.0
         self.rotation_speed = 45 * pi / 180
 
     def setup_reference_system(self):
@@ -136,7 +136,6 @@ class ControllerTest:
         debug = StringBuilder()
         debug.concat("Checking if the orientation is correct ...", end="\n")
 
-        time.sleep(3)
         curr_g = self.pb.get_orientation_degrees()[2]
         # delta = 2
         ok = False
@@ -187,9 +186,12 @@ class ControllerTest:
             it += 1
         return ok, it
 
-    def balance(self, direction):
+    def balance(self):
+        print("Balance")
+        direction = self.target
         ok, curr_g, limit_range = self.check_orientation(direction, delta=2)
         if not ok:
+            print("NOT OK")
             self.pb.stop()
             ok, it = self.adjust_orientation(direction)
         if not ok:
@@ -390,14 +392,16 @@ class ControllerTest:
                 self.pb.move_forward(self.curr_speed)
             elif self.pb.get_front_distance() <= Semaphore.YELLOW:
                 self.pb.move_forward(self.curr_speed / 2)
-            self.balance_line()
+            self.balance()
         self.pb.stop()
 
     def algorithm(self):
-
+        self.target = 90
         self.go_forw()
         self.rotate_to_final_g(self.rotation_speed, 180)
+        self.target = 180
         self.go_forw()
+        """
         self.rotate_to_final_g(self.rotation_speed, 90)
         self.rotate_to_final_g(self.rotation_speed, 180)
         self.go_forw()
@@ -406,7 +410,7 @@ class ControllerTest:
         self.rotate_to_final_g(self.rotation_speed, 180)
         self.go_forw()
         self.rotate_to_final_g(self.rotation_speed, 90)
-        self.go_forw()
+        self.go_forw()"""
 
 
 
