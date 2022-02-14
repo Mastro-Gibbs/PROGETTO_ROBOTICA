@@ -5,7 +5,7 @@ from utility import *
 import time
 from math import pi
 
-DEBUG = True
+DEBUG = False
 
 
 class ControllerTest:

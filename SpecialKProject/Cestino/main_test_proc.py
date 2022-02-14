@@ -37,7 +37,7 @@ def algorithm(pb):
     while len(actions) != i:
         print("f")
         if actions[i] == 1:
-            while pb.get_front_distance() > 0.35:
+            while pb.__get_front_distance() > 0.35:
                 pb.move_forward(vel)
             pb.stop()
         elif actions[i] != 1:
