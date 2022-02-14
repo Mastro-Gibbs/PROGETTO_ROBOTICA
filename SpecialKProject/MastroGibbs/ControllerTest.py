@@ -1,6 +1,6 @@
 import time
 
-from PhysicalBody import PhysicalBody
+from PhysicalBody import PhysicalBody, ThreadHeap
 
 
 class ControllerTest:
@@ -8,25 +8,25 @@ class ControllerTest:
     def __init__(self):
         self.pb = PhysicalBody()
 
-    def __del__(self):
-        del self.pb
-
     def sense_discover(self):
-        self.pb.move_forward(5)
-        self.pb.thread_heap_begin(0.4)
+        self.pb.move_forward(2)
+        self.pb.thread_heap_begin(sample_delay=0.4)
         self.pb.thread_heap_start()
 
-        self.pb.thread_heap_kill(3)
-
-        time.sleep(0.5)
-
-        self.pb.thread_heap_revive()
-
-        i = 5
+        i = 10
         while i:
-            l = self.pb.get_orientation()
-            print(l)
+            if i == 8:
+                self.pb.thread_heap_kill(ThreadHeap.th_orientation_deg)
+
+            print(self.pb.get_orientation_deg())
+
             time.sleep(1)
+
+            if i == 5:
+                self.pb.thread_heap_revive()
+
+            i -= 1
+
         self.pb.thread_heap_killall()
 
 

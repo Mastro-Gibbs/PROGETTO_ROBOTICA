@@ -8,10 +8,27 @@ import ctypes
 from time import sleep as zzz
 
 
+class ThreadHeap(Enum):
+    th_proxF = 1
+    th_proxL = 2
+    th_proxR = 3
+    th_proxB = 4
+
+    th_visL = 5
+    th_visC = 6
+    th_visR = 7
+
+    th_orientation = 8
+    th_orientation_deg = 9
+
+
 class PhysicalBody:
 
     def __init__(self):
+        self.__class_logger = "\033[95m[PhysicalBody]\033[00m \033[97m--->\033[00m"
+
         self.__api = CSim.connect("127.0.0.1", 19997)
+        print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Coppelia connection started!"))
         self.__api.simulation.start()
         try:
             self.__clientID = self.__api._id
@@ -94,22 +111,19 @@ class PhysicalBody:
             self._orientation_deg = None
 
         except common.NotFoundComponentError as e:
-            print("[PhysicalBody] Coppelia Sim Scene Error: missing component!")
+            print("{0} \033[91m{1}\033[00m".format(self.__class_logger, "Coppelia Sim Scene Error: missing component!"))
             print("------------->", e)
             self.__api.simulation.stop()
             self.__api.close_connection()
             exit(-1)
         except Exception:
-            print("[PhysicalBody] PhysicalBody ERRORR!")
+            print("{0} \033[91m{1}\033[00m".format(self.__class_logger, "Something went wrong!"))
             self.__api.simulation.stop()
             self.__api.close_connection()
             exit(-1)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.__api.simulation.stop()
-        self.__api.close_connection()
-
     def __del__(self):
+        print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Coppelia connection stopped!"))
         self.__api.simulation.stop()
         self.__api.close_connection()
 
@@ -127,7 +141,7 @@ class PhysicalBody:
         self.__thread_orientation = Thread(target=self.__get_orientation, args=(self.__sample_delay,))
         self.__thread_orientation_deg = Thread(target=self.__get_orientation_degrees, args=(self.__sample_delay,))
 
-        print("[PhysicalBody] Threads just born!")
+        print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Threads just born!"))
 
     def thread_heap_start(self):
         self.__thread_proxF.start()
@@ -142,7 +156,7 @@ class PhysicalBody:
         self.__thread_orientation.start()
         self.__thread_orientation_deg.start()
 
-        print("[PhysicalBody] Threads just start!")
+        print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Threads just start!"))
 
     def thread_heap_revive(self):
         revived = False
@@ -150,112 +164,118 @@ class PhysicalBody:
             self.__thread_proxF = Thread(target=self.__get_front_distance, args=(self.__sample_delay,))
             self.__thread_proxF.start()
             revived = True
-            print("[PhysicalBody] Thread 'proxF' rised!")
+            print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Thread 'proxF' rised!"))
 
         if not self.__thread_proxL.is_alive():
             self.__thread_proxL = Thread(target=self.__get_left_distance, args=(self.__sample_delay,))
             self.__thread_proxL.start()
             revived = True
-            print("[PhysicalBody] Thread 'proxL' rised!")
+            print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Thread 'proxL' rised!"))
 
         if not self.__thread_proxR.is_alive():
             self.__thread_proxR = Thread(target=self.__get_right_distance, args=(self.__sample_delay,))
             self.__thread_proxR.start()
             revived = True
-            print("[PhysicalBody] Thread 'proxR' rised!")
+            print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Thread 'proxR' rised!"))
 
         if not self.__thread_proxB.is_alive():
             self.__thread_proxB = Thread(target=self.__get_back_distance, args=(self.__sample_delay,))
             self.__thread_proxB.start()
             revived = True
-            print("[PhysicalBody] Thread 'proxB' rised!")
+            print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Thread 'proxB' rised!"))
 
         if not self.__thread_visL.is_alive():
             self.__thread_visL = Thread(target=self.__black_color_detected_left, args=(self.__sample_delay,))
             self.__thread_visL.start()
             revived = True
-            print("[PhysicalBody] Thread 'visL' rised!")
+            print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Thread 'visL' rised!"))
 
         if not self.__thread_visC.is_alive():
             self.__thread_visC = Thread(target=self.__black_color_detected_centre, args=(self.__sample_delay,))
             self.__thread_visC.start()
             revived = True
-            print("[PhysicalBody] Thread 'visC' rised!")
+            print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Thread 'visC' rised!"))
 
         if not self.__thread_visR.is_alive():
             self.__thread_visR = Thread(target=self.__black_color_detected_right, args=(self.__sample_delay,))
             self.__thread_visR.start()
             revived = True
-            print("[PhysicalBody] Thread 'visR' rised!")
+            print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Thread 'visR' rised!"))
 
         if not self.__thread_orientation.is_alive():
             self.__thread_orientation = Thread(target=self.__get_orientation, args=(self.__sample_delay,))
             self.__thread_orientation.start()
             revived = True
-            print("[PhysicalBody] Thread 'orientation' rised!")
+            print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Thread 'orientation' rised!"))
 
         if not self.__thread_orientation_deg.is_alive():
             self.__thread_orientation_deg = Thread(target=self.__get_orientation_degrees, args=(self.__sample_delay,))
             self.__thread_orientation_deg.start()
             revived = True
-            print("[PhysicalBody] Thread 'orientation_deg' rised!")
+            print("{0} \033[92m{1}\033[00m".format(self.__class_logger, "Thread 'orientation_deg' rised!"))
 
         if not revived:
-            print("[PhysicalBody] No thread rised!")
+            print("{0} \033[93m{1}\033[00m".format(self.__class_logger, "No thread rised!"))
 
-    def thread_heap_kill(self, th: int):
-        killer = Thread(target=self.__suppress_thread, args=(th,))
+    def thread_heap_kill(self, th: ThreadHeap):
+        killer = Thread(target=self.__suppress_thread, args=(th.value,))
         killer.start()
 
     def __suppress_thread(self, th):
         if th == 1:
+            print("{0} \033[93m{1}\033[00m".format(self.__class_logger, "Thread 'proxF' will die!"))
             self.__async_raise(self.__thread_proxF.ident, SystemExit)
             while self.__thread_proxF.is_alive():
                 pass
-            print("[PhysicalBody] Thread 'proxF' died!")
+            print("{0} \033[91m{1}\033[00m".format(self.__class_logger, "Thread 'proxF' is gone!"))
         elif th == 2:
+            print("[PhysicalBody] \033[93m{0}\033[00m".format("Thread 'proxL' will die!"))
             self.__async_raise(self.__thread_proxL.ident, SystemExit)
             while self.__thread_proxL.is_alive():
                 pass
-            print("[PhysicalBody] Thread 'proxL' died!")
+            print("{0} \033[91m{1}\033[00m".format(self.__class_logger, "Thread 'proxL' is gone!"))
         elif th == 3:
+            print("{0} \033[93m{1}\033[00m".format(self.__class_logger, "Thread 'proxR' is gone!"))
             self.__async_raise(self.__thread_proxR.ident, SystemExit)
             while self.__thread_proxR.is_alive():
                 pass
-            print("[PhysicalBody] Thread 'proxR' died!")
+            print("{0} \033[91m{1}\033[00m".format(self.__class_logger, "Thread 'proxR' is gone!"))
         elif th == 4:
+            print("{0} \033[93m{1}\033[00m".format(self.__class_logger, "Thread 'proxB' will die!"))
             self.__async_raise(self.__thread_proxB.ident, SystemExit)
             while self.__thread_proxB.is_alive():
                 pass
-            print("[PhysicalBody] Thread 'proxB' died!")
+            print("{0} \033[91m{1}\033[00m".format(self.__class_logger, "Thread 'proxB' is gone!"))
         elif th == 5:
+            print("{0} \033[93m{1}\033[00m".format(self.__class_logger, "Thread 'visL' will die!"))
             self.__async_raise(self.__thread_visL.ident, SystemExit)
             while self.__thread_visL.is_alive():
                 pass
-            print("[PhysicalBody] Thread 'visL' died!")
+            print("{0} \033[91m{1}\033[00m".format(self.__class_logger, "Thread 'visL' is gone!"))
         elif th == 6:
+            print("{0} \033[93m{1}\033[00m".format(self.__class_logger, "Thread 'visC' will die!"))
             self.__async_raise(self.__thread_visC.ident, SystemExit)
             while self.__thread_visC.is_alive():
                 pass
-            print("[PhysicalBody] Thread 'visC' died!")
+            print("{0} \033[91m{1}\033[00m".format(self.__class_logger, "Thread 'visC' is gone!"))
         elif th == 7:
+            print("{0} \033[93m{1}\033[00m".format(self.__class_logger, "Thread 'visR' will die!"))
             self.__async_raise(self.__thread_visR.ident, SystemExit)
             while self.__thread_visR.is_alive():
                 pass
-            print("[PhysicalBody] Thread 'visR' died!")
+            print("{0} \033[91m{1}\033[00m".format(self.__class_logger, "Thread 'visR' is gone!"))
         elif th == 8:
+            print("{0} \033[93m{1}\033[00m".format(self.__class_logger, "Thread 'orientation' will die!"))
             self.__async_raise(self.__thread_orientation.ident, SystemExit)
             while self.__thread_orientation.is_alive():
                 pass
-            print("[PhysicalBody] Thread 'orientation' died!")
+            print("{0} \033[91m{1}\033[00m".format(self.__class_logger, "Thread 'orientation' is gone!"))
         elif th == 9:
+            print("{0} \033[93m{1}\033[00m".format(self.__class_logger, "Thread 'orientation_deg' will die!"))
             self.__async_raise(self.__thread_orientation_deg.ident, SystemExit)
             while self.__thread_orientation_deg.is_alive():
                 pass
-            print("[PhysicalBody] Thread 'orientation_deg' died!")
-        else:
-            print("[PhysicalBody] No thread found by id!")
-
+            print("{0} \033[91m{1}\033[00m".format(self.__class_logger, "Thread 'orientation_deg' is gone!"))
 
     def thread_heap_killall(self):
         if self.__thread_proxF.is_alive():
@@ -279,7 +299,7 @@ class PhysicalBody:
         if self.__thread_orientation_deg.is_alive():
             self.__async_raise(self.__thread_orientation_deg.ident, SystemExit)
 
-        print("\n[PhysicalBody] All thread killed!")
+        print("\n{0} \033[92m{1}\033[00m".format(self.__class_logger, "All thread killed!"))
 
     def move_forward(self, vel):
         self.__set_motor_velocity(vel, vel, vel, vel)
@@ -306,29 +326,25 @@ class PhysicalBody:
         while True:
             _, vec3 = self.__front_proximity_sensor.read()
             self._proxF = vec3.distance()
-            if sample_delay:
-                zzz(sample_delay)
+            zzz(sample_delay)
 
     def __get_back_distance(self, sample_delay):
         while True:
             _, vec3 = self.__back_proximity_sensor.read()
             self._proxB = vec3.distance()
-            if sample_delay:
-                zzz(sample_delay)
+            zzz(sample_delay)
 
     def __get_left_distance(self, sample_delay):
         while True:
             _, vec3 = self.__left_proximity_sensor.read()
             self._proxL = vec3.distance()
-            if sample_delay:
-                zzz(sample_delay)
+            zzz(sample_delay)
 
     def __get_right_distance(self, sample_delay):
         while True:
             _, vec3 = self.__right_proximity_sensor.read()
             self._proxR = vec3.distance()
-            if sample_delay:
-                zzz(sample_delay)
+            zzz(sample_delay)
 
     def __black_color_detected_left(self, sample_delay):
         while True:
@@ -339,9 +355,7 @@ class PhysicalBody:
                 del arr
             except IndexError:
                 self._visL = None
-
-            if sample_delay:
-                zzz(sample_delay)
+            zzz(sample_delay)
 
     def __black_color_detected_centre(self, sample_delay):
         while True:
@@ -352,9 +366,7 @@ class PhysicalBody:
                 del arr
             except IndexError:
                 self._visC = None
-
-            if sample_delay:
-                zzz(sample_delay)
+            zzz(sample_delay)
 
     def __black_color_detected_right(self, sample_delay):
         while True:
@@ -365,26 +377,20 @@ class PhysicalBody:
                 del arr
             except IndexError:
                 self._visR = None
-
-            if sample_delay:
-                zzz(sample_delay)
+            zzz(sample_delay)
 
     def __get_orientation(self, sample_delay):
         while True:
             self._orientation = \
                 s.simxGetObjectOrientation(self.__code_robot, self.__handle_robot, self.__handle_parent,
                                            s.simx_opmode_buffer)[1][2]
-
-            if sample_delay:
-                zzz(sample_delay)
+            zzz(sample_delay)
 
     def __get_orientation_degrees(self, sample_delay):
         while True:
             if self._orientation is not None:
                 self._orientation_deg = radians_to_degrees(self._orientation)
-
-            if sample_delay:
-                zzz(sample_delay)
+            zzz(sample_delay)
 
     def __async_raise(self, tid, exctype):
         """raises the exception, performs cleanup if needed"""
