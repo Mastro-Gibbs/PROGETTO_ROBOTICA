@@ -2,18 +2,15 @@ import threading
 import time
 import inspect
 import ctypes
- 
-
 
 
 class GATTO:
-    
 
     def __init__(self) -> None:
         self.GATTOVAR = 0
 
     def getGATTOVAR(self):
-        return self.GATTOVAR 
+        return self.GATTOVAR
 
     def _async_raise(self, tid, exctype):
         """raises the exception, performs cleanup if needed"""
@@ -27,18 +24,16 @@ class GATTO:
             ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
             raise SystemError("PyThreadState_SetAsyncExc failed")
 
-    
     def stop_thread(self, thread):
         self._async_raise(thread.ident, SystemExit)
-    
-    
+
     def test(self):
         print("THREAD STARTED!")
         while True:
             time.sleep(0.01)
             self.GATTOVAR += 1
- 
- 
+
+
 if __name__ == "__main__":
     g = GATTO()
     print("MAIN THREAD: ", g.getGATTOVAR())
@@ -52,7 +47,3 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         g.stop_thread(t)
-
-
-
-
