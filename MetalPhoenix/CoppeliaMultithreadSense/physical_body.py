@@ -6,7 +6,6 @@ from time import sleep
 from enum import Enum
 from math import pi
 
-from pycsim import CSim, common
 import RemoteApiPython.sim as sim
 from RemoteApiPython.simConst import *
 
@@ -44,18 +43,25 @@ class PhysicalBody:
         print()  # \n
         self.__class_logger = StdoutLogger(class_name="PhysicalBody", color="purple")
 
-        self.__api = CSim.connect("127.0.0.1", 19997)
-        self.__api.simulation.start()
-
-        self.__class_logger.log("Coppelia connection started!", italic=True)
         try:
-            self.__clientID = self.__api._id
+            __res = sim.simxStart(
+                connectionAddress="127.0.0.1",
+                connectionPort=19997,
+                waitUntilConnected=True,
+                doNotReconnectOnceDisconnected=True,
+                timeOutInMs=5000,
+                commThreadCycleInMs=5)
+            if __res == simx_return_ok:
+                self.__clientID = __res
+                sim.simxStartSimulation(__res, simx_opmode_oneshot_wait)
+            else:
+                raise Exception("Failed to connect to CoppeliaSim")
+
+            self.__class_logger.log("Coppelia connection started!", italic=True)
 
             # SENSORS
-            self.__front_camera = self.__api.sensor.vision("cam1")
-            self.__centre_vision_sensor = self.__api.sensor.vision("cvs")
-            self.__right_vision_sensor = self.__api.sensor.vision("rvs")
-            self.__left_vision_sensor = self.__api.sensor.vision("lvs")
+            self.__fc_handle = sim.simxGetObjectHandle(self.__clientID, "cam1", simx_opmode_blocking)[1]
+
             self.__front_proximity_sensor = self.__api.sensor.proximity('fps')
             self.__back_proximity_sensor = self.__api.sensor.proximity('bps')
             self.__left_proximity_sensor = self.__api.sensor.proximity('lps')
@@ -119,16 +125,24 @@ class PhysicalBody:
 
             self._orientation = None
 
-        except common.NotFoundComponentError as e:
-            self.__class_logger.log("Coppelia Sim Scene Error: missing component:\n[ERR] -> {0}".format(e), 4)
-            self.__api.simulation.stop()
-            self.__api.close_connection()
-            exit(-1)
         except Exception as e:
             self.__class_logger.log("Something went wrong:\n[ERR] -> {0}".format(e), 4)
             self.__api.simulation.stop()
             self.__api.close_connection()
             exit(-1)
+
+    def _get_info_about_joint(self, handle):
+        obj_type_code = sim_object_joint_type
+        data_type_code = 16
+        code, handles, types_and_mode, limits_and_ranges, string_data = sim.simxGetObjectGroupData(
+            self.__clientID, obj_type_code, data_type_code, simx_opmode_oneshot)
+        if code == simx_return_ok:
+            index = handles.index(handle)
+            index = index * 2
+            return types_and_mode[index], types_and_mode[index + 1], limits_and_ranges[index], limits_and_ranges[
+                index + 1]
+        else:
+            return None
 
     def __del__(self):
         """Destroyer
