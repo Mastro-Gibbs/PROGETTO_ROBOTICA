@@ -1,22 +1,23 @@
 from io import StringIO
+from enum import Enum
 
 
-def normalize_angle(ang, type):
+def normalize_angle(ang: float, type_t: int):
     """
     Normalizes any angle in degrees to be in the interval [0.,360.) or
     [-180.,180.).
     """
     bang = ang
-    if type == 0:
-        while bang < 0.:
-            bang = bang + 360.
-        while bang >= 360.:
-            bang = bang - 360.
+    if type_t == 0:
+        while bang < 0.0:
+            bang = bang + 360.0
+        while bang >= 360.0:
+            bang = bang - 360.0
     else:
-        while bang < -180.:
-            bang = bang + 360.
-        while bang >= 180.:
-            bang = bang - 360.
+        while bang < -180.0:
+            bang = bang + 360.0
+        while bang >= 180.0:
+            bang = bang - 360.0
     return bang
 
 
@@ -51,18 +52,20 @@ def detect_target(begin: float) -> float:
     """
     Detect nearest angle [0, 90, -90, 180] from 'begin' aka current angle.
 
+    #WARNING: May not locate the correct angle.
+
     #PARAM: -> begin: float. Current angle.
 
     #RETURN: float. Nearest angle.
     """
     if -45.0 < begin <= 45.0:
-        target = 0.0
+        target = Compass.OVEST
     elif 45.0 < begin <= 135.0:
-        target = 90.0
+        target = Compass.NORD
     elif 135.0 < begin <= 180 or -180 <= begin <= -135.0:
-        target = 180.0
+        target = Compass.EST
     else:
-        target = -90.0
+        target = Compass.SUD
 
     return target
 
@@ -101,6 +104,7 @@ class StdoutLogger:
     """
     Class to menage stdout log colors.
     """
+
     def __init__(self, class_name: str, color: str):
         """Constructor
 
@@ -112,7 +116,7 @@ class StdoutLogger:
         if color == "purple":
             self.__class = "\033[95m[{0}]\033[00m".format(class_name)
         elif color == "cyan":
-            self.__class = "\033[96m[{0}]\033[00m" .format(class_name)
+            self.__class = "\033[96m[{0}]\033[00m".format(class_name)
 
     def log(self, msg, severity: int = 0, italic: bool = False):
         """Print on stdout he message with selected color.
@@ -141,3 +145,42 @@ class StdoutLogger:
 
         print(self.__class, end=' \033[97m---> \033[00m')
         print(out)
+
+
+class Stack:
+    """Stack class based on list"""
+    def __init__(self):
+        self.stack = list()
+        self.index = -1
+
+    def push(self, elem: float):
+        self.stack.append(elem)
+        self.index += 1
+
+    def pop(self) -> float:
+        if not self.is_empty():
+            self.index -= 1
+            return self.stack.pop()
+        else:
+            raise IndexError("Stack is empty!")
+
+    def peek(self) -> float:
+        elem = self.pop()
+        self.push(elem)
+        return elem
+
+    def is_empty(self) -> bool:
+        if self.index == -1:
+            return True
+        return False
+
+    def erase(self):
+        self.stack.clear()
+        self.index = -1
+
+
+class Compass(float, Enum):
+    NORD = 90.0
+    SUD = -90.0
+    EST = 180.0
+    OVEST = 0.0

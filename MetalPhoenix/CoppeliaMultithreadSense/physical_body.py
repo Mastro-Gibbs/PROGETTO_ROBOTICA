@@ -8,6 +8,7 @@ from math import pi
 
 from pycsim import CSim, common
 import RemoteApiPython.sim as sim
+from RemoteApiPython.simConst import *
 
 from utility import StdoutLogger
 
@@ -61,12 +62,12 @@ class PhysicalBody:
             self.__right_proximity_sensor = self.__api.sensor.proximity('rps')
 
             # IR SENSOR HANDLERS
-            self.__lvs_handle = sim.simxGetObjectHandle(self.__clientID, 'lvs', sim.simx_opmode_blocking)[1]
-            sim.simxReadVisionSensor(self.__clientID, self.__lvs_handle, sim.simx_opmode_streaming)
-            self.__cvs_handle = sim.simxGetObjectHandle(self.__clientID, 'cvs', sim.simx_opmode_blocking)[1]
-            sim.simxReadVisionSensor(self.__clientID, self.__cvs_handle, sim.simx_opmode_streaming)
-            self.__rvs_handle = sim.simxGetObjectHandle(self.__clientID, 'rvs', sim.simx_opmode_blocking)[1]
-            sim.simxReadVisionSensor(self.__clientID, self.__rvs_handle, sim.simx_opmode_streaming)
+            self.__lvs_handle = sim.simxGetObjectHandle(self.__clientID, 'lvs', simx_opmode_blocking)[1]
+            sim.simxReadVisionSensor(self.__clientID, self.__lvs_handle, simx_opmode_streaming)
+            self.__cvs_handle = sim.simxGetObjectHandle(self.__clientID, 'cvs', simx_opmode_blocking)[1]
+            sim.simxReadVisionSensor(self.__clientID, self.__cvs_handle, simx_opmode_streaming)
+            self.__rvs_handle = sim.simxGetObjectHandle(self.__clientID, 'rvs', simx_opmode_blocking)[1]
+            sim.simxReadVisionSensor(self.__clientID, self.__rvs_handle, simx_opmode_streaming)
 
             # MOTORS
             self.__front_left_motor = self.__api.joint.with_velocity_control("joint_front_left_wheel")
@@ -76,21 +77,21 @@ class PhysicalBody:
 
             # MOTOR HANDLERS
             self.__flmotor_handle = \
-                sim.simxGetObjectHandle(self.__clientID, 'joint_front_left_wheel', sim.simx_opmode_blocking)[1]
+                sim.simxGetObjectHandle(self.__clientID, 'joint_front_left_wheel', simx_opmode_blocking)[1]
             self.__frmotor_handle = \
-                sim.simxGetObjectHandle(self.__clientID, 'joint_front_right_wheel', sim.simx_opmode_blocking)[1]
+                sim.simxGetObjectHandle(self.__clientID, 'joint_front_right_wheel', simx_opmode_blocking)[1]
             self.__rlmotor_handle = \
-                sim.simxGetObjectHandle(self.__clientID, 'joint_rear_left_wheel', sim.simx_opmode_blocking)[1]
+                sim.simxGetObjectHandle(self.__clientID, 'joint_rear_left_wheel', simx_opmode_blocking)[1]
             self.__rrmotor_handle = \
-                sim.simxGetObjectHandle(self.__clientID, 'joint_rear_right_wheel', sim.simx_opmode_blocking)[1]
+                sim.simxGetObjectHandle(self.__clientID, 'joint_rear_right_wheel', simx_opmode_blocking)[1]
 
             # READING INITIAL ORIENTATION OF THE ROBOT
             self.__code_robot, self.__handle_robot = sim.simxGetObjectHandle(self.__clientID, "Freenove4wd",
-                                                                             sim.simx_opmode_blocking)
-            self.__handle_parent = sim.sim_handle_parent
+                                                                             simx_opmode_blocking)
+            self.__handle_parent = sim_handle_parent
 
             sim.simxGetObjectOrientation(self.__code_robot, self.__handle_robot, self.__handle_parent,
-                                         sim.simx_opmode_streaming)
+                                         simx_opmode_streaming)
 
             # THREADS
             self.__thread_proxF = Thread(target=self.__get_front_distance, args=(), name="proxF")
@@ -318,7 +319,7 @@ class PhysicalBody:
             -vel_RR -> right lower wheel
         """
         _id = self.__clientID
-        _op_mode = sim.simx_opmode_streaming
+        _op_mode = simx_opmode_streaming
 
         sim.simxSetJointTargetVelocity(_id, self.__flmotor_handle, vel_FL, _op_mode)
         sim.simxSetJointTargetVelocity(_id, self.__frmotor_handle, vel_FR, _op_mode)
@@ -333,6 +334,7 @@ class PhysicalBody:
                 self._proxF = vec3.distance()
             except Exception as e:
                 self.__class_logger.log("[THREAD proxF][ERR] --> {0}".format(e), 4)
+                break
             sleep(sample_delay)
 
     def __get_back_distance(self, sample_delay):
@@ -343,6 +345,7 @@ class PhysicalBody:
                 self._proxB = vec3.distance()
             except Exception as e:
                 self.__class_logger.log("[THREAD proxB][ERR] --> {0}".format(e), 4)
+                break
             sleep(sample_delay)
 
     def __get_left_distance(self, sample_delay):
@@ -353,6 +356,7 @@ class PhysicalBody:
                 self._proxL = vec3.distance()
             except Exception as e:
                 self.__class_logger.log("[THREAD proxL][ERR] --> {0}".format(e), 4)
+                break
             sleep(sample_delay)
 
     def __get_right_distance(self, sample_delay):
@@ -363,13 +367,14 @@ class PhysicalBody:
                 self._proxR = vec3.distance()
             except Exception as e:
                 self.__class_logger.log("[THREAD proxR][ERR] --> {0}".format(e), 4)
+                break
             sleep(sample_delay)
 
     def __black_color_detected_left(self, sample_delay):
         self._visL = None
         while True:
             try:
-                arr = sim.simxReadVisionSensor(self.__clientID, self.__lvs_handle, sim.simx_opmode_buffer)[2]
+                arr = sim.simxReadVisionSensor(self.__clientID, self.__lvs_handle, simx_opmode_buffer)[2]
                 if arr:
                     self._visL = arr[0][11] < 0.5
                 del arr
@@ -377,13 +382,14 @@ class PhysicalBody:
                 self._visL = None
             except Exception as e:
                 self.__class_logger.log("[THREAD visL][ERR] --> {0}".format(e), 4)
+                break
             sleep(sample_delay + 0.01)
 
     def __black_color_detected_centre(self, sample_delay):
         self._visC = None
         while True:
             try:
-                arr = sim.simxReadVisionSensor(self.__clientID, self.__cvs_handle, sim.simx_opmode_buffer)[2]
+                arr = sim.simxReadVisionSensor(self.__clientID, self.__cvs_handle, simx_opmode_buffer)[2]
                 if arr:
                     self._visC = arr[0][11] < 0.5
                 del arr
@@ -391,13 +397,14 @@ class PhysicalBody:
                 self._visC = None
             except Exception as e:
                 self.__class_logger.log("[THREAD visC][ERR] --> {0}".format(e), 4)
+                break
             sleep(sample_delay + 0.01)
 
     def __black_color_detected_right(self, sample_delay):
         self._visR = None
         while True:
             try:
-                arr = sim.simxReadVisionSensor(self.__clientID, self.__rvs_handle, sim.simx_opmode_buffer)[2]
+                arr = sim.simxReadVisionSensor(self.__clientID, self.__rvs_handle, simx_opmode_buffer)[2]
                 if arr:
                     self._visR = arr[0][11] < 0.5
                 del arr
@@ -405,6 +412,7 @@ class PhysicalBody:
                 self._visR = None
             except Exception as e:
                 self.__class_logger.log("[THREAD visR][ERR] --> {0}".format(e), 4)
+                break
             sleep(sample_delay + 0.01)
 
     def __get_orientation(self, sample_delay):
@@ -414,12 +422,13 @@ class PhysicalBody:
             try:
                 self._orientation = \
                     sim.simxGetObjectOrientation(self.__code_robot, self.__handle_robot, self.__handle_parent,
-                                                 sim.simx_opmode_buffer)[1][2]
+                                                 simx_opmode_buffer)[1][2]
             except Exception as e:
                 self.__class_logger.log("[THREAD orientation][ERR] --> {0}".format(e), 4)
+                break
             sleep(sample_delay)
 
-    def get_proxF(self)-> float | None:
+    def get_proxF(self) -> float | None:
         """return last thread's sampled value of proximity sensor in front"""
         return self._proxF if self._proxF is None or self._proxF > 0 else None
 

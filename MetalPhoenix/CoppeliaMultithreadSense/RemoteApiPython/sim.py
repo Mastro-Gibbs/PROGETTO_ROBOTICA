@@ -3,7 +3,6 @@ import struct
 import sys
 import os
 import ctypes as ct
-from RemoteApiPython.simConst import *
 
 #load library
 libsimx = None
