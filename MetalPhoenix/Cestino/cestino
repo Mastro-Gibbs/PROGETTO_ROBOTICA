@@ -1,0 +1,128 @@
+ # FUNZIONE ALTERNATIVA PER LA ROTAZIONE -- DA CESTINARE
+    def rotate_test(self, vel, c: Clockwise):
+        init_g = self.get_orientation_degrees()[2]
+        print("Init_g: ", init_g)
+        deg_delta = 2
+        deg_goal = None
+        goal_reached = False
+        """
+            deg_gol = 180° (oppure -180°)
+            if -180<curr_g<=-176 or 176<=curr_g<=180:
+                stop
+        """
+        # [0, -90, -180,  180,  90]
+        # [0,  90,  180, -180, -90]
+        if c.RIGHT:
+            if -90 < init_g < 180:
+                deg_goal = init_g - 90
+            elif -180 <= init_g <= -90:
+                deg_goal = init_g + 270
+            # deg_goal = 180
+            limit_range = [deg_goal - 1, deg_goal + 1]
+            print("Goal: ", deg_goal)
+            print(limit_range)
+
+        time.sleep(4)
+        stop = False
+        while not stop:
+            # self.stop()
+            curr_g = self.get_orientation_degrees()[2]
+            print(curr_g)
+            l = min(limit_range)
+            if deg_goal - deg_delta <= curr_g <= deg_goal + deg_delta:
+                self.stop()
+                stop = True
+                print("Second check if the goal is reached")
+                curr_g = self.get_orientation_degrees()[2]
+                if deg_goal - deg_delta <= curr_g <= deg_goal + deg_delta:
+                    goal_reached = True
+                    print("Goal reached")
+                else:
+                    initial_clockwise = c
+                    self.adjust_orientation_test(deg_goal, initial_clockwise)
+            elif np.sign(curr_g) == np.sign(l) and curr_g < l:
+                print("Goal not reached accurately")
+                self.stop()
+                time.sleep(3)
+                initial_clockwise = c
+                self.adjust_orientation_test(deg_goal, initial_clockwise)
+                stop = True
+            else:
+                self.turn_to_right(vel, vel)
+
+    def adjust_orientation_test(self, deg_goal, initial_clockwise: Clockwise):
+        print("Trying to adjust the orientation")
+        print("Goal: ", deg_goal)
+        limit_range = [deg_goal - 3, deg_goal + 3]
+        print(limit_range)
+        time.sleep(3)
+        arr = self.get_orientation_degrees()
+        curr_g = arr[2]
+        print(initial_clockwise)
+        c = Clockwise.RIGHT
+        if initial_clockwise.RIGHT:
+            c = Clockwise.LEFT
+        print(c)
+        vel = 45 * math.pi / 180
+        stop = False
+        deg_delta = 2
+        while not stop:
+            # self.stop()
+            curr_g = self.get_orientation_degrees()[2]
+            print(curr_g)
+            print("here")
+            if deg_goal - deg_delta <= curr_g <= deg_goal + deg_delta:
+                self.stop()
+                stop = True
+                print("Goal reached")
+                goal_reached = True
+            elif c == Clockwise.RIGHT:
+                self.turn_to_right(vel, vel)
+            elif c == Clockwise.LEFT:
+                self.turn_to_left(vel, vel)
+
+
+"""
+public static int translateAgle(int angle){
+    if (angle == 0)
+       return 0;
+
+    int d = angle/180;
+    if (d%2 == 0){
+        return angle%180;
+    }
+    int signum = Math.abs(angle)/angle;
+
+    return angle%180 - signum*180;
+}
+
+
+ if c == Clockwise.RIGHT:
+    if prev_g < -90 and curr_g > 90:
+        delta_sx = 180 + prev_g
+        delta_dx = 180 - curr_g
+        deg = delta_sx + delta_dx + deg
+    else:
+        deg = abs(curr_g - prev_g) + deg
+if c == Clockwise.LEFT:
+    if prev_g > 90 and curr_g < -90:
+        delta_dx = 180 - prev_g
+        delta_sx = 180 + curr_g
+        deg = delta_sx + delta_dx + deg
+    else:
+        deg = abs(curr_g - prev_g) + deg
+"""
+"""
+def angle_to_g(angle):
+    if angle == 0:
+        return 0
+    d = angle / 180
+    print(d)
+    print(d % 2)
+    print(-90 % 180 + 180)
+    if d % 2 == 0:
+        return angle % 180
+    signum = abs(angle) / angle
+    return angle % 180 - signum * 180
+
+"""
