@@ -101,8 +101,7 @@ class Controller:
             _normalized_ori = detect_target(_ori)
 
             if _left > 0.30:
-                pass
-                # self.stack.push()
+                self.stack.push()
 
         self.body.thread_kill(ThreadType.th_proxF)
         self.body.thread_kill(ThreadType.th_proxL)

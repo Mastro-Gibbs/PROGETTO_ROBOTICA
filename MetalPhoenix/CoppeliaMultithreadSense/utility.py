@@ -2,6 +2,13 @@ from io import StringIO
 from enum import Enum
 
 
+class Compass(float, Enum):
+    NORD = 90.0
+    SUD = -90.0
+    EST = 0.0
+    OVEST = 180.0
+
+
 def normalize_angle(ang: float, type_t: int):
     """
     Normalizes any angle in degrees to be in the interval [0.,360.) or
@@ -59,15 +66,35 @@ def detect_target(begin: float) -> float:
     #RETURN: float. Nearest angle.
     """
     if -45.0 < begin <= 45.0:
-        target = Compass.OVEST
+        target = Compass.EST
     elif 45.0 < begin <= 135.0:
         target = Compass.NORD
     elif 135.0 < begin <= 180 or -180 <= begin <= -135.0:
-        target = Compass.EST
+        target = Compass.OVEST
     else:
         target = Compass.SUD
 
     return target
+
+
+def normalize_compass(curr_pos: float, compass: Compass) -> float:
+    if detect_target(curr_pos) == 0:
+        if compass == Compass.EST:
+            return Compass.SUD
+        elif compass == Compass.OVEST:
+            return Compass.NORD
+    elif detect_target(curr_pos) == 90:
+        return compass
+    elif detect_target(curr_pos) == -90:
+        if compass == Compass.EST:
+            return Compass.OVEST
+        elif compass == Compass.OVEST:
+            return Compass.EST
+    elif detect_target(curr_pos) == 180:
+        if compass == Compass.EST:
+            return Compass.SUD
+        elif compass == Compass.OVEST:
+            return Compass.NORD
 
 
 class StringBuilder:
@@ -149,6 +176,7 @@ class StdoutLogger:
 
 class Stack:
     """Stack class based on list"""
+
     def __init__(self):
         self.stack = list()
         self.index = -1
@@ -177,10 +205,3 @@ class Stack:
     def erase(self):
         self.stack.clear()
         self.index = -1
-
-
-class Compass(float, Enum):
-    NORD = 90.0
-    SUD = -90.0
-    EST = 180.0
-    OVEST = 0.0

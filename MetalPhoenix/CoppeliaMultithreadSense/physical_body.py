@@ -6,8 +6,7 @@ from time import sleep
 from enum import Enum
 from math import pi
 
-import RemoteApiPython.sim as sim
-from RemoteApiPython.simConst import *
+from coppelia import *
 
 from utility import StdoutLogger
 
@@ -43,61 +42,46 @@ class PhysicalBody:
         print()  # \n
         self.__class_logger = StdoutLogger(class_name="PhysicalBody", color="purple")
 
+        self.__sim = SimConnection(ip="127.0.0.1", port=19997)
+
         try:
-            __res = sim.simxStart(
-                connectionAddress="127.0.0.1",
-                connectionPort=19997,
-                waitUntilConnected=True,
-                doNotReconnectOnceDisconnected=True,
-                timeOutInMs=5000,
-                commThreadCycleInMs=5)
-            if __res == simx_return_ok:
-                self.__clientID = __res
-                sim.simxStartSimulation(__res, simx_opmode_oneshot_wait)
-            else:
-                raise Exception("Failed to connect to CoppeliaSim")
+            self.__sim.begin_connection()
+            self.__sim.start_simulation()
 
             self.__class_logger.log("Coppelia connection started!", italic=True)
 
             # SENSORS
-            self.__fc_handle = sim.simxGetObjectHandle(self.__clientID, "cam1", simx_opmode_blocking)[1]
+            self.__cam_handler = self.__sim.get_object_handle('cam1')
+            sim.simxReadVisionSensor(self.__sim.id(), self.__cam_handler, simx_opmode_streaming)
 
-            self.__front_proximity_sensor = self.__api.sensor.proximity('fps')
-            self.__back_proximity_sensor = self.__api.sensor.proximity('bps')
-            self.__left_proximity_sensor = self.__api.sensor.proximity('lps')
-            self.__right_proximity_sensor = self.__api.sensor.proximity('rps')
+            self.__front_prox_handler = self.__sim.get_object_handle('fps')
+            self.__back_prox_handler = self.__sim.get_object_handle('bps')
+            self.__left_prox_handler = self.__sim.get_object_handle('lps')
+            self.__right_prox_handler = self.__sim.get_object_handle('rps')
+            sim.simxReadProximitySensor(self.__sim.id(), self.__front_prox_handler, simx_opmode_streaming)
+            sim.simxReadProximitySensor(self.__sim.id(), self.__back_prox_handler, simx_opmode_streaming)
+            sim.simxReadProximitySensor(self.__sim.id(), self.__left_prox_handler, simx_opmode_streaming)
+            sim.simxReadProximitySensor(self.__sim.id(), self.__right_prox_handler, simx_opmode_streaming)
 
             # IR SENSOR HANDLERS
-            self.__lvs_handle = sim.simxGetObjectHandle(self.__clientID, 'lvs', simx_opmode_blocking)[1]
-            sim.simxReadVisionSensor(self.__clientID, self.__lvs_handle, simx_opmode_streaming)
-            self.__cvs_handle = sim.simxGetObjectHandle(self.__clientID, 'cvs', simx_opmode_blocking)[1]
-            sim.simxReadVisionSensor(self.__clientID, self.__cvs_handle, simx_opmode_streaming)
-            self.__rvs_handle = sim.simxGetObjectHandle(self.__clientID, 'rvs', simx_opmode_blocking)[1]
-            sim.simxReadVisionSensor(self.__clientID, self.__rvs_handle, simx_opmode_streaming)
+            self.__left_vision_handler = self.__sim.get_object_handle('lvs')
+            self.__centre_vision_handler = self.__sim.get_object_handle('cvs')
+            self.__right_vision_handler = self.__sim.get_object_handle('rvs')
+            sim.simxReadVisionSensor(self.__sim.id(), self.__centre_vision_handler, simx_opmode_streaming)
+            sim.simxReadVisionSensor(self.__sim.id(), self.__left_vision_handler, simx_opmode_streaming)
+            sim.simxReadVisionSensor(self.__sim.id(), self.__right_vision_handler, simx_opmode_streaming)
 
             # MOTORS
-            self.__front_left_motor = self.__api.joint.with_velocity_control("joint_front_left_wheel")
-            self.__front_right_motor = self.__api.joint.with_velocity_control("joint_front_right_wheel")
-            self.__rear_left_motor = self.__api.joint.with_velocity_control("joint_rear_left_wheel")
-            self.__rear_right_motor = self.__api.joint.with_velocity_control("joint_rear_right_wheel")
+            self.__fl_motor_handler = self.__sim.get_object_handle("joint_front_left_wheel")
+            self.__fr_motor_handler = self.__sim.get_object_handle("joint_front_right_wheel")
+            self.__rl_motor_handler = self.__sim.get_object_handle("joint_rear_left_wheel")
+            self.__rr_motor_handler = self.__sim.get_object_handle("joint_rear_right_wheel")
 
-            # MOTOR HANDLERS
-            self.__flmotor_handle = \
-                sim.simxGetObjectHandle(self.__clientID, 'joint_front_left_wheel', simx_opmode_blocking)[1]
-            self.__frmotor_handle = \
-                sim.simxGetObjectHandle(self.__clientID, 'joint_front_right_wheel', simx_opmode_blocking)[1]
-            self.__rlmotor_handle = \
-                sim.simxGetObjectHandle(self.__clientID, 'joint_rear_left_wheel', simx_opmode_blocking)[1]
-            self.__rrmotor_handle = \
-                sim.simxGetObjectHandle(self.__clientID, 'joint_rear_right_wheel', simx_opmode_blocking)[1]
 
             # READING INITIAL ORIENTATION OF THE ROBOT
-            self.__code_robot, self.__handle_robot = sim.simxGetObjectHandle(self.__clientID, "Freenove4wd",
-                                                                             simx_opmode_blocking)
-            self.__handle_parent = sim_handle_parent
-
-            sim.simxGetObjectOrientation(self.__code_robot, self.__handle_robot, self.__handle_parent,
-                                         simx_opmode_streaming)
+            self.__robot_handler = self.__sim.get_object_handle("Freenove4wd")
+            self.__parent_handler = sim_handle_parent
+            sim.simxGetObjectOrientation(self.__sim.id(), self.__robot_handler, self.__parent_handler, simx_opmode_streaming)
 
             # THREADS
             self.__thread_proxF = Thread(target=self.__get_front_distance, args=(), name="proxF")
@@ -125,24 +109,21 @@ class PhysicalBody:
 
             self._orientation = None
 
-        except Exception as e:
-            self.__class_logger.log("Something went wrong:\n[ERR] -> {0}".format(e), 4)
-            self.__api.simulation.stop()
-            self.__api.close_connection()
+        except SimConnectionException as sce:
+            self.__class_logger.log("[ERR] -> {0}".format(sce), 4)
             exit(-1)
 
-    def _get_info_about_joint(self, handle):
-        obj_type_code = sim_object_joint_type
-        data_type_code = 16
-        code, handles, types_and_mode, limits_and_ranges, string_data = sim.simxGetObjectGroupData(
-            self.__clientID, obj_type_code, data_type_code, simx_opmode_oneshot)
-        if code == simx_return_ok:
-            index = handles.index(handle)
-            index = index * 2
-            return types_and_mode[index], types_and_mode[index + 1], limits_and_ranges[index], limits_and_ranges[
-                index + 1]
-        else:
-            return None
+        except SimHandleException as she:
+            self.__class_logger.log("[ERR] -> {0}".format(she), 4)
+            self.__sim.stop_simulation()
+            self.__sim.end_connection()
+            exit(-1)
+
+        except Exception as e:
+            self.__class_logger.log("Something went wrong:\n[ERR] -> {0}".format(e), 4)
+            self.__sim.stop_simulation()
+            self.__sim.end_connection()
+            exit(-1)
 
     def __del__(self):
         """Destroyer
@@ -151,8 +132,8 @@ class PhysicalBody:
         -Close coppelia connection (if it will be called, the connection to coppelia exists)
         """
         self.__class_logger.log("Coppelia connection stopped!\n", severity=4, italic=True)
-        self.__api.simulation.stop()
-        self.__api.close_connection()
+        self.__sim.stop_simulation()
+        self.__sim.end_connection()
 
     def thread_begin(self, th: ThreadType, sample_delay=0.01) -> None:
         """Start specified thread
@@ -241,8 +222,6 @@ class PhysicalBody:
             if self.__thread_orientation.is_alive():
                 self.__async_raise(self.__thread_orientation, SystemExit)
 
-        self.__class_logger.log("[Thread] '{0}' is gone!".format(th), 3)
-
     def safe_exit(self) -> None:
         """Stop all threads, if they are alive
 
@@ -283,6 +262,8 @@ class PhysicalBody:
         elif res != 1:
             ct.pythonapi.PyThreadState_SetAsyncExc(tid, None)
             raise SystemError("PyThreadState_SetAsyncExc failed")
+
+        self.__class_logger.log("[Thread] '{0}' is gone!".format(thread.name), 3)
 
     def __sync_raise(self, thread: Thread, exctype) -> None:
         """Raise exc into passed thread, it's syncr (wait for thread 'is_alive' property becomes False)"""
@@ -332,20 +313,22 @@ class PhysicalBody:
             -vel_RL -> Left lower wheel
             -vel_RR -> right lower wheel
         """
-        _id = self.__clientID
+        _id = self.__sim.id()
         _op_mode = simx_opmode_streaming
 
-        sim.simxSetJointTargetVelocity(_id, self.__flmotor_handle, vel_FL, _op_mode)
-        sim.simxSetJointTargetVelocity(_id, self.__frmotor_handle, vel_FR, _op_mode)
-        sim.simxSetJointTargetVelocity(_id, self.__rlmotor_handle, vel_RL, _op_mode)
-        sim.simxSetJointTargetVelocity(_id, self.__rrmotor_handle, vel_RR, _op_mode)
+        sim.simxSetJointTargetVelocity(_id, self.__fl_motor_handler, vel_FL, _op_mode)
+        sim.simxSetJointTargetVelocity(_id, self.__fr_motor_handler, vel_FR, _op_mode)
+        sim.simxSetJointTargetVelocity(_id, self.__rl_motor_handler, vel_RL, _op_mode)
+        sim.simxSetJointTargetVelocity(_id, self.__rr_motor_handler, vel_RR, _op_mode)
 
     def __get_front_distance(self, sample_delay):
         self._proxF = None
+        _id = self.__sim.id()
         while True:
             try:
-                _, vec3 = self.__front_proximity_sensor.read()
-                self._proxF = vec3.distance()
+                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__front_prox_handler, simx_opmode_buffer)
+                _val = point[2]
+                self._proxF = _val if 0.01 <= _val <= 0.40 else None
             except Exception as e:
                 self.__class_logger.log("[THREAD proxF][ERR] --> {0}".format(e), 4)
                 break
@@ -353,10 +336,12 @@ class PhysicalBody:
 
     def __get_back_distance(self, sample_delay):
         self._proxB = None
+        _id = self.__sim.id()
         while True:
             try:
-                _, vec3 = self.__back_proximity_sensor.read()
-                self._proxB = vec3.distance()
+                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__back_prox_handler, simx_opmode_buffer)
+                _val = point[2]
+                self._proxB = _val if 0.01 <= _val <= 0.40 else None
             except Exception as e:
                 self.__class_logger.log("[THREAD proxB][ERR] --> {0}".format(e), 4)
                 break
@@ -364,10 +349,12 @@ class PhysicalBody:
 
     def __get_left_distance(self, sample_delay):
         self._proxL = None
+        _id = self.__sim.id()
         while True:
             try:
-                _, vec3 = self.__left_proximity_sensor.read()
-                self._proxL = vec3.distance()
+                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__left_prox_handler, simx_opmode_buffer)
+                _val = point[2]
+                self._proxL = _val if 0.001 <= _val <= 0.40 else None
             except Exception as e:
                 self.__class_logger.log("[THREAD proxL][ERR] --> {0}".format(e), 4)
                 break
@@ -375,10 +362,12 @@ class PhysicalBody:
 
     def __get_right_distance(self, sample_delay):
         self._proxR = None
+        _id = self.__sim.id()
         while True:
             try:
-                _, vec3 = self.__right_proximity_sensor.read()
-                self._proxR = vec3.distance()
+                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__right_prox_handler, simx_opmode_buffer)
+                _val = point[2]
+                self._proxR = _val if 0.001 <= _val <= 0.40 else None
             except Exception as e:
                 self.__class_logger.log("[THREAD proxR][ERR] --> {0}".format(e), 4)
                 break
@@ -386,9 +375,10 @@ class PhysicalBody:
 
     def __black_color_detected_left(self, sample_delay):
         self._visL = None
+        _id = self.__sim.id()
         while True:
             try:
-                arr = sim.simxReadVisionSensor(self.__clientID, self.__lvs_handle, simx_opmode_buffer)[2]
+                arr = sim.simxReadVisionSensor(_id, self.__left_vision_handler, simx_opmode_buffer)[2]
                 if arr:
                     self._visL = arr[0][11] < 0.5
                 del arr
@@ -401,9 +391,10 @@ class PhysicalBody:
 
     def __black_color_detected_centre(self, sample_delay):
         self._visC = None
+        _id = self.__sim.id()
         while True:
             try:
-                arr = sim.simxReadVisionSensor(self.__clientID, self.__cvs_handle, simx_opmode_buffer)[2]
+                arr = sim.simxReadVisionSensor(_id, self.__centre_vision_handler, simx_opmode_buffer)[2]
                 if arr:
                     self._visC = arr[0][11] < 0.5
                 del arr
@@ -416,9 +407,10 @@ class PhysicalBody:
 
     def __black_color_detected_right(self, sample_delay):
         self._visR = None
+        _id = self.__sim.id()
         while True:
             try:
-                arr = sim.simxReadVisionSensor(self.__clientID, self.__rvs_handle, simx_opmode_buffer)[2]
+                arr = sim.simxReadVisionSensor(_id, self.__right_vision_handler, simx_opmode_buffer)[2]
                 if arr:
                     self._visR = arr[0][11] < 0.5
                 del arr
@@ -431,11 +423,12 @@ class PhysicalBody:
 
     def __get_orientation(self, sample_delay):
         self._orientation = None
+        _id = self.__sim.id()
         sleep(0.1)
         while True:
             try:
                 self._orientation = \
-                    sim.simxGetObjectOrientation(self.__code_robot, self.__handle_robot, self.__handle_parent,
+                    sim.simxGetObjectOrientation(_id, self.__robot_handler, self.__parent_handler,
                                                  simx_opmode_buffer)[1][2]
             except Exception as e:
                 self.__class_logger.log("[THREAD orientation][ERR] --> {0}".format(e), 4)
@@ -444,19 +437,19 @@ class PhysicalBody:
 
     def get_proxF(self) -> float | None:
         """return last thread's sampled value of proximity sensor in front"""
-        return self._proxF if self._proxF is None or self._proxF > 0 else None
+        return self._proxF
 
     def get_proxL(self) -> float | None:
         """return last thread's sampled value of proximity sensor in left"""
-        return self._proxL if self._proxF is None or self._proxL > 0 else None
+        return self._proxL
 
     def get_proxR(self) -> float | None:
         """return last thread's sampled value of proximity sensor in right"""
-        return self._proxR if self._proxF is None or self._proxR > 0 else None
+        return self._proxR
 
     def get_proxB(self) -> float | None:
         """return last thread's sampled value of proximity sensor in back"""
-        return self._proxB if self._proxF is None or self._proxB > 0 else None
+        return self._proxB
 
     def get_visL(self) -> bool:
         """return last thread's sampled value of vision sensor in left (black line)"""
