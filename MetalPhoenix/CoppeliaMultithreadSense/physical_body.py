@@ -51,35 +51,35 @@ class PhysicalBody:
             self.__class_logger.log("Coppelia connection started!", italic=True)
 
             # SENSORS
-            self.__cam_handler = self.__sim.get_object_handle('cam1')
+            self.__cam_handler = self.__sim.get_object_handle("/Freenove4wd/robot_cam")
             sim.simxReadVisionSensor(self.__sim.id(), self.__cam_handler, simx_opmode_streaming)
 
-            self.__front_prox_handler = self.__sim.get_object_handle('fps')
-            self.__back_prox_handler = self.__sim.get_object_handle('bps')
-            self.__left_prox_handler = self.__sim.get_object_handle('lps')
-            self.__right_prox_handler = self.__sim.get_object_handle('rps')
+            self.__front_prox_handler = self.__sim.get_object_handle("/Freenove4wd/fps")
+            self.__back_prox_handler = self.__sim.get_object_handle("/Freenove4wd/bps")
+            self.__left_prox_handler = self.__sim.get_object_handle("/Freenove4wd/lps")
+            self.__right_prox_handler = self.__sim.get_object_handle("/Freenove4wd/rps")
             sim.simxReadProximitySensor(self.__sim.id(), self.__front_prox_handler, simx_opmode_streaming)
             sim.simxReadProximitySensor(self.__sim.id(), self.__back_prox_handler, simx_opmode_streaming)
             sim.simxReadProximitySensor(self.__sim.id(), self.__left_prox_handler, simx_opmode_streaming)
             sim.simxReadProximitySensor(self.__sim.id(), self.__right_prox_handler, simx_opmode_streaming)
 
             # IR SENSOR HANDLERS
-            self.__left_vision_handler = self.__sim.get_object_handle('lvs')
-            self.__centre_vision_handler = self.__sim.get_object_handle('cvs')
-            self.__right_vision_handler = self.__sim.get_object_handle('rvs')
+            self.__left_vision_handler = self.__sim.get_object_handle("/Freenove4wd/lvs")
+            self.__centre_vision_handler = self.__sim.get_object_handle("/Freenove4wd/cvs")
+            self.__right_vision_handler = self.__sim.get_object_handle("/Freenove4wd/rvs")
             sim.simxReadVisionSensor(self.__sim.id(), self.__centre_vision_handler, simx_opmode_streaming)
             sim.simxReadVisionSensor(self.__sim.id(), self.__left_vision_handler, simx_opmode_streaming)
             sim.simxReadVisionSensor(self.__sim.id(), self.__right_vision_handler, simx_opmode_streaming)
 
             # MOTORS
-            self.__fl_motor_handler = self.__sim.get_object_handle("joint_front_left_wheel")
-            self.__fr_motor_handler = self.__sim.get_object_handle("joint_front_right_wheel")
-            self.__rl_motor_handler = self.__sim.get_object_handle("joint_rear_left_wheel")
-            self.__rr_motor_handler = self.__sim.get_object_handle("joint_rear_right_wheel")
+            self.__fl_motor_handler = self.__sim.get_object_handle("/Freenove4wd/joint_front_left_wheel")
+            self.__fr_motor_handler = self.__sim.get_object_handle("/Freenove4wd/joint_front_right_wheel")
+            self.__rl_motor_handler = self.__sim.get_object_handle("/Freenove4wd/joint_rear_left_wheel")
+            self.__rr_motor_handler = self.__sim.get_object_handle("/Freenove4wd/joint_rear_right_wheel")
 
 
             # READING INITIAL ORIENTATION OF THE ROBOT
-            self.__robot_handler = self.__sim.get_object_handle("Freenove4wd")
+            self.__robot_handler = self.__sim.get_object_handle("/Freenove4wd")
             self.__parent_handler = sim_handle_parent
             sim.simxGetObjectOrientation(self.__sim.id(), self.__robot_handler, self.__parent_handler, simx_opmode_streaming)
 
