@@ -16,10 +16,7 @@ class ThreadType(str, Enum):
 
     return thread name
     """
-    th_proxF = "proxF"
-    th_proxL = "proxL"
-    th_proxR = "proxR"
-    th_proxB = "proxB"
+    th_prox = "prox"
     th_visL = "visL"
     th_visC = "visC"
     th_visR = "visR"
@@ -84,14 +81,11 @@ class PhysicalBody:
             sim.simxGetObjectOrientation(self.__sim.id(), self.__robot_handler, self.__parent_handler, simx_opmode_streaming)
 
             # THREADS
-            self.__thread_proxF = Thread(target=self.__get_front_distance, args=(), name="proxF")
-            self.__thread_proxL = Thread(target=self.__get_left_distance, args=(), name="proxL")
-            self.__thread_proxR = Thread(target=self.__get_right_distance, args=(), name="proxR")
-            self.__thread_proxB = Thread(target=self.__get_back_distance, args=(), name="proxB")
+            self.__thread_prox = Thread(target=self.__get_distance, args=(), name="prox")
 
             self.__thread_visL = Thread(target=self.__black_color_detected_left, args=(), name="visL")
             self.__thread_visC = Thread(target=self.__black_color_detected_centre, args=(), name="visC")
-            self.__thread_visR = Thread(target=self.__black_color_detected_centre, args=(), name="visR")
+            self.__thread_visR = Thread(target=self.__black_color_detected_right, args=(), name="visR")
 
             self.__thread_orientation = Thread(target=self.__get_orientation, args=(), name="orientation")
 
@@ -135,7 +129,7 @@ class PhysicalBody:
         self.__sim.stop_simulation()
         self.__sim.end_connection()
 
-    def thread_begin(self, th: ThreadType, sample_delay=0.01) -> None:
+    def thread_begin(self, th: ThreadType, sample_delay=0.0) -> None:
         """Start specified thread
 
         # PARAMS:
@@ -145,26 +139,11 @@ class PhysicalBody:
         If the new thread already exists, it will be killed
         """
         sample_delay = abs(sample_delay)
-        if th == ThreadType.th_proxF:
-            if self.__thread_proxF.is_alive():
-                self.__async_raise(self.__thread_proxF, SystemExit)
-            self.__thread_proxF = Thread(target=self.__get_front_distance, args=(sample_delay,), name="proxF")
-            self.__thread_proxF.start()
-        elif th == ThreadType.th_proxL:
-            if self.__thread_proxL.is_alive():
-                self.__async_raise(self.__thread_proxL, SystemExit)
-            self.__thread_proxL = Thread(target=self.__get_left_distance, args=(sample_delay,), name="proxL")
-            self.__thread_proxL.start()
-        elif th == ThreadType.th_proxR:
-            if self.__thread_proxR.is_alive():
-                self.__async_raise(self.__thread_proxR, SystemExit)
-            self.__thread_proxR = Thread(target=self.__get_right_distance, args=(sample_delay,), name="proxR")
-            self.__thread_proxR.start()
-        elif th == ThreadType.th_proxB:
-            if self.__thread_proxB.is_alive():
-                self.__async_raise(self.__thread_proxB, SystemExit)
-            self.__thread_proxB = Thread(target=self.__get_back_distance, args=(sample_delay,), name="proxB")
-            self.__thread_proxB.start()
+        if th == ThreadType.th_prox:
+            if self.__thread_prox.is_alive():
+                self.__async_raise(self.__thread_prox, SystemExit)
+            self.__thread_prox = Thread(target=self.__get_distance, args=(sample_delay,), name="prox")
+            self.__thread_prox.start()
         elif th == ThreadType.th_visL:
             if self.__thread_visL.is_alive():
                 self.__async_raise(self.__thread_visL, SystemExit)
@@ -186,7 +165,7 @@ class PhysicalBody:
             self.__thread_orientation = Thread(target=self.__get_orientation, args=(sample_delay,), name="orientation")
             self.__thread_orientation.start()
 
-        self.__class_logger.log("[Thread] '{0}' reveals itself!".format(th), 1)
+        self.__class_logger.log("[Thread] '{0}' reveals itself!".format(self.__thread_prox.name), 1)
 
     def thread_kill(self, th: ThreadType) -> None:
         """Stop specified thread
@@ -197,18 +176,9 @@ class PhysicalBody:
         If the thread already exists, it will be killed
         else it has no effect
         """
-        if th == ThreadType.th_proxF:
-            if self.__thread_proxF.is_alive():
-                self.__async_raise(self.__thread_proxF, SystemExit)
-        elif th == ThreadType.th_proxL:
-            if self.__thread_proxL.is_alive():
-                self.__async_raise(self.__thread_proxL, SystemExit)
-        elif th == ThreadType.th_proxR:
-            if self.__thread_proxR.is_alive():
-                self.__async_raise(self.__thread_proxR, SystemExit)
-        elif th == ThreadType.th_proxB:
-            if self.__thread_proxB.is_alive():
-                self.__async_raise(self.__thread_proxB, SystemExit)
+        if th == ThreadType.th_prox:
+            if self.__thread_prox.is_alive():
+                self.__async_raise(self.__thread_prox, SystemExit)
         elif th == ThreadType.th_visL:
             if self.__thread_visL.is_alive():
                 self.__async_raise(self.__thread_visL, SystemExit)
@@ -229,19 +199,13 @@ class PhysicalBody:
 
         #EXAMPLE: (no kill thread in time)
         try:
-            thread_begin(ThreadType.th_proxF)
+            thread_begin(ThreadType.th_prox)
             ...
         except KeyboardInterrupt:
             safe_kill()
         """
-        if self.__thread_proxF.is_alive():
-            self.__sync_raise(self.__thread_proxF, SystemExit)
-        if self.__thread_proxL.is_alive():
-            self.__sync_raise(self.__thread_proxL, SystemExit)
-        if self.__thread_proxR.is_alive():
-            self.__sync_raise(self.__thread_proxR, SystemExit)
-        if self.__thread_proxB.is_alive():
-            self.__sync_raise(self.__thread_proxB, SystemExit)
+        if self.__thread_prox.is_alive():
+            self.__sync_raise(self.__thread_prox, SystemExit)
         if self.__thread_visL.is_alive():
             self.__sync_raise(self.__thread_visL, SystemExit)
         if self.__thread_visC.is_alive():
@@ -278,6 +242,8 @@ class PhysicalBody:
             raise SystemError("PyThreadState_SetAsyncExc failed")
         while thread.is_alive():
             sleep(0.001)
+
+        self.__class_logger.log("[Thread] '{0}' is gone!".format(thread.name), 3)
 
     def move_forward(self, vel) -> None:
         """Move forward robot wheels
@@ -321,57 +287,36 @@ class PhysicalBody:
         sim.simxSetJointTargetVelocity(_id, self.__rl_motor_handler, vel_RL, _op_mode)
         sim.simxSetJointTargetVelocity(_id, self.__rr_motor_handler, vel_RR, _op_mode)
 
-    def __get_front_distance(self, sample_delay):
+    def __get_distance(self, sample_delay):
         self._proxF = None
         _id = self.__sim.id()
         while True:
             try:
-                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__front_prox_handler, simx_opmode_buffer)
+                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__front_prox_handler, simx_opmode_oneshot_wait)
                 _val = point[2]
                 self._proxF = _val if 0.01 <= _val <= 0.40 else None
-            except Exception as e:
-                self.__class_logger.log("[THREAD proxF][ERR] --> {0}".format(e), 4)
-                break
-            sleep(sample_delay)
+                del point
 
-    def __get_back_distance(self, sample_delay):
-        self._proxB = None
-        _id = self.__sim.id()
-        while True:
-            try:
-                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__back_prox_handler, simx_opmode_buffer)
+                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__back_prox_handler, simx_opmode_oneshot_wait)
                 _val = point[2]
                 self._proxB = _val if 0.01 <= _val <= 0.40 else None
-            except Exception as e:
-                self.__class_logger.log("[THREAD proxB][ERR] --> {0}".format(e), 4)
-                break
-            sleep(sample_delay)
+                del point
 
-    def __get_left_distance(self, sample_delay):
-        self._proxL = None
-        _id = self.__sim.id()
-        while True:
-            try:
-                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__left_prox_handler, simx_opmode_buffer)
+                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__left_prox_handler, simx_opmode_oneshot_wait)
                 _val = point[2]
                 self._proxL = _val if 0.001 <= _val <= 0.40 else None
-            except Exception as e:
-                self.__class_logger.log("[THREAD proxL][ERR] --> {0}".format(e), 4)
-                break
-            sleep(sample_delay)
+                del point
 
-    def __get_right_distance(self, sample_delay):
-        self._proxR = None
-        _id = self.__sim.id()
-        while True:
-            try:
-                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__right_prox_handler, simx_opmode_buffer)
+                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__right_prox_handler, simx_opmode_oneshot_wait)
                 _val = point[2]
                 self._proxR = _val if 0.001 <= _val <= 0.40 else None
+                del point
             except Exception as e:
-                self.__class_logger.log("[THREAD proxR][ERR] --> {0}".format(e), 4)
+                self.__class_logger.log("[THREAD prox][ERR] --> {0}".format(e), 4)
                 break
-            sleep(sample_delay)
+
+            if sample_delay > 0:
+                sleep(sample_delay)
 
     def __black_color_detected_left(self, sample_delay):
         self._visL = None

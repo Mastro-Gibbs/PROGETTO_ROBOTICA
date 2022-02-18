@@ -92,9 +92,9 @@ def normalize_compass(curr_pos: float, compass: Compass) -> float:
             return Compass.EST
     elif detect_target(curr_pos) == 180:
         if compass == Compass.EST:
-            return Compass.SUD
-        elif compass == Compass.OVEST:
             return Compass.NORD
+        elif compass == Compass.OVEST:
+            return Compass.SUD
 
 
 class StringBuilder:
