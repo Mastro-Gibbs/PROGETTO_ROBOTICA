@@ -17,9 +17,6 @@ class ThreadType(str, Enum):
     return thread name
     """
     th_prox = "prox"
-    th_visL = "visL"
-    th_visC = "visC"
-    th_visR = "visR"
     th_orientation = "orientation"
 
 
@@ -49,24 +46,18 @@ class PhysicalBody:
 
             # SENSORS
             self.__cam_handler = self.__sim.get_object_handle("/Freenove4wd/robot_cam")
-            sim.simxReadVisionSensor(self.__sim.id(), self.__cam_handler, simx_opmode_streaming)
+            sim.simxReadVisionSensor(self.__sim.id(), self.__cam_handler, simx_opmode_oneshot_wait)
 
             self.__front_prox_handler = self.__sim.get_object_handle("/Freenove4wd/fps")
             self.__back_prox_handler = self.__sim.get_object_handle("/Freenove4wd/bps")
             self.__left_prox_handler = self.__sim.get_object_handle("/Freenove4wd/lps")
             self.__right_prox_handler = self.__sim.get_object_handle("/Freenove4wd/rps")
-            sim.simxReadProximitySensor(self.__sim.id(), self.__front_prox_handler, simx_opmode_streaming)
-            sim.simxReadProximitySensor(self.__sim.id(), self.__back_prox_handler, simx_opmode_streaming)
-            sim.simxReadProximitySensor(self.__sim.id(), self.__left_prox_handler, simx_opmode_streaming)
-            sim.simxReadProximitySensor(self.__sim.id(), self.__right_prox_handler, simx_opmode_streaming)
-
-            # IR SENSOR HANDLERS
-            self.__left_vision_handler = self.__sim.get_object_handle("/Freenove4wd/lvs")
-            self.__centre_vision_handler = self.__sim.get_object_handle("/Freenove4wd/cvs")
-            self.__right_vision_handler = self.__sim.get_object_handle("/Freenove4wd/rvs")
-            sim.simxReadVisionSensor(self.__sim.id(), self.__centre_vision_handler, simx_opmode_streaming)
-            sim.simxReadVisionSensor(self.__sim.id(), self.__left_vision_handler, simx_opmode_streaming)
-            sim.simxReadVisionSensor(self.__sim.id(), self.__right_vision_handler, simx_opmode_streaming)
+            self.__gate_handler = self.__sim.get_object_handle("/Maze/GateCounter55cmX40cm/Sensor")
+            sim.simxReadProximitySensor(self.__sim.id(), self.__front_prox_handler, simx_opmode_oneshot_wait)
+            sim.simxReadProximitySensor(self.__sim.id(), self.__back_prox_handler, simx_opmode_oneshot_wait)
+            sim.simxReadProximitySensor(self.__sim.id(), self.__left_prox_handler, simx_opmode_oneshot_wait)
+            sim.simxReadProximitySensor(self.__sim.id(), self.__right_prox_handler, simx_opmode_oneshot_wait)
+            sim.simxReadProximitySensor(self.__sim.id(), self.__gate_handler, simx_opmode_oneshot_wait)
 
             # MOTORS
             self.__fl_motor_handler = self.__sim.get_object_handle("/Freenove4wd/joint_front_left_wheel")
@@ -74,18 +65,13 @@ class PhysicalBody:
             self.__rl_motor_handler = self.__sim.get_object_handle("/Freenove4wd/joint_rear_left_wheel")
             self.__rr_motor_handler = self.__sim.get_object_handle("/Freenove4wd/joint_rear_right_wheel")
 
-
             # READING INITIAL ORIENTATION OF THE ROBOT
             self.__robot_handler = self.__sim.get_object_handle("/Freenove4wd")
             self.__parent_handler = sim_handle_parent
-            sim.simxGetObjectOrientation(self.__sim.id(), self.__robot_handler, self.__parent_handler, simx_opmode_streaming)
+            sim.simxGetObjectOrientation(self.__sim.id(), self.__robot_handler, self.__parent_handler, simx_opmode_oneshot_wait)
 
             # THREADS
             self.__thread_prox = Thread(target=self.__get_distance, args=(), name="prox")
-
-            self.__thread_visL = Thread(target=self.__black_color_detected_left, args=(), name="visL")
-            self.__thread_visC = Thread(target=self.__black_color_detected_centre, args=(), name="visC")
-            self.__thread_visR = Thread(target=self.__black_color_detected_right, args=(), name="visR")
 
             self.__thread_orientation = Thread(target=self.__get_orientation, args=(), name="orientation")
 
@@ -96,10 +82,7 @@ class PhysicalBody:
             self._proxL = None
             self._proxR = None
             self._proxB = None
-
-            self._visL = None
-            self._visC = None
-            self._visR = None
+            self._gate = None
 
             self._orientation = None
 
@@ -144,28 +127,13 @@ class PhysicalBody:
                 self.__async_raise(self.__thread_prox, SystemExit)
             self.__thread_prox = Thread(target=self.__get_distance, args=(sample_delay,), name="prox")
             self.__thread_prox.start()
-        elif th == ThreadType.th_visL:
-            if self.__thread_visL.is_alive():
-                self.__async_raise(self.__thread_visL, SystemExit)
-            self.__thread_visL = Thread(target=self.__black_color_detected_left, args=(sample_delay,), name="visL")
-            self.__thread_visL.start()
-        elif th == ThreadType.th_visC:
-            if self.__thread_visC.is_alive():
-                self.__async_raise(self.__thread_visC, SystemExit)
-            self.__thread_visC = Thread(target=self.__black_color_detected_centre, args=(sample_delay,), name="visC")
-            self.__thread_visC.start()
-        elif th == ThreadType.th_visR:
-            if self.__thread_visR.is_alive():
-                self.__async_raise(self.__thread_visR, SystemExit)
-            self.__thread_visR = Thread(target=self.__black_color_detected_right, args=(sample_delay,), name="visR")
-            self.__thread_visR.start()
         elif th == ThreadType.th_orientation:
             if self.__thread_orientation.is_alive():
                 self.__async_raise(self.__thread_orientation, SystemExit)
             self.__thread_orientation = Thread(target=self.__get_orientation, args=(sample_delay,), name="orientation")
             self.__thread_orientation.start()
 
-        self.__class_logger.log("[Thread] '{0}' reveals itself!".format(self.__thread_prox.name), 1)
+        self.__class_logger.log("[Thread] '{0}' reveals itself!".format(th), 1)
 
     def thread_kill(self, th: ThreadType) -> None:
         """Stop specified thread
@@ -179,15 +147,6 @@ class PhysicalBody:
         if th == ThreadType.th_prox:
             if self.__thread_prox.is_alive():
                 self.__async_raise(self.__thread_prox, SystemExit)
-        elif th == ThreadType.th_visL:
-            if self.__thread_visL.is_alive():
-                self.__async_raise(self.__thread_visL, SystemExit)
-        elif th == ThreadType.th_visC:
-            if self.__thread_visC.is_alive():
-                self.__async_raise(self.__thread_visC, SystemExit)
-        elif th == ThreadType.th_visR:
-            if self.__thread_visR.is_alive():
-                self.__async_raise(self.__thread_visR, SystemExit)
         elif th == ThreadType.th_orientation:
             if self.__thread_orientation.is_alive():
                 self.__async_raise(self.__thread_orientation, SystemExit)
@@ -206,12 +165,6 @@ class PhysicalBody:
         """
         if self.__thread_prox.is_alive():
             self.__sync_raise(self.__thread_prox, SystemExit)
-        if self.__thread_visL.is_alive():
-            self.__sync_raise(self.__thread_visL, SystemExit)
-        if self.__thread_visC.is_alive():
-            self.__sync_raise(self.__thread_visC, SystemExit)
-        if self.__thread_visR.is_alive():
-            self.__sync_raise(self.__thread_visR, SystemExit)
         if self.__thread_orientation.is_alive():
             self.__sync_raise(self.__thread_orientation, SystemExit)
 
@@ -289,6 +242,10 @@ class PhysicalBody:
 
     def __get_distance(self, sample_delay):
         self._proxF = None
+        self._proxR = None
+        self._proxL = None
+        self._proxB = None
+        self._gate = None
         _id = self.__sim.id()
         while True:
             try:
@@ -311,60 +268,18 @@ class PhysicalBody:
                 _val = point[2]
                 self._proxR = _val if 0.001 <= _val <= 0.40 else None
                 del point
+
+                _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__gate_handler,
+                                                                simx_opmode_oneshot_wait)
+                _val = point[2]
+                self._gate = _val if 0.001 <= _val <= 0.40 else None
+                del point
             except Exception as e:
                 self.__class_logger.log("[THREAD prox][ERR] --> {0}".format(e), 4)
                 break
 
             if sample_delay > 0:
                 sleep(sample_delay)
-
-    def __black_color_detected_left(self, sample_delay):
-        self._visL = None
-        _id = self.__sim.id()
-        while True:
-            try:
-                arr = sim.simxReadVisionSensor(_id, self.__left_vision_handler, simx_opmode_buffer)[2]
-                if arr:
-                    self._visL = arr[0][11] < 0.5
-                del arr
-            except IndexError:
-                self._visL = None
-            except Exception as e:
-                self.__class_logger.log("[THREAD visL][ERR] --> {0}".format(e), 4)
-                break
-            sleep(sample_delay + 0.01)
-
-    def __black_color_detected_centre(self, sample_delay):
-        self._visC = None
-        _id = self.__sim.id()
-        while True:
-            try:
-                arr = sim.simxReadVisionSensor(_id, self.__centre_vision_handler, simx_opmode_buffer)[2]
-                if arr:
-                    self._visC = arr[0][11] < 0.5
-                del arr
-            except IndexError:
-                self._visC = None
-            except Exception as e:
-                self.__class_logger.log("[THREAD visC][ERR] --> {0}".format(e), 4)
-                break
-            sleep(sample_delay + 0.01)
-
-    def __black_color_detected_right(self, sample_delay):
-        self._visR = None
-        _id = self.__sim.id()
-        while True:
-            try:
-                arr = sim.simxReadVisionSensor(_id, self.__right_vision_handler, simx_opmode_buffer)[2]
-                if arr:
-                    self._visR = arr[0][11] < 0.5
-                del arr
-            except IndexError:
-                self._visR = None
-            except Exception as e:
-                self.__class_logger.log("[THREAD visR][ERR] --> {0}".format(e), 4)
-                break
-            sleep(sample_delay + 0.01)
 
     def __get_orientation(self, sample_delay):
         self._orientation = None
@@ -374,11 +289,12 @@ class PhysicalBody:
             try:
                 self._orientation = \
                     sim.simxGetObjectOrientation(_id, self.__robot_handler, self.__parent_handler,
-                                                 simx_opmode_buffer)[1][2]
+                                                 simx_opmode_oneshot_wait)[1][2]
             except Exception as e:
                 self.__class_logger.log("[THREAD orientation][ERR] --> {0}".format(e), 4)
                 break
-            sleep(sample_delay)
+            if sample_delay > 0:
+                sleep(sample_delay)
 
     def get_proxF(self) -> float | None:
         """return last thread's sampled value of proximity sensor in front"""
@@ -396,17 +312,9 @@ class PhysicalBody:
         """return last thread's sampled value of proximity sensor in back"""
         return self._proxB
 
-    def get_visL(self) -> bool:
-        """return last thread's sampled value of vision sensor in left (black line)"""
-        return self._visL
-
-    def get_visC(self) -> bool:
-        """return last thread's sampled value of vision sensor in centre (black line)"""
-        return self._visC
-
-    def get_visR(self) -> bool:
-        """return last thread's sampled value of vision sensor in right (black line)"""
-        return self._visR
+    def get_gate(self) -> float | None:
+        """return last thread's sampled value of proximity sensor in back"""
+        return True if self._gate is not None else False
 
     def get_orientation(self) -> float | None:
         """return last thread's sampled value of robot Z axis (radiant)"""

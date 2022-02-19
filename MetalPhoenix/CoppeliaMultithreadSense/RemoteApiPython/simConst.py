@@ -749,7 +749,7 @@ simx_opmode_streaming            =0x020000 # sends command as one chunk. Command
                                                       #(every x ms (as far as possible) where x can be 0-65535. just add x to opmode_continuous). 
                                                       # A reply will be sent continuously each time as one chunk. Doesn't wait for the reply. 
 
-# Operation modes for heavy data 
+# Operation modes for heavy data 5
 simx_opmode_oneshot_split        =0x030000   # sends command as several chunks (max chunk size is x bytes where x can be _MIN_SPLIT_AMOUNT_IN_BYTES-65535. Just add x to opmode_oneshot_split). Reply will also come as several chunks. Doesn't wait for the reply.      
 simx_opmode_continuous_split    =0x040000
 simx_opmode_streaming_split    =0x040000    # sends command as several chunks (max chunk size is x bytes where x can be _MIN_SPLIT_AMOUNT_IN_BYTES-65535. Just add x to opmode_continuous_split). Command will be stored on the server and always executed. A reply will be sent continuously each time as several chunks. Doesn't wait for the reply. 

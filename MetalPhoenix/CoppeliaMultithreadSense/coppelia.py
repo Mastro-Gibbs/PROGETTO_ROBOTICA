@@ -44,7 +44,7 @@ class SimConnection:
         sim.simxStopSimulation(self.__id, simx_opmode_oneshot_wait)
 
     def get_object_handle(self, name: str) -> int | None:
-        code, handle = sim.simxGetObjectHandle(self.__id, name, simx_opmode_blocking)
+        code, handle = sim.simxGetObjectHandle(self.__id, name, simx_opmode_oneshot_wait)
         if code == simx_return_ok:
             return handle
         else:

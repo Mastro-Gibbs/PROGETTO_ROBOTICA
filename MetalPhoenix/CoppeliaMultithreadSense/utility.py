@@ -55,7 +55,7 @@ def short_way(init_g: float, final_g: float) -> bool:
         return False  # to left
 
 
-def detect_target(begin: float) -> float:
+def detect_target(begin: float) -> float | None:
     """
     Detect nearest angle [0, 90, -90, 180] from 'begin' aka current angle.
 
@@ -65,6 +65,9 @@ def detect_target(begin: float) -> float:
 
     #RETURN: float. Nearest angle.
     """
+    if begin is None:
+        return None
+
     if -45.0 < begin <= 45.0:
         target = Compass.EST
     elif 45.0 < begin <= 135.0:

@@ -1,7 +1,7 @@
 from time import sleep, time
 
 from physical_body import PhysicalBody, ThreadType
-from utility import short_way, detect_target, StdoutLogger, Compass, Stack
+from utility import short_way, detect_target, StdoutLogger, Compass, Stack, normalize_compass
 
 
 class Controller:
@@ -12,11 +12,12 @@ class Controller:
         self.stack = Stack()
 
         self._speed = 8
-        self._rot_speed = 10
+        self._rot_speed = 2.5
 
+        """
         # GET ROBOT INIT ORIENTATION, WAKE UP ORIENTATION THREAD
         self.body.thread_begin(ThreadType.th_orientation)
-
+            
         self._start_orientation = None
         while self._start_orientation is None:
             self._start_orientation = self.body.get_orientation_deg()
@@ -24,12 +25,12 @@ class Controller:
 
         self.__class_logger.log("Start orientation: {0} degrees".format(self._start_orientation), -1)
 
-        if not self.align_robot(target=Compass.NORD):
+        if not self.align_robot(target=Compass.OVEST):
             self.__class_logger.log("Alignment fail!", 4)
 
         self.body.thread_kill(ThreadType.th_orientation)
-
-        sleep(5)
+        """
+        sleep(1)
 
     def align_robot(self, target: None | float = None, timeout: float = 5.5) -> bool:
         """Align robot to target.
@@ -78,34 +79,8 @@ class Controller:
         self.body.stop()
         return True
 
+    def expire(self):
+        self.body.safe_exit()
+
     def algorithm(self):
         pass
-
-    def __go_on(self):
-        _front = None
-        _left = None
-        _right = None
-        _ori = None
-        _normalized_ori = None
-
-        self.body.thread_begin(ThreadType.th_proxF)
-        self.body.thread_begin(ThreadType.th_proxL)
-        self.body.thread_begin(ThreadType.th_proxR)
-        self.body.thread_begin(ThreadType.th_orientation)
-
-        while _front is None or _front > 0.15:
-            _front = self.body.get_proxF()
-            _left = self.body.get_proxL()
-            _right = self.body.get_proxR()
-            _ori = self.body.get_orientation_deg()
-            _normalized_ori = detect_target(_ori)
-
-            if _left > 0.30:
-                self.stack.push()
-
-        self.body.thread_kill(ThreadType.th_proxF)
-        self.body.thread_kill(ThreadType.th_proxL)
-        self.body.thread_kill(ThreadType.th_proxR)
-        self.body.thread_kill(ThreadType.th_orientation)
-
-
