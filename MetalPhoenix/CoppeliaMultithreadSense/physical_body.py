@@ -233,12 +233,12 @@ class PhysicalBody:
             -vel_RR -> right lower wheel
         """
         _id = self.__sim.id()
-        _op_mode = simx_opmode_streaming
+        _op_mode = simx_opmode_oneshot
 
-        sim.simxSetJointTargetVelocity(_id, self.__fl_motor_handler, vel_FL, _op_mode)
-        sim.simxSetJointTargetVelocity(_id, self.__fr_motor_handler, vel_FR, _op_mode)
         sim.simxSetJointTargetVelocity(_id, self.__rl_motor_handler, vel_RL, _op_mode)
+        sim.simxSetJointTargetVelocity(_id, self.__fr_motor_handler, vel_FR, _op_mode)
         sim.simxSetJointTargetVelocity(_id, self.__rr_motor_handler, vel_RR, _op_mode)
+        sim.simxSetJointTargetVelocity(_id, self.__fl_motor_handler, vel_FL, _op_mode)
 
     def __get_distance(self, sample_delay):
         self._proxF = None
@@ -261,18 +261,18 @@ class PhysicalBody:
 
                 _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__left_prox_handler, simx_opmode_oneshot_wait)
                 _val = point[2]
-                self._proxL = _val if 0.001 <= _val <= 0.40 else None
+                self._proxL = _val if 0.01 <= _val <= 0.40 else None
                 del point
 
                 _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__right_prox_handler, simx_opmode_oneshot_wait)
                 _val = point[2]
-                self._proxR = _val if 0.001 <= _val <= 0.40 else None
+                self._proxR = _val if 0.01 <= _val <= 0.40 else None
                 del point
 
                 _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__gate_handler,
                                                                 simx_opmode_oneshot_wait)
                 _val = point[2]
-                self._gate = _val if 0.001 <= _val <= 0.40 else None
+                self._gate = True if 0.25 < _val <= 0.30 or self._gate else False
                 del point
             except Exception as e:
                 self.__class_logger.log("[THREAD prox][ERR] --> {0}".format(e), 4)
@@ -312,9 +312,9 @@ class PhysicalBody:
         """return last thread's sampled value of proximity sensor in back"""
         return self._proxB
 
-    def get_gate(self) -> float | None:
+    def get_gate(self) -> bool:
         """return last thread's sampled value of proximity sensor in back"""
-        return True if self._gate is not None else False
+        return self._gate
 
     def get_orientation(self) -> float | None:
         """return last thread's sampled value of robot Z axis (radiant)"""

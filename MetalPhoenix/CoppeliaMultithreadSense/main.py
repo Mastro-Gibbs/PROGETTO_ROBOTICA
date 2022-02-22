@@ -1,4 +1,4 @@
-"""
+
 from controller import Controller
 
 c = Controller()
@@ -24,3 +24,4 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         pb.safe_exit()
+"""

@@ -55,7 +55,7 @@ def short_way(init_g: float, final_g: float) -> bool:
         return False  # to left
 
 
-def detect_target(begin: float) -> float | None:
+def detect_target(begin: float) -> Compass | None:
     """
     Detect nearest angle [0, 90, -90, 180] from 'begin' aka current angle.
 
@@ -80,7 +80,7 @@ def detect_target(begin: float) -> float | None:
     return target
 
 
-def normalize_compass(curr_pos: float, compass: Compass) -> float:
+def normalize_compass(curr_pos: float, compass: Compass) -> Compass:
     if detect_target(curr_pos) == 0:
         if compass == Compass.EST:
             return Compass.SUD
@@ -98,6 +98,17 @@ def normalize_compass(curr_pos: float, compass: Compass) -> float:
             return Compass.NORD
         elif compass == Compass.OVEST:
             return Compass.SUD
+
+
+def negate_compass(compass: float) -> Compass:
+    if compass == Compass.NORD:
+        return Compass.SUD
+    elif compass == Compass.SUD:
+        return Compass.NORD
+    elif compass == Compass.EST:
+        return Compass.OVEST
+    elif compass == Compass.OVEST:
+        return Compass.EST
 
 
 class StringBuilder:
@@ -177,7 +188,7 @@ class StdoutLogger:
         print(out)
 
 
-class Stack:
+class LIFOStack:
     """Stack class based on list"""
 
     def __init__(self):
@@ -207,4 +218,32 @@ class Stack:
 
     def erase(self):
         self.stack.clear()
+        self.index = -1
+
+
+class FIFOStack:
+    """Stack class based on list"""
+
+    def __init__(self):
+        self.queue = list()
+        self.index = -1
+
+    def push(self, elem: float):
+        self.queue.insert(0, elem)
+        self.index += 1
+
+    def pop(self) -> float:
+        if not self.is_empty():
+            self.index -= 1
+            return self.queue.pop()
+        else:
+            raise IndexError("FIFOStack is empty!")
+
+    def is_empty(self) -> bool:
+        if self.index == -1:
+            return True
+        return False
+
+    def erase(self):
+        self.queue.clear()
         self.index = -1
