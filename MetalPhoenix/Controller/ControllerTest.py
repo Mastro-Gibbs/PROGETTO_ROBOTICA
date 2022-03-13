@@ -10,7 +10,7 @@ import ctypes
 import time
 from math import pi
 
-DEBUG = False
+DEBUG = True
 
 
 class ControllerTest:

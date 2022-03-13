@@ -251,22 +251,22 @@ class PhysicalBody:
             try:
                 _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__front_prox_handler, simx_opmode_oneshot_wait)
                 _val = point[2]
-                self._proxF = _val if 0.01 <= _val <= 0.40 else None
+                self._proxF = _val if 0.03 <= _val <= 0.40 else None
                 del point
 
                 _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__back_prox_handler, simx_opmode_oneshot_wait)
                 _val = point[2]
-                self._proxB = _val if 0.01 <= _val <= 0.40 else None
+                self._proxB = _val if 0.03 <= _val <= 0.40 else None
                 del point
 
                 _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__left_prox_handler, simx_opmode_oneshot_wait)
                 _val = point[2]
-                self._proxL = _val if 0.01 <= _val <= 0.40 else None
+                self._proxL = _val if 0.03 <= _val <= 0.40 else None
                 del point
 
                 _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__right_prox_handler, simx_opmode_oneshot_wait)
                 _val = point[2]
-                self._proxR = _val if 0.01 <= _val <= 0.40 else None
+                self._proxR = _val if 0.03 <= _val <= 0.40 else None
                 del point
 
                 _, _, point, _, _ = sim.simxReadProximitySensor(_id, self.__gate_handler,
@@ -323,6 +323,7 @@ class PhysicalBody:
     def get_orientation_deg(self) -> float | None:
         """return last thread's sampled value of robot Z axis (degrees)"""
         if self._orientation is not None:
-            return self._orientation * 180 / pi
+            ret = self._orientation * 180 / pi
+            return ret if ret > 0.3 or ret < -0.3 else None
         else:
             return None

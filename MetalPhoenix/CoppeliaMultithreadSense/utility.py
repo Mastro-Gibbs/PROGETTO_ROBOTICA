@@ -1,5 +1,7 @@
 from io import StringIO
 from enum import Enum
+from time import time_ns
+
 
 
 class Compass(float, Enum):
@@ -14,16 +16,27 @@ def normalize_angle(ang: float, type_t: int):
     Normalizes any angle in degrees to be in the interval [0.,360.) or
     [-180.,180.).
     """
+    time_t = time_ns() + 250000
     bang = ang
     if type_t == 0:
         while bang < 0.0:
+            if time_t > time_ns():
+                return None
             bang = bang + 360.0
+        time_t = time_ns() + 250000
         while bang >= 360.0:
+            if time_t > time_ns():
+                return None
             bang = bang - 360.0
     else:
         while bang < -180.0:
+            if time_t > time_ns():
+                return None
             bang = bang + 360.0
+        time_t = time_ns() + 250000
         while bang >= 180.0:
+            if time_t > time_ns():
+                return None
             bang = bang - 360.0
     return bang
 
@@ -247,3 +260,12 @@ class FIFOStack:
     def erase(self):
         self.queue.clear()
         self.index = -1
+
+ROUND_DIGITS = 4
+
+def round_v(value):
+    return round(value, ROUND_DIGITS)
+
+class Clockwise(Enum):
+    RIGHT = 0
+    LEFT = 1
