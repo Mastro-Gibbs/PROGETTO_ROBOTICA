@@ -324,6 +324,10 @@ class PhysicalBody:
         """return last thread's sampled value of robot Z axis (degrees)"""
         if self._orientation is not None:
             ret = self._orientation * 180 / pi
-            return ret if ret > 0.3 or ret < -0.3 else None
+            while -180 > ret > 180:
+                print("while")
+                ret = self._orientation * 180 / pi
+            return ret
         else:
+            print("---ORIENTATION NONE---")
             return None

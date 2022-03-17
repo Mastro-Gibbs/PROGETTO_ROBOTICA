@@ -10,7 +10,7 @@ import ctypes
 import time
 from math import pi
 
-DEBUG = True
+DEBUG = False
 
 
 class ControllerTest:
@@ -114,9 +114,12 @@ class ControllerTest:
 
         while not stop:
             curr_g = self.pb.get_orientation_degrees()[2]
+            print("curr_g: ", curr_g)
             if it_is_rotating:
-                performed_deg = self.compute_performed_degrees(c, prev_g, curr_g) + performed_deg
-            prev_g = curr_g
+                performed_deg_temp = self.compute_performed_degrees(c, init_g, curr_g)
+                if performed_deg_temp > 180:
+                    continue
+                performed_deg = performed_deg_temp
             debug.concat(f"[init_g, curr_g, degrees] = [{round_v(init_g)}, {round_v(curr_g)}, {round_v(degrees)}]",
                          end="\n")
             debug.concat(f"[Performed deg, Round] = [{round_v(performed_deg)}, {round_v(int(performed_deg / 360))}]",
@@ -416,7 +419,7 @@ class ControllerTest:
                 self.pb.move_forward(self.curr_speed / 2)
             else:
                 self.pb.move_forward(self.curr_speed)
-            self.balance()
+            # self.balance()
 
     def algorithm(self):
         self.target = 90
@@ -441,6 +444,12 @@ class ControllerTest:
         self.go_forw()
         """
         """
+
+    def algorithm2(self):
+        self.rotate_to_final_g(self.rotation_speed, 180)
+        self.rotate_to_final_g(self.rotation_speed, -90)
+        self.rotate_to_final_g(self.rotation_speed, 0)
+        self.rotate_to_final_g(self.rotation_speed, 90)
 
     def algorithm_(self):
         actions = [1, 180, 1, 90, 1, 180, 1, -90, 1, 180, 1, 90, 1, 0, 1, 90, 1, 0, 1, 90, 1, 180,

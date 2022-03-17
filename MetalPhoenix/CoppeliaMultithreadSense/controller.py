@@ -165,6 +165,9 @@ class Controller:
         """
         self._body.stop()
         init_g = self._body.get_orientation_deg()
+        print("FINAL_G: ", final_g)
+        print("INIT_G: ", init_g)
+        sleep(3)
         degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
         self.__do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
         self._body.stop()
@@ -204,6 +207,7 @@ class Controller:
 
         degrees = abs(degrees)
         init_g = self._body.get_orientation_deg()
+        self.__class_logger.log(f"init_g: {init_g}", 3)
         prev_g = init_g
         performed_deg = 0.0
         delta = 0.8
@@ -212,14 +216,10 @@ class Controller:
 
         while not stop:
             curr_g = self._body.get_orientation_deg()
-            while curr_g is None:
-                curr_g = self._body.get_orientation_deg()
-
+            self.__class_logger.log(f"curr_ggg: {curr_g}", 3)
             if it_is_rotating:
                 performed_deg_temp = self.compute_performed_degrees(c, init_g, curr_g)
-                if performed_deg_temp >= 180:
-                    self.__class_logger.log(f"performed_deg_temp: {performed_deg_temp}", 4)
-                    self.__class_logger.log(f"curr_g: {curr_g}", 3)
+                if performed_deg_temp > 180:
                     continue
                 performed_deg = performed_deg_temp
 
@@ -322,8 +322,7 @@ class Controller:
         # Trasformo gli angoli compresi tra [-180,180] ai corrispondenti angoli tra [0,360]
         init_g_360 = normalize_angle(init_g, 0)
         curr_g_360 = normalize_angle(curr_g, 0)
-        if init_g_360 is None or curr_g_360 is None:
-            return 181 # errore
+
         # Calcolo la differenza
         first_angle = curr_g_360 - init_g_360
         print(first_angle)
