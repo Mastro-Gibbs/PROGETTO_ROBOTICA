@@ -18,6 +18,7 @@ class Controller:
         self._speed = 15
         self._rot_speed = 10
 
+
         self.target = 0
 
     def algorithm(self):
