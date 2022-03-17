@@ -5,9 +5,8 @@ c = Controller()
 
 try:
     c.algorithm()
-    #print(c.compute_performed_degrees(0, 90.2048, 146.9571))
 except KeyboardInterrupt:
-    c.expire()
+    print("EXPIRED")
 
 
 """

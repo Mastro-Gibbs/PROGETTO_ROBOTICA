@@ -1,10 +1,7 @@
-from pycsim import CSim, common
-from RemoteApiPython import sim as s
-from RemoteApiPython import simConst as sc
+from Cestino.pycsim import CSim, common
+from Cestino.RemoteApiPython import simConst as sc, sim as s
 from time import sleep
 from math import pi
-
-from random import random
 
 world = "Robotnik_maze_2"
 robot = "Freenove4wd"

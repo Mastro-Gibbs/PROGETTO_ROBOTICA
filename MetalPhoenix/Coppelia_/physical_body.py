@@ -13,8 +13,6 @@ class PhysicalBody:
 
         -Start connection with coppelia
         -Init sensors
-        -Init threads
-        -Init shared vars
 
         Can catch Coppelia and generals exceptions,
         if connection was made, it will be destroyed
@@ -126,46 +124,38 @@ class PhysicalBody:
         sim.simxSetJointTargetVelocity(_id, self.__fl_motor_handler, vel_FL, _op_mode)
 
     def get_proxF(self) -> float | None:
-        """return last thread's sampled value of proximity sensor in front"""
         _, _, point, _, _ = sim.simxReadProximitySensor(self.__sim.id(), self.__front_prox_handler,
                                                         simx_opmode_oneshot_wait)
         _val = point[2]
         return _val if 0.03 <= _val <= 0.40 else None
 
     def get_proxL(self) -> float | None:
-        """return last thread's sampled value of proximity sensor in left"""
         _, _, point, _, _ = sim.simxReadProximitySensor(self.__sim.id(), self.__left_prox_handler,
                                                         simx_opmode_oneshot_wait)
         _val = point[2]
         return _val if 0.03 <= _val <= 0.40 else None
 
     def get_proxR(self) -> float | None:
-        """return last thread's sampled value of proximity sensor in right"""
         _, _, point, _, _ = sim.simxReadProximitySensor(self.__sim.id(), self.__right_prox_handler,
                                                         simx_opmode_oneshot_wait)
         _val = point[2]
         return _val if 0.03 <= _val <= 0.40 else None
 
     def get_proxB(self) -> float | None:
-        """return last thread's sampled value of proximity sensor in back"""
         _, _, point, _, _ = sim.simxReadProximitySensor(self.__sim.id(), self.__back_prox_handler,
                                                         simx_opmode_oneshot_wait)
         _val = point[2]
         return _val if 0.03 <= _val <= 0.40 else None
 
     def get_gate(self) -> bool:
-        """return last thread's sampled value of proximity sensor in back"""
         _, _, point, _, _ = sim.simxReadProximitySensor(self.__sim.id(), self.__gate_handler,
                                                         simx_opmode_oneshot_wait)
         _val = point[2]
         return True if 0.25 < _val <= 0.30 else False
 
     def get_orientation(self) -> float:
-        """return last thread's sampled value of robot Z axis (radiant)"""
         return sim.simxGetObjectOrientation(self.__sim.id(), self.__robot_handler, self.__parent_handler,
                                             simx_opmode_oneshot_wait)[1][2]
 
     def get_orientation_deg(self) -> float:
-        """return last thread's sampled value of robot Z axis (degrees)"""
-
         return self.get_orientation() * 180 / pi

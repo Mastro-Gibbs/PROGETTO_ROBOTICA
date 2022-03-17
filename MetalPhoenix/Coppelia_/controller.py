@@ -1,10 +1,11 @@
-from time import sleep, time
+from time import sleep
 from math import pi
 from physical_body import PhysicalBody
 from utility import StdoutLogger, Compass, \
-    LIFOStack, FIFOStack, normalize_compass, negate_compass, normalize_angle, round_v, Clockwise
+    LIFOStack, normalize_compass, negate_compass, normalize_angle, round_v, Clockwise
 
-DEBUG = False
+
+OR_MAX_ATTEMPT = 10
 
 
 class Controller:
@@ -13,61 +14,33 @@ class Controller:
 
         self._body = PhysicalBody()
         self._stack = LIFOStack()
-        self._queue = LIFOStack()
 
-        self._speed = 5
-        self._rot_speed = 0.7
+        self._speed = 15
+        self._rot_speed = 10
 
         self.target = 0
 
     def algorithm(self):
-
-        """while True:
+        while True:
             self.__go_on()
             self.target = self._stack.pop()
-            self.rotate_to_final_g(self._rot_speed, self.target)"""
-
-        self.__go_on()
-        self.rotate_to_final_g(self._rot_speed, 90)
-        self.target = 90
-        self.__go_on()
-        self.rotate_to_final_g(self._rot_speed, 180)
-        self.target = 180
-        self.__go_on()
-        self.rotate_to_final_g(self._rot_speed, -90)
-        self.target = -90
-        self.__go_on()
-        self.rotate_to_final_g(self._rot_speed, 180)
-        self.target = 180
-        self.__go_on()
-        self.rotate_to_final_g(self._rot_speed, 90)
-        self.target = 90
-        self.__go_on()
-
-    def algorithm_(self):
-        self.__go_on()
-        while True:
-            self.__think()
-            self.__go_on()
+            self.rotate_to_final_g(self._rot_speed, self.target)
 
     def __go_on(self, _was_insert_l=True, _was_insert_r=True):
         self._body.move_forward(self._speed)
 
         _front = self._body.get_proxF()
 
-        while _front is None or _front > 0.2:
+        while _front is None or _front > 0.22:
             if self._body.get_gate():
                 self.__class_logger.log("!!!FINISH!!!", 0)
                 self._body.stop()
-                self.expire()
                 exit(1)
 
             _front = self._body.get_proxF()
             _right = self._body.get_proxR()
             _left = self._body.get_proxL()
             _ori = self._body.get_orientation_deg()
-
-            # print("LEFT: {0}, RIGHT: {1}, FRONT: {2}, COMPASS: {3}".format(_left, _right, _front, _ori))
 
             if _left is not None:
                 _was_insert_l = False
@@ -85,22 +58,6 @@ class Controller:
 
         self._body.stop()
 
-    def __go_back(self):
-        while not self._queue.is_empty():
-            act = self._queue.pop()
-
-            self._body.stop()
-            self.align_robot(act)
-
-            print(act)
-
-            self._body.move_forward(self._speed)
-
-            _front = self._body.get_proxF()
-
-            while _front is None or _front > 0.23:
-                _front = self._body.get_proxF()
-
     def __think(self):
         _right = self._body.get_proxR()
         _left = self._body.get_proxL()
@@ -111,20 +68,15 @@ class Controller:
             if _left is None:
                 act = self._stack.pop()
                 self._queue.push(negate_compass(act))
-                if not self.align_robot(act):
-                    self.__class_logger.log("ERR", 4)
                 return
 
             if _right is None:
                 act = self._stack.pop()
                 self._queue.push(negate_compass(act))
-                if not self.align_robot(act):
-                    self.__class_logger.log("ERR", 4)
                 return
 
         except IndexError as e:
             self.__class_logger.log("[STACK] empty stack!", 4)
-            self.expire()
             exit(-1)
 
     def rotate_to_final_g(self, vel, final_g):
@@ -132,41 +84,30 @@ class Controller:
            Funzione rotate che permette di far ruotare il robot fino a che non raggiunge final_g
         """
         self._body.stop()
+
         init_g = self._body.get_orientation_deg()
-        print("FINAL_G: ", final_g)
-        print("INIT_G: ", init_g)
-        sleep(3)
         degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
-        self.__do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
+
+        self.__do_rotation(vel=vel, c=c, degrees=degrees, final_g=final_g)
+
         self._body.stop()
 
-    # CONTROLLER
-    def rotate_degrees(self, vel, c: Clockwise, degrees):
-        """
-            Funzione rotate che permette di far ruotare il robot di degrees gradi
-        """
-        self._body.stop()
-        init_g = self._body.get_orientation_deg()
-        final_g = self.compute_final_g(c, init_g, degrees)
-        self.__do_rotation(vel=vel, c=c, degrees=abs(degrees), final_g=final_g)
-        self._body.stop()
-
-    # CONTROLLER
     def __do_rotation(self, vel, c: Clockwise, degrees, final_g):
-        self._body.stop()
         degrees = abs(degrees)
-        print("final_g: ", round_v(final_g))
-        if DEBUG:
-            sleep(5)
+
+        self._body.stop()
         self.__rotate(vel, c, degrees)
+
         ok, curr_g, limit_range = self.check_orientation(final_g)
+
         if not ok:
             ok, it = self.adjust_orientation(final_g)
-        if not ok:
-            print("ERROR")
-            exit()
 
-    # CONTROLLER
+        if it == OR_MAX_ATTEMPT:  # porca vacca!
+            print("ERROR")
+            #  DA GESTIRE MEGLIO
+            exit(-1)
+
     def __rotate(self, vel, c: Clockwise, degrees):
         """
         Function that given vel, Clockwise and rotation degrees computes
@@ -174,54 +115,40 @@ class Controller:
         """
         degrees = abs(degrees)
         init_g = self._body.get_orientation_deg()
-        self.__class_logger.log(f"init_g: {init_g}", 3)
-        performed_deg = 0.0
+
         delta = 0.8
         stop = False
-        it_is_rotating = False
+        archived = False
+        performed_deg = 0.0
 
         while not stop:
             curr_g = self._body.get_orientation_deg()
-            self.__class_logger.log(f"curr_g: {curr_g}", 3)
-            if it_is_rotating:
-                performed_deg_temp = self.compute_performed_degrees(c, init_g, curr_g)
-                if performed_deg_temp > 180:
-                    continue
-                performed_deg = performed_deg_temp
-
-            self.__class_logger.log(
-                f"[init_g, curr_g, degrees] = [{round_v(init_g)}, {round_v(curr_g)}, {round_v(degrees)}]")
-            self.__class_logger.log(
-                f"[Performed deg, Round] = [{round_v(performed_deg)}, {round_v(int(performed_deg / 360))}]")
-
-            if degrees - delta < performed_deg < degrees + delta:
-                self._body.stop()
-                it_is_rotating = False
-                self.__class_logger.log("Maybe the orientation is correct ...")
-                achieved = True
-                return achieved, init_g, performed_deg, degrees
-
-            if performed_deg > degrees + delta:
-                self._body.stop()
-                it_is_rotating = False
-                self.__class_logger.log("Error: performed degrees exceeded the target")
-                achieved = False  # error, serve il check dell'orientation
-                return achieved, init_g, performed_deg, degrees
 
             if c == Clockwise.RIGHT:
                 self._body.turn(vel, -vel)
-                it_is_rotating = True
             elif c == Clockwise.LEFT:
                 self._body.turn(-vel, vel)
-                it_is_rotating = True
 
-    # CONTROLLER
+            performed_deg_temp = self.compute_performed_degrees(c, init_g, curr_g)
+            if performed_deg_temp > 180:
+                continue
+            performed_deg = performed_deg_temp
+
+            if degrees - delta < performed_deg < degrees + delta:
+                archived = True
+                stop = True
+            elif performed_deg > degrees + delta:
+                archived = False
+                stop = True
+
+        self._body.stop()
+        return archived, init_g, performed_deg, degrees
+
     def check_orientation(self, final_g, delta=2):
-
         self.__class_logger.log("Checking if the orientation is correct ...")
 
         curr_g = self._body.get_orientation_deg()
-        # delta = 2
+
         ok = False
         if abs(final_g) + delta > 180:
             limit_g_dx = 180 - delta
@@ -246,52 +173,42 @@ class Controller:
         limit_range = [limit_g_sx, limit_g_dx]
         return ok, curr_g, limit_range
 
-    # CONTROLLER
     def adjust_orientation(self, final_g):
         self._body.stop()
+
         ok = False
         it = 0
-        max_attempts = 10
-        while not ok and it < max_attempts:
+
+        while not ok and it < OR_MAX_ATTEMPT:
             curr_g = self._body.get_orientation_deg()
+
             degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
-            print(f"Adjusting orientation, attempts: {it + 1} / {max_attempts}")
-            print(f"[Degrees_to_do, curr_g, final_g] = [{round_v(degrees)}, {round_v(curr_g)}, {round_v(final_g)}]")
-            if DEBUG:
-                sleep(8)
+
+            self.__class_logger.log(f"Adjusting orientation, attempts: {it + 1} / {OR_MAX_ATTEMPT}", 2)
+            self.__class_logger.log(f"[Degrees_to_do, curr_g, final_g] = [{round_v(degrees)}, {round_v(curr_g)}, {round_v(final_g)}]", 2)
+
             if abs(degrees) < 6:
                 self.__rotate(0.25, c, abs(degrees))
             else:
                 self.__rotate(45 * pi / 180, c, abs(degrees))
+
             ok, curr_g, limit_range = self.check_orientation(final_g)
             it += 1
-        return ok, it
 
-    # CONTROLLER
-    def compute_final_g(self, c: Clockwise, init_g, degrees):
-        print("Computing final_g ...")
-        if c == Clockwise.RIGHT:
-            degrees = -1 * degrees
-        init_g_360 = normalize_angle(init_g, 0)
-        final_g_360 = init_g_360 + degrees
-        final_g = normalize_angle(final_g_360, 1)
-        print(f"[init_g, final_g, degrees, clockwise] = [{round_v(init_g)}, {round_v(final_g)}, {abs(degrees)}, {c}]")
-        return final_g
+        return ok, it
 
     def compute_performed_degrees(self, c, init_g, curr_g):
         """Calcola l'angolo tra init_g e curr_g che il robot ha eseguito in base al senso di rotazione"""
 
         if init_g == curr_g:
             return 0
-        # Trasformo gli angoli compresi tra [-180,180] ai corrispondenti angoli tra [0,360]
+
         init_g_360 = normalize_angle(init_g, 0)
         curr_g_360 = normalize_angle(curr_g, 0)
 
-        # Calcolo la differenza
         first_angle = curr_g_360 - init_g_360
-        print(first_angle)
         second_angle = -1 * first_angle / abs(first_angle) * (360 - abs(first_angle))
-        print(second_angle)
+
         if c == Clockwise.RIGHT:
             if first_angle < 0:
                 performed_degrees = abs(first_angle)
@@ -304,20 +221,20 @@ class Controller:
                 performed_degrees = abs(second_angle)
         return performed_degrees
 
-    # CONTROLLER
     def best_angle_and_rotation_way(self, init_g, final_g):
         """Calcola l'angolo migliore (minimo) tra init_g e final_g e il modo in cui bisogna ruotare"""
+
         if init_g == final_g:
             return 0
 
-        # Trasformo gli angoli compresi tra [-180,180] ai corrispondenti angoli tra [0,360]
         init_g_360 = normalize_angle(init_g, 0)
         final_g_360 = normalize_angle(final_g, 0)
-        # Calcolo la differenza
+
         first_angle = final_g_360 - init_g_360
-        # Calcolo l'angolo più piccolo
+
         second_angle = -1 * first_angle / abs(first_angle) * (360 - abs(first_angle))
         smallest = first_angle
+
         if abs(first_angle) > 180:
             smallest = second_angle
 

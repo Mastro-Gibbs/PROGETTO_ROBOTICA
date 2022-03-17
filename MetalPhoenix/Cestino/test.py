@@ -1,7 +1,6 @@
-from RemoteApiPython import simConst as sc
-from RemoteApiPython import sim as s
+from Cestino.RemoteApiPython import sim as s
 from time import sleep
-from pycsim import CSim, common
+from Cestino.pycsim import CSim, common
 #
 # clientID = s.simxStart(
 #     connectionAddress="127.0.0.1",
