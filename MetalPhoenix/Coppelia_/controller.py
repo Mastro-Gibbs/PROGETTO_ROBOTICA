@@ -18,7 +18,6 @@ class Controller:
         self._speed = 15
         self._rot_speed = 10
 
-
         self.target = 0
 
     def algorithm(self):
@@ -81,9 +80,7 @@ class Controller:
             exit(-1)
 
     def rotate_to_final_g(self, vel, final_g):
-        """
-           Funzione rotate che permette di far ruotare il robot fino a che non raggiunge final_g
-        """
+        """Rotate function that rotates the robot until it reaches final_g"""
         self._body.stop()
 
         init_g = self._body.get_orientation_deg()
@@ -199,7 +196,7 @@ class Controller:
         return ok, it
 
     def compute_performed_degrees(self, c, init_g, curr_g):
-        """Calcola l'angolo tra init_g e curr_g che il robot ha eseguito in base al senso di rotazione"""
+        """Calculates the angle between init_g and curr_g that the robot performed based on the direction of rotation"""
 
         if init_g == curr_g:
             return 0
@@ -223,7 +220,7 @@ class Controller:
         return performed_degrees
 
     def best_angle_and_rotation_way(self, init_g, final_g):
-        """Calcola l'angolo migliore (minimo) tra init_g e final_g e il modo in cui bisogna ruotare"""
+        """Calculate the best (minimum) angle between init_g and final_g and how you need to rotate"""
 
         if init_g == final_g:
             return 0
@@ -240,10 +237,10 @@ class Controller:
             smallest = second_angle
 
         if smallest < 0:
-            self.__class_logger.log(f"Ruotare in senso orario (RIGHT) di {abs(round_v(smallest))} gradi")
+            self.__class_logger.log(f"Rotate clockwise (RIGHT) of {abs(round_v(smallest))} degrees")
             c = Clockwise.RIGHT
         else:
-            self.__class_logger.log(f"Ruotare in senso antirario (LEFT) di {abs(round_v(smallest))} gradi")
+            self.__class_logger.log(f"Rotate anit-clockwise (LEFT) of {abs(round_v(smallest))} degrees")
             c = Clockwise.LEFT
 
         return smallest, c
