@@ -26,7 +26,10 @@ class Controller:
             self.target = self._stack.pop()
             self.rotate_to_final_g(self._rot_speed, self.target)
 
-    def __go_on(self, _was_insert_l=True, _was_insert_r=True):
+    def __go_on(self):
+        _was_insert_l = True
+        _was_insert_r = True
+
         self._body.move_forward(self._speed)
 
         _front = self._body.get_proxF()
@@ -42,17 +45,17 @@ class Controller:
             _left = self._body.get_proxL()
             _ori = self._body.get_orientation_deg()
 
-            if _left is not None:
+            if _left is not None:  # there is a wall
                 _was_insert_l = False
 
-            if _right is not None:
+            if _right is not None:  # there is a wall
                 _was_insert_r = False
 
-            if _left is None and not _was_insert_l:
+            if _left is None and not _was_insert_l:  # there is a gate
                 self._stack.push(normalize_compass(_ori, Compass.OVEST))
                 _was_insert_l = True
 
-            if _right is None and not _was_insert_r:
+            if _right is None and not _was_insert_r:  # there is a gate
                 self._stack.push(normalize_compass(_ori, Compass.EST))
                 _was_insert_r = True
 
