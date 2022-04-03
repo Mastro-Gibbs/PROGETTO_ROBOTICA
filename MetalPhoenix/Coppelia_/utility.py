@@ -53,20 +53,20 @@ def detect_target(begin: float) -> Compass | None:
     return target
 
 
-def normalize_compass(curr_pos: float, compass: Compass) -> Compass:
-    if detect_target(curr_pos) == 0:
+def normalize_compass(curr_ori: float, compass: Compass) -> Compass:
+    if detect_target(curr_ori) == 0:
         if compass == Compass.EST:
             return Compass.SUD
         elif compass == Compass.OVEST:
             return Compass.NORD
-    elif detect_target(curr_pos) == 90:
+    elif detect_target(curr_ori) == 90:
         return compass
-    elif detect_target(curr_pos) == -90:
+    elif detect_target(curr_ori) == -90:
         if compass == Compass.EST:
             return Compass.OVEST
         elif compass == Compass.OVEST:
             return Compass.EST
-    elif detect_target(curr_pos) == 180:
+    elif detect_target(curr_ori) == 180:
         if compass == Compass.EST:
             return Compass.NORD
         elif compass == Compass.OVEST:

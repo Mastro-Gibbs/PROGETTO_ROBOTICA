@@ -2,10 +2,11 @@ from time import sleep
 from math import pi
 from physical_body import PhysicalBody
 from utility import StdoutLogger, Compass, \
-    LIFOStack, normalize_compass, negate_compass, normalize_angle, round_v, Clockwise
+    LIFOStack, normalize_compass, negate_compass, normalize_angle, round_v, Clockwise, detect_target
 from tree import Tree, Node, WAY
 
 OR_MAX_ATTEMPT = 10
+SAFE_DISTANCE = 0.22 # aka 22cm
 
 NODE_ID = "n"
 NODE_COUNT = 0
@@ -54,58 +55,60 @@ class Controller:
             self.target = self._stack.pop()
             self.rotate_to_final_g(self._rot_speed, self.target)"""
 
+    def control_policy(self, ori: float, sensors: list) -> list:
+        actions = list()
+
+        left = sensors[0]
+        front = sensors[1]
+        right = sensors[2]
+
+        if left is None:
+            actions.append(normalize_compass(ori, Compass.OVEST))
+
+        if front is None:
+            actions.append(normalize_compass(ori, Compass.NORD))
+
+        if right is None:
+            actions.append(normalize_compass(ori, Compass.EST))
+
+        return actions
+
+    def decision_making_policy(self, actions: list) -> Compass | None:
+        for i in self.priority_list:   # [ S, N, O, E ]
+            for j in actions:          # [ E, O, N ]
+                if j == i:
+                    return i
+
+        return None
+
+
     def __go_on(self):
-        _was_insert_l = True
-        _was_insert_r = True
+        """
+
+        1# Muoviti fintantoché non trovi un muro frontale o un path da seguire in base alle funzioni di decisione
+
+        2# Se trovi un bivio, inserisci il nuovo nodo e gli svincoli come figli del nodo, marcando quelli
+            non scelti dall'algoritmo di decisione come non visitati
+
+        """
+        changing_path = False
 
         self._body.move_forward(self._speed)
 
         _front = self._body.get_proxF()
+        _right = self._body.get_proxR()
+        _left = self._body.get_proxL()
         _ori = self._body.get_orientation_deg()
 
-        while _front is None or _front > 0.22:
-            if self._body.get_gate():
-                n = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.NORD))
-                self.tree.append(_n=n, _way=WAY.LEFT)
-                self.__class_logger.log("!!!FINISH!!!", 0)
-                self._body.stop()
-                exit(1)
-
+        while (_front is None or _front > SAFE_DISTANCE) and not changing_path:
             _front = self._body.get_proxF()
             _right = self._body.get_proxR()
             _left = self._body.get_proxL()
             _ori = self._body.get_orientation_deg()
 
-            if _left is not None:  # there is a wall
-                _was_insert_l = False
 
-            if _right is not None:  # there is a wall
-                _was_insert_r = False
 
-            if _left is None and not _was_insert_l:  # there is a gate
-                n = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.OVEST))
-                self.tree.append(_n=n, _way=WAY.LEFT)
 
-                """if _front > 0.30 or _front is None:
-                    n1 = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.NORD))
-                    self.tree.append(_n=n1, _way=WAY.MID)"""
-
-                _was_insert_l = True
-
-            if _right is None and not _was_insert_r:  # there is a gate
-                if _was_insert_l:
-                    self.tree.regress()
-
-                n = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.EST))
-                self.tree.append(_n=n, _way=WAY.RIGHT)
-
-                """if _front > 0.30 or _front is None:
-                    n1 = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.NORD))
-                    self.tree.append(_n=n1, _way=WAY.MID)"""
-
-                _was_insert_r = True
-
-        self._body.stop()
 
     def verify_gate(self, c: Compass) -> bool:
         global OR_MAX_ATTEMPT
@@ -326,3 +329,61 @@ class Controller:
             c = Clockwise.LEFT
 
         return smallest, c
+
+
+
+
+
+        """
+        _was_insert_l = True
+        _was_insert_r = True
+
+        self._body.move_forward(self._speed)
+
+        _front = self._body.get_proxF()
+        _ori = self._body.get_orientation_deg()
+
+        while _front is None or _front > 0.22:
+            if self._body.get_gate():
+                n = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.NORD))
+                self.tree.append(_n=n, _way=WAY.LEFT)
+                self.__class_logger.log("!!!FINISH!!!", 0)
+                self._body.stop()
+                exit(1)
+
+            _front = self._body.get_proxF()
+            _right = self._body.get_proxR()
+            _left = self._body.get_proxL()
+            _ori = self._body.get_orientation_deg()
+
+            if _left is not None:  # there is a wall
+                _was_insert_l = False
+
+            if _right is not None:  # there is a wall
+                _was_insert_r = False
+
+            if _left is None and not _was_insert_l:  # there is a gate
+                n = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.OVEST))
+                self.tree.append(_n=n, _way=WAY.LEFT)
+
+                if _front > 0.30 or _front is None:
+                    n1 = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.NORD))
+                    self.tree.append(_n=n1, _way=WAY.MID)
+
+                _was_insert_l = True
+
+            if _right is None and not _was_insert_r:  # there is a gate
+                if _was_insert_l:
+                    self.tree.regress()
+
+                n = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.EST))
+                self.tree.append(_n=n, _way=WAY.RIGHT)
+
+                if _front > 0.30 or _front is None:
+                    n1 = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.NORD))
+                    self.tree.append(_n=n1, _way=WAY.MID)
+
+                _was_insert_r = True
+
+        self._body.stop()
+"""
