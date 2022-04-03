@@ -6,6 +6,7 @@ c = Controller()
 try:
     c.algorithm()
 except KeyboardInterrupt:
+    print(c.tree.build_tree_dict())
     print("EXPIRED")
 
 

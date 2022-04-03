@@ -18,6 +18,7 @@ class Node:
         self.__action = action
         self.__dead_end: bool = False
         self.__final: bool = False
+        self.__explored: bool = False
 
         self.parent = None
         self.left = None
@@ -54,6 +55,9 @@ class Node:
     def set_dead_end(self, _val: bool = True):
         self.__dead_end = _val
 
+    def set_explored(self, _val: bool = True):
+        self.__explored = _val
+
     def get_properties(self):
         return self.__name, self.__action, self.__dead_end, self.__final
 
@@ -78,6 +82,10 @@ class Node:
         return self.__name
 
     @property
+    def action(self) -> Compass:
+        return self.__action
+
+    @property
     def is_final(self) -> bool:
         return self.__final
 
@@ -85,12 +93,16 @@ class Node:
     def is_dead_end(self) -> bool:
         return self.__dead_end
 
+    @property
+    def is_explored(self) -> bool:
+        return self.__explored
+
 
 class Tree:
     def __init__(self):
         self.__root: Node = Node(name="root")
         self.__current: Node = self.__root
-        self.T = {self.__root.name: {}}
+        self.__T = {self.__root.name: {}}
 
     def append(self, _n: Node, _way: WAY):
         if _way == WAY.LEFT:
@@ -129,9 +141,9 @@ class Tree:
     def build_tree_dict(self):
         if self.__root is None:
             return None
-        self.T = {self.__root.name: {}}
+        self.__T = {self.__root.name: {}}
         self.__DFSRec_T(self.__root)
-        return self.T
+        return self.__T
 
     def __DFSRec(self, node, level):
         if node is None:
@@ -148,14 +160,14 @@ class Tree:
             return
         # print(node, level)
 
-        if node.name not in self.T:
-            self.T[node.name] = {}
+        if node.name not in self.__T:
+            self.__T[node.name] = {}
         if node.left is not None:
-            self.T[node.name][node.left.name] = 1
+            self.__T[node.name][node.left.name] = 1
         if node.mid is not None:
-            self.T[node.name][node.mid.name] = 1
+            self.__T[node.name][node.mid.name] = 1
         if node.right is not None:
-            self.T[node.name][node.right.name] = 1
+            self.__T[node.name][node.right.name] = 1
 
         self.__DFSRec_T(node.left, level + 1)
         self.__DFSRec_T(node.mid, level + 1)

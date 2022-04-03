@@ -3,9 +3,18 @@ from math import pi
 from physical_body import PhysicalBody
 from utility import StdoutLogger, Compass, \
     LIFOStack, normalize_compass, negate_compass, normalize_angle, round_v, Clockwise
-
+from tree import Tree, Node, WAY
 
 OR_MAX_ATTEMPT = 10
+
+NODE_ID = "n"
+NODE_COUNT = 0
+
+
+def generate_node_id() -> str:
+    global NODE_COUNT
+    NODE_COUNT += 1
+    return NODE_ID + str(NODE_COUNT)
 
 
 class Controller:
@@ -13,18 +22,37 @@ class Controller:
         self.__class_logger = StdoutLogger(class_name="Controller", color="cyan")
 
         self._body = PhysicalBody()
-        self._stack = LIFOStack()
 
-        self._speed = 15
-        self._rot_speed = 10
+        """
+        self._stack = LIFOStack()
+        """
+
+        self._speed = 5
+        self._rot_speed = 2.5
 
         self.target = 0
+
+        self.priority_list = [Compass.SUD, Compass.NORD, Compass.OVEST, Compass.EST]
+        self.trajectory = list()
+        self.tree = Tree()
 
     def algorithm(self):
         while True:
             self.__go_on()
-            self.target = self._stack.pop()
+            self.target = self.tree.current.action
             self.rotate_to_final_g(self._rot_speed, self.target)
+
+
+        # va avanti
+        # se trova uno svincolo si ferma
+        # update/append nodes into tree
+        # ***PENSA E DECIDE***
+        # agisce
+
+        """while True:
+            self.__go_on()
+            self.target = self._stack.pop()
+            self.rotate_to_final_g(self._rot_speed, self.target)"""
 
     def __go_on(self):
         _was_insert_l = True
@@ -33,9 +61,12 @@ class Controller:
         self._body.move_forward(self._speed)
 
         _front = self._body.get_proxF()
+        _ori = self._body.get_orientation_deg()
 
         while _front is None or _front > 0.22:
             if self._body.get_gate():
+                n = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.NORD))
+                self.tree.append(_n=n, _way=WAY.LEFT)
                 self.__class_logger.log("!!!FINISH!!!", 0)
                 self._body.stop()
                 exit(1)
@@ -52,15 +83,61 @@ class Controller:
                 _was_insert_r = False
 
             if _left is None and not _was_insert_l:  # there is a gate
-                self._stack.push(normalize_compass(_ori, Compass.OVEST))
+                n = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.OVEST))
+                self.tree.append(_n=n, _way=WAY.LEFT)
+
+                """if _front > 0.30 or _front is None:
+                    n1 = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.NORD))
+                    self.tree.append(_n=n1, _way=WAY.MID)"""
+
                 _was_insert_l = True
 
             if _right is None and not _was_insert_r:  # there is a gate
-                self._stack.push(normalize_compass(_ori, Compass.EST))
+                if _was_insert_l:
+                    self.tree.regress()
+
+                n = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.EST))
+                self.tree.append(_n=n, _way=WAY.RIGHT)
+
+                """if _front > 0.30 or _front is None:
+                    n1 = Node(name=generate_node_id(), action=normalize_compass(_ori, Compass.NORD))
+                    self.tree.append(_n=n1, _way=WAY.MID)"""
+
                 _was_insert_r = True
 
         self._body.stop()
 
+    def verify_gate(self, c: Compass) -> bool:
+        global OR_MAX_ATTEMPT
+
+        it = 0
+        _gate: bool = False
+
+        _sens = 0.0
+        _not_none_counter = 0
+
+        if c == Compass.OVEST:
+            _sens = self._body.get_proxL()
+        elif c == Compass.EST:
+            _sens = self._body.get_proxR()
+
+        while it < OR_MAX_ATTEMPT:
+            it += 1
+            if _sens is None:
+                _gate = True
+                if c == Compass.OVEST:
+                    _sens = self._body.get_proxL()
+                elif c == Compass.EST:
+                    _sens = self._body.get_proxR()
+            else:
+                _gate = False
+                _not_none_counter += 1
+                if _not_none_counter == 2:
+                    break
+
+        return _gate
+
+    """
     def __think(self):
         _right = self._body.get_proxR()
         _left = self._body.get_proxL()
@@ -80,7 +157,7 @@ class Controller:
 
         except IndexError as e:
             self.__class_logger.log("[STACK] empty stack!", 4)
-            exit(-1)
+            exit(-1)"""
 
     def rotate_to_final_g(self, vel, final_g):
         """Rotate function that rotates the robot until it reaches final_g"""
@@ -95,6 +172,7 @@ class Controller:
 
     def __do_rotation(self, vel, c: Clockwise, degrees, final_g):
         degrees = abs(degrees)
+        it = 0
 
         self._body.stop()
         self.__rotate(vel, c, degrees)
@@ -186,7 +264,8 @@ class Controller:
             degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
 
             self.__class_logger.log(f"Adjusting orientation, attempts: {it + 1} / {OR_MAX_ATTEMPT}", 2)
-            self.__class_logger.log(f"[Degrees_to_do, curr_g, final_g] = [{round_v(degrees)}, {round_v(curr_g)}, {round_v(final_g)}]", 2)
+            self.__class_logger.log(
+                f"[Degrees_to_do, curr_g, final_g] = [{round_v(degrees)}, {round_v(curr_g)}, {round_v(final_g)}]", 2)
 
             if abs(degrees) < 6:
                 self.__rotate(0.25, c, abs(degrees))
