@@ -9,6 +9,18 @@ class Compass(float, Enum):
     OVEST = 180.0
 
 
+class Clockwise(Enum):
+    RIGHT = 0
+    LEFT = 1
+
+
+ROUND_DIGITS = 4
+
+
+def round_v(value):
+    return round(value, ROUND_DIGITS)
+
+
 def normalize_angle(ang: float, type_t: int):
     """
     Normalizes any angle in degrees to be in the interval [0.,360.) or
@@ -71,6 +83,18 @@ def normalize_compass(curr_ori: float, compass: Compass) -> Compass:
             return Compass.NORD
         elif compass == Compass.OVEST:
             return Compass.SUD
+
+
+# Front Right Left Back to compass
+def f_r_l_b_to_compass(curr_ori: float) -> {}:
+    if detect_target(curr_ori) == 0:  # Muso robot ad EST
+        return {"FRONT": Compass.EST, "RIGHT": Compass.SUD, "LEFT": Compass.NORD, "BACK": Compass.OVEST}
+    elif detect_target(curr_ori) == 90:  # Muso robot a NORD
+        return {"FRONT": Compass.NORD, "RIGHT": Compass.EST, "LEFT": Compass.OVEST, "BACK": Compass.SUD}
+    elif detect_target(curr_ori) == 180:  # Muso robot ad OVEST
+        return {"FRONT": Compass.OVEST, "RIGHT": Compass.NORD, "LEFT": Compass.SUD, "BACK": Compass.EST}
+    else:  # -90
+        return {"FRONT": Compass.SUD, "RIGHT": Compass.OVEST, "LEFT": Compass.EST, "BACK": Compass.NORD}
 
 
 def negate_compass(compass: float) -> Compass:
@@ -220,15 +244,3 @@ class FIFOStack:
     def erase(self):
         self.queue.clear()
         self.index = -1
-
-
-ROUND_DIGITS = 4
-
-
-def round_v(value):
-    return round(value, ROUND_DIGITS)
-
-
-class Clockwise(Enum):
-    RIGHT = 0
-    LEFT = 1
