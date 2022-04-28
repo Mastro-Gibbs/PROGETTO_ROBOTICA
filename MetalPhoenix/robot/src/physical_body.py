@@ -3,7 +3,7 @@ from math import pi
 from tools.coppeliaAPI.simConst import *
 import tools.coppeliaAPI.sim as sim
 from tools.coppelia import *
-from tools.utility import StdoutLogger, CFG
+from tools.utility import Logger, CFG
 
 
 class PhysicalBody:
@@ -18,7 +18,7 @@ class PhysicalBody:
         if connection was made, it will be destroyed
         """
         print()  # \n
-        self.__class_logger = StdoutLogger(class_name="PhysicalBody", color="purple")
+        self.__class_logger = Logger(class_name="PhysicalBody", color="purple")
 
         self.__sim = SimConnection(ip=CFG.physical_data()["IP"], port=CFG.physical_data()["PORT"])
 
@@ -26,7 +26,7 @@ class PhysicalBody:
             self.__sim.begin_connection()
             self.__sim.start_simulation()
 
-            self.__class_logger.log("Coppelia connection started!", italic=True)
+            self.__class_logger.log("Coppelia connection started!\n", italic=True)
 
             # SENSORS
             self.__cam_handler = self.__sim.get_object_handle("/Freenove4wd/robot_cam")
@@ -56,11 +56,11 @@ class PhysicalBody:
                                          simx_opmode_oneshot_wait)
 
         except SimConnectionException as sce:
-            self.__class_logger.log("[ERR] -> {0}".format(sce), 4)
+            self.__class_logger.log("[ERR] -> {0}\n".format(sce), 4)
             exit(-1)
 
         except SimHandleException as she:
-            self.__class_logger.log("[ERR] -> {0}".format(she), 4)
+            self.__class_logger.log("[ERR] -> {0}\n".format(she), 4)
             self.__sim.stop_simulation()
             self.__sim.end_connection()
             exit(-1)

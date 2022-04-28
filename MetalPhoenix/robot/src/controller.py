@@ -3,7 +3,7 @@ from math import pi
 from enum import Enum
 
 from physical_body import PhysicalBody
-from tools.utility import StdoutLogger, Compass, f_r_l_b_to_compass, negate_compass, \
+from tools.utility import Logger, Compass, f_r_l_b_to_compass, negate_compass, \
     normalize_angle, round_v, Clockwise, detect_target, CFG
 
 from tools.tree import Tree, Node, WAY, Type
@@ -68,7 +68,7 @@ Se non ci sono né OBSERVED né EXPLORED allora il nodo successivo è il parent 
 class Controller:
     def __init__(self):
 
-        self.__class_logger = StdoutLogger(class_name="Controller", color="cyan")
+        self.__class_logger = Logger(class_name="Controller", color="cyan")
 
         self._body = PhysicalBody()
 
@@ -123,14 +123,14 @@ class Controller:
             self.front_values.append(self.front_value)
             self.right_values.append(self.right_value)
 
-            print("NEW CYCLE")
+            self.__class_logger.log("!!! NEW ALGORTHM CYCLE !!!", severity=2)
 
             # THINK
             actions = self.control_policy()
 
-            print("MODE", self.mode)
-            print("Current", self.tree.current)
-            print("ACTIONS", actions)
+            self.__class_logger.log(f"--MODE: {self.mode}")
+            self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}")
+            self.__class_logger.log(f"--ACTIONS: {actions}")
 
             # Update tree adding the children if only if the actions are correct (namely the robot is in sensing mode)
             self.update_tree(actions)
@@ -141,11 +141,11 @@ class Controller:
             # Updating tree setting the current node
             self.update_tree(action)
 
-            print(self.tree.build_tree_dict())
-            print("Current", self.tree.current)
-            self.__class_logger.log(f"(STATE, POSITION): ({self._state}, {self._position})")
-            self.__class_logger.log(f"Available actions: {actions}")
-            self.__class_logger.log(f"Performing action: {action}")
+            self.__class_logger.log(f"--CURRENT TREE: {self.tree.build_tree_dict()}")
+            self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}")
+            self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})")
+            self.__class_logger.log(f"--Available actions: {actions}")
+            self.__class_logger.log(f"--Performing action: {action}")
 
             if action is None:
                 exit(-1)

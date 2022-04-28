@@ -1,6 +1,12 @@
 from io import StringIO
 from enum import Enum
 import configparser
+import datetime
+
+
+date = datetime.datetime.now()
+sign = "[" + str(date.year) + "-" + str(date.month) + "-" + str(date.day) + "_" + str(date.hour) \
+        + "_" + str(date.minute) + "_" + str(date.second) + "]"
 
 
 class Compass(float, Enum):
@@ -116,7 +122,7 @@ class StringBuilder:
         return self._file_str.getvalue()
 
 
-class StdoutLogger:
+class Logger:
     """
     Class to menage stdout log colors.
     """
@@ -134,6 +140,10 @@ class StdoutLogger:
         elif color == "cyan":
             self.__class = "\033[96m[{0}]\033[00m".format(class_name)
 
+        self.__class_name = class_name
+
+        self.file = CFG.logger_data()["FILE"] + sign + "." + CFG.logger_data()["EXT"]
+
     def log(self, msg, severity: int = 0, italic: bool = False):
         """Print on stdout he message with selected color.
 
@@ -141,26 +151,34 @@ class StdoutLogger:
                  -> severity: int. [-1 to 4] refer color.
                  -> italic: bool. Italic font
         """
-        out: str = str()
+        with open(self.file, "a") as file:
+            out: str = str()
 
-        if italic:
-            out = "\033[03m"
+            if italic:
+                out = "\033[03m"
 
-        if severity == 4:
-            out = out + "\033[31m{0}\033[00m".format(msg)  # dk red
-        elif severity == 3:
-            out = out + "\033[91m{0}\033[00m".format(msg)  # red
-        elif severity == 2:
-            out = out + "\033[93m{0}\033[00m".format(msg)  # yellow
-        elif severity == 1:
-            out = out + "\033[32m{0}\033[00m".format(msg)  # dk green
-        elif severity == 0:
-            out = out + "\033[92m{0}\033[00m".format(msg)  # green
-        else:
-            out = out + "\033[37m{0}\033[00m".format(msg)  # lite gray
+            if severity == 4:
+                out = out + "\033[31m{0}\033[00m".format(msg)  # dk red
+            elif severity == 3:
+                out = out + "\033[91m{0}\033[00m".format(msg)  # red
+            elif severity == 2:
+                out = out + "\033[93m{0}\033[00m".format(msg)  # yellow
+            elif severity == 1:
+                out = out + "\033[32m{0}\033[00m".format(msg)  # dk green
+            elif severity == 0:
+                out = out + "\033[92m{0}\033[00m".format(msg)  # green
+            else:
+                out = out + "\033[37m{0}\033[00m".format(msg)  # lite gray
 
-        print(self.__class, end=' \033[97m---> \033[00m')
-        print(out)
+            print(self.__class, end=' \033[97m---> \033[00m')
+            print(out)
+
+            time = datetime.datetime.now()
+            time = "[" + str(time.hour) + ":" + str(time.minute) + ":" + str(time.second) + "]"
+
+            data_to_write = time + " " + self.__class_name + " -> " + msg + "\n"
+
+            file.write(data_to_write)
 
 
 class CFG:
@@ -186,4 +204,13 @@ class CFG:
         return {
                 "IP": psr["COPPELIA"]["ip"],
                 "PORT": int(psr["COPPELIA"]["port"])
+                }
+
+    @staticmethod
+    def logger_data() -> dict:
+        psr = configparser.ConfigParser()
+        psr.read('../resources/data/config.conf')
+        return {
+                "FILE": psr["UTILITY"]["filename"],
+                "EXT": psr["UTILITY"]["ext"]
                 }
