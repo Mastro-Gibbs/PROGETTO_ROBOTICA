@@ -1,14 +1,16 @@
 import time
-from time import sleep
 from math import pi
-from physical_body import PhysicalBody
-from utility import StdoutLogger, Compass, \
-    LIFOStack, f_r_l_b_to_compass, negate_compass, normalize_angle, round_v, Clockwise, detect_target
-from tree import Tree, Node, WAY, Type
 from enum import Enum
 
-OR_MAX_ATTEMPT = 10
-SAFE_DISTANCE = 0.22  # aka 22cm
+from physical_body import PhysicalBody
+from utility import StdoutLogger, Compass, f_r_l_b_to_compass, negate_compass, \
+    normalize_angle, round_v, Clockwise, detect_target, CFG
+
+from tree import Tree, Node, WAY, Type
+
+
+OR_MAX_ATTEMPT = CFG.controller_data()["MAX_ATTEMPTS"]
+SAFE_DISTANCE = CFG.controller_data()["SAFE_DIST"]
 
 NODE_ID = "n"
 NODE_COUNT = 0
@@ -77,10 +79,10 @@ class Controller:
 
         self._body.stop()
 
-        self._speed = 10
-        self._rot_speed = 8
+        self._speed = CFG.controller_data()["SPEED"]
+        self._rot_speed = CFG.controller_data()["ROT_SPEED"]
 
-        self._speed_m_on_sec = self._speed * 0.25 / 5
+        self._speed_m_on_sec = self._speed * 0.25 / (self._speed // 3)
         # Tempo che serve per posizionarsi al centro di una giunzione
         self.junction_sim_time = 0.25 / self._speed_m_on_sec
 

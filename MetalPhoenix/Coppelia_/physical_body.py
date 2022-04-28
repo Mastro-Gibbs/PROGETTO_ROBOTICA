@@ -1,9 +1,7 @@
-from time import sleep
 from math import pi
 
 from coppelia import *
-
-from utility import StdoutLogger
+from utility import StdoutLogger, CFG
 
 
 class PhysicalBody:
@@ -20,7 +18,7 @@ class PhysicalBody:
         print()  # \n
         self.__class_logger = StdoutLogger(class_name="PhysicalBody", color="purple")
 
-        self.__sim = SimConnection(ip="127.0.0.1", port=19997)
+        self.__sim = SimConnection(ip=CFG.physical_data()["IP"], port=CFG.physical_data()["PORT"])
 
         try:
             self.__sim.begin_connection()

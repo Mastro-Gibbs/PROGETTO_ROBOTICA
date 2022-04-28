@@ -1,5 +1,6 @@
 from io import StringIO
 from enum import Enum
+import configparser
 
 
 class Compass(float, Enum):
@@ -14,11 +15,8 @@ class Clockwise(Enum):
     LEFT = 1
 
 
-ROUND_DIGITS = 4
-
-
 def round_v(value):
-    return round(value, ROUND_DIGITS)
+    return round(value, 4)
 
 
 def normalize_angle(ang: float, type_t: int):
@@ -63,26 +61,6 @@ def detect_target(begin: float) -> Compass | None:
         target = Compass.SUD
 
     return target
-
-
-def normalize_compass(curr_ori: float, compass: Compass) -> Compass:
-    if detect_target(curr_ori) == 0:
-        if compass == Compass.EST:
-            return Compass.SUD
-        elif compass == Compass.OVEST:
-            return Compass.NORD
-    elif detect_target(curr_ori) == 90:
-        return compass
-    elif detect_target(curr_ori) == -90:
-        if compass == Compass.EST:
-            return Compass.OVEST
-        elif compass == Compass.OVEST:
-            return Compass.EST
-    elif detect_target(curr_ori) == 180:
-        if compass == Compass.EST:
-            return Compass.NORD
-        elif compass == Compass.OVEST:
-            return Compass.SUD
 
 
 # Front Right Left Back to compass
@@ -185,62 +163,27 @@ class StdoutLogger:
         print(out)
 
 
-class LIFOStack:
-    """Stack class based on list"""
+class CFG:
 
     def __init__(self):
-        self.stack = list()
-        self.index = -1
+        ...
 
-    def push(self, elem: float):
-        self.stack.append(elem)
-        self.index += 1
+    @staticmethod
+    def controller_data() -> dict:
+        psr = configparser.ConfigParser()
+        psr.read('resources/config.conf')
+        return {
+                "SPEED": float(psr["ROBOT"]["speed"]),
+                "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
+                "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
+                "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"])
+                }
 
-    def pop(self) -> float:
-        if not self.is_empty():
-            self.index -= 1
-            return self.stack.pop()
-        else:
-            raise IndexError("Stack is empty!")
-
-    def peek(self) -> float:
-        elem = self.pop()
-        self.push(elem)
-        return elem
-
-    def is_empty(self) -> bool:
-        if self.index == -1:
-            return True
-        return False
-
-    def erase(self):
-        self.stack.clear()
-        self.index = -1
-
-
-class FIFOStack:
-    """Stack class based on list"""
-
-    def __init__(self):
-        self.queue = list()
-        self.index = -1
-
-    def push(self, elem: float):
-        self.queue.insert(0, elem)
-        self.index += 1
-
-    def pop(self) -> float:
-        if not self.is_empty():
-            self.index -= 1
-            return self.queue.pop()
-        else:
-            raise IndexError("FIFOStack is empty!")
-
-    def is_empty(self) -> bool:
-        if self.index == -1:
-            return True
-        return False
-
-    def erase(self):
-        self.queue.clear()
-        self.index = -1
+    @staticmethod
+    def physical_data() -> dict:
+        psr = configparser.ConfigParser()
+        psr.read('resources/config.conf')
+        return {
+                "IP": psr["COPPELIA"]["ip"],
+                "PORT": int(psr["COPPELIA"]["port"])
+                }
