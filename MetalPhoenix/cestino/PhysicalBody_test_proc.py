@@ -1,11 +1,11 @@
-from Cestino.pycsim import CSim
-import Cestino.RemoteApiPython.sim as s
-from Cestino import utility
+from cestino.pycsim import CSim
+import cestino.RemoteApiPython.sim as s
+from cestino import utility
 import time
 import math
 from multiprocessing import Process, Manager
 from threading import Thread
-from Cestino.utility import *
+from cestino.utility import *
 
 DEBUG = True
 

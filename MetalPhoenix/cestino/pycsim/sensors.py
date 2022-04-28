@@ -1,5 +1,5 @@
-import Cestino.RemoteApiPython.sim as s
-import Cestino.RemoteApiPython.simConst as sc
+import cestino.RemoteApiPython.sim as s
+import cestino.RemoteApiPython.simConst as sc
 from .common import MatchObjTypeError, NotFoundComponentError
 from .common import Vec3, EulerAngles
 

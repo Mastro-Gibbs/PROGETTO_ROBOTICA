@@ -10,7 +10,7 @@ sys.path.append("/home/marco/Scrivania/ISRLAB/Pycharm/PycharmProjects/RemoteApiP
 for p in sys.path:
     print(p)
 """
-from Cestino.RemoteApiPython import simConst as sc, sim as s
+from cestino.RemoteApiPython import simConst as sc, sim as s
 
 from math import pi
 from time import sleep

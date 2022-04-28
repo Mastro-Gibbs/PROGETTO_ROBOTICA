@@ -1,6 +1,6 @@
-from Cestino.RemoteApiPython import sim as s
+from cestino.RemoteApiPython import sim as s
 from time import sleep
-from Cestino.pycsim import CSim, common
+from cestino.pycsim import CSim, common
 #
 # clientID = s.simxStart(
 #     connectionAddress="127.0.0.1",

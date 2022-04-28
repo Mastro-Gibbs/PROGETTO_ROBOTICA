@@ -1,4 +1,4 @@
-from Cestino.pycsim import CSim
+from cestino.pycsim import CSim
 import RemoteApiPython.sim as s
 from utility import *
 import utility

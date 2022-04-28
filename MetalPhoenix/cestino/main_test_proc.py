@@ -1,6 +1,6 @@
-from Cestino.pycsim import CSim, common
+from cestino.pycsim import CSim, common
 
-from Cestino.PhysicalBody import PhysicalBody
+from cestino.PhysicalBody import PhysicalBody
 import time
 import math
 from enum import Enum

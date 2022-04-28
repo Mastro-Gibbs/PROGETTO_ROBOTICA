@@ -1,5 +1,5 @@
-from Cestino.pycsim import CSim, common
-from Cestino.RemoteApiPython import simConst as sc, sim as s
+from cestino.pycsim import CSim, common
+from cestino.RemoteApiPython import simConst as sc, sim as s
 from time import sleep
 from math import pi
 

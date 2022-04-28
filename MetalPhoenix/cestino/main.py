@@ -1,5 +1,5 @@
-from Cestino.pycsim import CSim, common
-from Cestino.Controller.ControllerTest import ControllerTest
+from cestino.pycsim import CSim, common
+from cestino.Controller.ControllerTest import ControllerTest
 
 DEBUG = False
 
