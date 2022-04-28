@@ -153,7 +153,7 @@ class Controller:
 
             self.__class_logger.log(f"(STATE, POSITION): ({self._state}, {self._position})")
 
-            print("\n")
+            print()
             if performed and prev_action != action:
                 self.performed_commands.append(action)
                 if action in self.priority_list:
@@ -222,6 +222,7 @@ class Controller:
                     print(self.tree.current)
                     return
 
+                # Caso in cui scelgo un OBSERVED e lo metto come corrente
                 cur = None
                 if self.tree.current.has_left and self.tree.current.left.action == action:
                     cur = self.tree.current.left
@@ -256,7 +257,7 @@ class Controller:
                     print("DEAD END NOT LEAF")
 
                 else:
-                    print("------------------------ DA GESTIRE ? --------------------------")
+                    print("Nodo senza figli DEAD END, aggiorno il corrente nel prossimo update tree")
 
                 """elif self.tree.current.is_root:
                     ...
@@ -272,6 +273,7 @@ class Controller:
         right = self.right_value
         ori = self.orientation
 
+        # Sto in RUNNING e l'albero non viene aggiornato
         if self.mode == Mode.ESCAPING and self.tree.current.type == Type.OBSERVED:
             self.mode = Mode.EXPLORING
 
@@ -339,7 +341,6 @@ class Controller:
                         actions.insert(0, action)
 
                 # Se non ci sono EXPLORED tornare indietro
-
                 if not actions:
                     action = negate_compass(self.tree.current.action)
                     actions.insert(0, action)
