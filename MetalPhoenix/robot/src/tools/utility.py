@@ -171,7 +171,7 @@ class CFG:
     @staticmethod
     def controller_data() -> dict:
         psr = configparser.ConfigParser()
-        psr.read('resources/config.conf')
+        psr.read('resources/data/config.conf')
         return {
                 "SPEED": float(psr["ROBOT"]["speed"]),
                 "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
