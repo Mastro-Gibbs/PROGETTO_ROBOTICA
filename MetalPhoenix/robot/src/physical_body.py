@@ -1,7 +1,7 @@
 from math import pi
 
-from robot.src.utility.coppelia import *
-from robot.src.utility.utility import StdoutLogger, CFG
+from robot.src.tools.coppelia import *
+from robot.src.tools.utility import StdoutLogger, CFG
 
 
 class PhysicalBody:

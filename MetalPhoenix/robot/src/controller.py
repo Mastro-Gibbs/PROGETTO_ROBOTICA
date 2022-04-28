@@ -3,10 +3,10 @@ from math import pi
 from enum import Enum
 
 from physical_body import PhysicalBody
-from robot.src.utility.utility import StdoutLogger, Compass, f_r_l_b_to_compass, negate_compass, \
+from robot.src.tools.utility import StdoutLogger, Compass, f_r_l_b_to_compass, negate_compass, \
     normalize_angle, round_v, Clockwise, detect_target, CFG
 
-from robot.src.utility.utility import Tree, Node, WAY, Type
+from robot.src.tools.tree import Tree, Node, WAY, Type
 
 
 OR_MAX_ATTEMPT = CFG.controller_data()["MAX_ATTEMPTS"]
