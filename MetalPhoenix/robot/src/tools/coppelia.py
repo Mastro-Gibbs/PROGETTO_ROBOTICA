@@ -1,5 +1,5 @@
-import robot.src.coppelia_api.sim as sim
-from robot.src.coppelia_api.simConst import *
+import tools.coppeliaAPI.sim as sim
+from tools.coppeliaAPI.simConst import *
 
 
 class SimConnectionException(Exception):

@@ -1,4 +1,4 @@
-from utility import Compass
+from tools.utility import Compass
 from enum import Enum
 
 
