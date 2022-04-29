@@ -14,6 +14,8 @@ SAFE_DISTANCE = CFG.controller_data()["SAFE_DIST"]
 NODE_ID = "n"
 NODE_COUNT = 0
 
+PREV_ACTION = None
+
 
 def generate_node_id() -> str:
     global NODE_COUNT
@@ -110,56 +112,54 @@ class Controller:
         self.tree = Tree()
 
     def algorithm(self):
-        prev_action = ""
+        global PREV_ACTION
 
-        while not self.goal_reached():
+        # SENSE
+        self.read_sensors()
+        self.left_values.append(self.left_value)
+        self.front_values.append(self.front_value)
+        self.right_values.append(self.right_value)
 
-            # SENSE
-            self.read_sensors()
-            self.left_values.append(self.left_value)
-            self.front_values.append(self.front_value)
-            self.right_values.append(self.right_value)
+        self.__class_logger.log("!!! NEW ALGORTHM CYCLE !!!", "yellow", newline=True)
 
-            self.__class_logger.log("!!! NEW ALGORTHM CYCLE !!!", "yellow", newline=True)
+        # THINK
+        actions = self.control_policy()
 
-            # THINK
-            actions = self.control_policy()
+        self.__class_logger.log(f" --MODE: {self.mode}")
+        # self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}")
+        # self.__class_logger.log(f"--ACTIONS: {actions}")
 
-            self.__class_logger.log(f" --MODE: {self.mode}")
-            # self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}")
-            # self.__class_logger.log(f"--ACTIONS: {actions}")
+        # Update tree adding the children if only if the actions are correct (namely the robot is in sensing mode)
+        self.update_tree(actions)
 
-            # Update tree adding the children if only if the actions are correct (namely the robot is in sensing mode)
-            self.update_tree(actions)
+        # THINK
+        action = self.decision_making_policy(actions)
 
-            # THINK
-            action = self.decision_making_policy(actions)
+        # Updating tree setting the current node
+        self.update_tree(action)
 
-            # Updating tree setting the current node
-            self.update_tree(action)
+        self.__class_logger.log("--CURRENT TREE:")
+        self.__class_logger.log(f"{self.tree.build_tree_dict()}", "gray", noheader=True)
+        self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}", "yellow", newline=True)
 
-            self.__class_logger.log("--CURRENT TREE:")
-            self.__class_logger.log(f"{self.tree.build_tree_dict()}", "gray", noheader=True)
-            self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}", "yellow", newline=True)
+        # self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})")
+        self.__class_logger.log(f"--Available actions: {actions}")
+        # self.__class_logger.log(f"--Performing action: {action}")
 
-            # self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})")
-            self.__class_logger.log(f"--Available actions: {actions}")
-            # self.__class_logger.log(f"--Performing action: {action}")
+        if action is None:
+            exit(-1)
 
-            if action is None:
-                exit(-1)
+        # ACT
+        performed = self.do_action(action)
 
-            # ACT
-            performed = self.do_action(action)
+        # self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})")
 
-            #self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})")
-
-            print()
-            if performed and prev_action != action:
-                self.performed_commands.append(action)
-                if action in self.priority_list:
-                    self.trajectory.append(action)
-                prev_action = action
+        print()
+        if performed and PREV_ACTION != action:
+            self.performed_commands.append(action)
+            if action in self.priority_list:
+                self.trajectory.append(action)
+            PREV_ACTION = action
 
     def update_tree(self, actions):
         """ if not actions:
@@ -672,3 +672,12 @@ class Controller:
             self.__class_logger.log(" ^^ FLYING TO THE HEAVEN ^^ ", "red", True, True)
 
         return res
+
+    def update_cfg(self):
+        global OR_MAX_ATTEMPT
+        global SAFE_DISTANCE
+
+        self._speed = CFG.controller_data()["SPEED"]
+        self._rot_speed = CFG.controller_data()["ROT_SPEED"]
+        OR_MAX_ATTEMPT = CFG.controller_data()["MAX_ATTEMPTS"]
+        SAFE_DISTANCE = CFG.controller_data()["SAFE_DIST"]
