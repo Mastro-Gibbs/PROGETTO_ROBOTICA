@@ -1,0 +1,1388 @@
+[10:55:28] [PhysicalBody] -> Coppelia connection started!
+
+
+[10:55:30] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:30] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:30] [Controller] -> --CURRENT TREE:
+[10:55:30] -> {'root': {}}
+
+[10:55:30] [Controller] -> --CURRENT NODE: [ Name: root, Type: Type.OBSERVED, Action: None, Parent: None, Left: None, Mid: None, Right: None ]
+[10:55:30] [Controller] -> --Available actions: [<Command.START: -1>]
+
+[10:55:30] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:30] [Controller] ->  ** COMMAND START ** 
+
+[10:55:31] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:31] [Controller] ->  --MODE: Mode.EXPLORING
+
+[10:55:31] [Controller] -> *** 1) UPDATING TREE (MODE EXPLORING) ***
+[10:55:31] [Controller] -> ADDED MID
+
+[10:55:31] [Controller] -> *** 2) UPDATING TREE (MODE EXPLORING) ***
+[10:55:31] [Controller] -> --CURRENT TREE:
+[10:55:31] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[10:55:31] [Controller] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[10:55:31] [Controller] -> --Available actions: [<Compass.NORD: 90.0>]
+
+[10:55:31] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:31] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:31] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:31] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:31] [Controller] -> --CURRENT TREE:
+[10:55:31] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[10:55:31] [Controller] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[10:55:31] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:31] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:31] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:31] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:31] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:31] [Controller] -> --CURRENT TREE:
+[10:55:31] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[10:55:31] [Controller] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[10:55:31] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:31] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:31] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:32] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:32] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:32] [Controller] -> --CURRENT TREE:
+[10:55:32] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[10:55:32] [Controller] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[10:55:32] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:32] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:32] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:32] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:32] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:32] [Controller] -> --CURRENT TREE:
+[10:55:32] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[10:55:32] [Controller] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[10:55:32] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:32] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:32] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:32] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:32] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:32] [Controller] -> --CURRENT TREE:
+[10:55:32] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[10:55:32] [Controller] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[10:55:32] [Controller] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[10:55:32] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:32] [Controller] ->  ** JOINING THE JUNCTION ** 
+[10:55:33] [Controller] ->  ** STATE SENSING ARISE ** 
+
+[10:55:33] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:33] [Controller] ->  --MODE: Mode.EXPLORING
+
+[10:55:33] [Controller] -> *** 1) UPDATING TREE (MODE EXPLORING) ***
+[10:55:33] [Controller] -> ADDED LEFT
+
+[10:55:33] [Controller] -> *** 2) UPDATING TREE (MODE EXPLORING) ***
+[10:55:33] [Controller] -> --CURRENT TREE:
+[10:55:33] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[10:55:33] [Controller] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[10:55:33] [Controller] -> --Available actions: [<Compass.OVEST: 180.0>]
+
+[10:55:33] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:33] [Controller] ->  ** COMMAND ROTATE ** 
+
+[10:55:33] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:55:33] [Controller] ->  >> Rotate anti-clockwise (LEFT) of 91.0029°
+
+[10:55:35] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:55:36] [Controller] ->  !! bad orientation !! 
+[10:55:36] [Controller] ->  >> curr state of the sensors: [-178, 178], curr_g: -176.9367
+
+[10:55:36] [Controller] ->  ** ADJUSTING ORIENTATION ** 
+
+[10:55:36] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:55:36] [Controller] ->  >> Rotate clockwise (RIGHT) of 3.0891°
+[10:55:36] [Controller] ->  --ATTEMPT: 1 / 10
+[10:55:36] [Controller] -> [Degrees_to_do, curr_g, final_g] = [-3.0891, -176.9109, 180.0]
+
+[10:55:36] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:55:37] [Controller] ->  ~~ perfect ~~ 
+[10:55:37] [Controller] ->  >> curr state of the sensors: [-178, 178], curr_g: -179.5188
+
+[10:55:37] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:37] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:37] [Controller] -> --CURRENT TREE:
+[10:55:37] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[10:55:37] [Controller] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[10:55:37] [Controller] -> --Available actions: [<Compass.OVEST: 180.0>]
+
+[10:55:37] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:37] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:37] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:37] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:37] [Controller] -> --CURRENT TREE:
+[10:55:37] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[10:55:37] [Controller] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[10:55:37] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:37] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:37] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:38] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:38] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:38] [Controller] -> --CURRENT TREE:
+[10:55:38] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[10:55:38] [Controller] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[10:55:38] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:38] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:38] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:38] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:38] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:38] [Controller] -> --CURRENT TREE:
+[10:55:38] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[10:55:38] [Controller] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[10:55:38] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:38] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:38] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:38] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:38] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:38] [Controller] -> --CURRENT TREE:
+[10:55:38] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[10:55:38] [Controller] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[10:55:38] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:38] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:38] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:39] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:39] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:39] [Controller] -> --CURRENT TREE:
+[10:55:39] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[10:55:39] [Controller] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[10:55:39] [Controller] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[10:55:39] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:39] [Controller] ->  ** JOINING THE JUNCTION ** 
+[10:55:39] [Controller] ->  ** STATE SENSING ARISE ** 
+
+[10:55:40] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:40] [Controller] ->  --MODE: Mode.EXPLORING
+
+[10:55:40] [Controller] -> *** 1) UPDATING TREE (MODE EXPLORING) ***
+[10:55:40] [Controller] -> ADDED LEFT
+[10:55:40] [Controller] -> ADDED MID
+
+[10:55:40] [Controller] -> *** 2) UPDATING TREE (MODE EXPLORING) ***
+[10:55:40] [Controller] -> --CURRENT TREE:
+[10:55:40] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , O )'}, 'L_n3': {}, 'M_n4': {}}
+
+[10:55:40] [Controller] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[10:55:40] [Controller] -> --Available actions: [<Compass.SUD: -90.0>, <Compass.OVEST: 180.0>]
+
+[10:55:40] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:40] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:40] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:40] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:40] [Controller] -> --CURRENT TREE:
+[10:55:40] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , O )'}, 'L_n3': {}, 'M_n4': {}}
+
+[10:55:40] [Controller] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[10:55:40] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:40] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:40] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:40] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:40] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:40] [Controller] -> --CURRENT TREE:
+[10:55:40] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , O )'}, 'L_n3': {}, 'M_n4': {}}
+
+[10:55:40] [Controller] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[10:55:40] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:40] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:40] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:41] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:41] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:41] [Controller] -> --CURRENT TREE:
+[10:55:41] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , O )'}, 'L_n3': {}, 'M_n4': {}}
+
+[10:55:41] [Controller] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[10:55:41] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:41] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:41] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:41] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:41] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:41] [Controller] -> --CURRENT TREE:
+[10:55:41] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , O )'}, 'L_n3': {}, 'M_n4': {}}
+
+[10:55:41] [Controller] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[10:55:41] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:41] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:41] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:41] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:41] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:41] [Controller] -> --CURRENT TREE:
+[10:55:41] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , O )'}, 'L_n3': {}, 'M_n4': {}}
+
+[10:55:41] [Controller] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[10:55:41] [Controller] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[10:55:41] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:41] [Controller] ->  ** JOINING THE JUNCTION ** 
+[10:55:42] [Controller] ->  ** STATE SENSING ARISE ** 
+
+[10:55:43] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:43] [Controller] ->  --MODE: Mode.EXPLORING
+
+[10:55:43] [Controller] -> *** 1) UPDATING TREE (MODE EXPLORING) ***
+[10:55:43] [Controller] -> ADDED RIGHT
+[10:55:43] [Controller] -> ADDED MID
+
+[10:55:43] [Controller] -> *** 2) UPDATING TREE (MODE EXPLORING) ***
+[10:55:43] [Controller] -> --CURRENT TREE:
+[10:55:43] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[10:55:43] [Controller] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[10:55:43] [Controller] -> --Available actions: [<Compass.NORD: 90.0>, <Compass.OVEST: 180.0>]
+
+[10:55:43] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:43] [Controller] ->  ** COMMAND ROTATE ** 
+
+[10:55:43] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:55:43] [Controller] ->  >> Rotate clockwise (RIGHT) of 88.589°
+
+[10:55:45] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:55:45] [Controller] ->  !! bad orientation !! 
+[10:55:45] [Controller] ->  >> curr state of the sensors: [92.0, 88.0], curr_g: 86.3897
+
+[10:55:45] [Controller] ->  ** ADJUSTING ORIENTATION ** 
+
+[10:55:45] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:55:45] [Controller] ->  >> Rotate anti-clockwise (LEFT) of 3.7492°
+[10:55:45] [Controller] ->  --ATTEMPT: 1 / 10
+[10:55:45] [Controller] -> [Degrees_to_do, curr_g, final_g] = [3.7492, 86.2508, 90.0]
+
+[10:55:46] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:55:46] [Controller] ->  ~~ perfect ~~ 
+[10:55:46] [Controller] ->  >> curr state of the sensors: [92.0, 88.0], curr_g: 89.4518
+
+[10:55:47] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:47] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:47] [Controller] -> --CURRENT TREE:
+[10:55:47] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[10:55:47] [Controller] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[10:55:47] [Controller] -> --Available actions: [<Compass.NORD: 90.0>]
+
+[10:55:47] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:47] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:47] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:47] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:47] [Controller] -> --CURRENT TREE:
+[10:55:47] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[10:55:47] [Controller] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[10:55:47] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:47] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:47] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:47] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:47] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:47] [Controller] -> --CURRENT TREE:
+[10:55:47] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[10:55:47] [Controller] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[10:55:47] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:47] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:47] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:48] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:48] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:48] [Controller] -> --CURRENT TREE:
+[10:55:48] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[10:55:48] [Controller] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[10:55:48] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:48] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:48] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:48] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:48] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:48] [Controller] -> --CURRENT TREE:
+[10:55:48] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[10:55:48] [Controller] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[10:55:48] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:48] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:48] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:48] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:48] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:48] [Controller] -> --CURRENT TREE:
+[10:55:48] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[10:55:48] [Controller] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[10:55:48] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:48] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:48] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:49] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:49] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:49] [Controller] -> --CURRENT TREE:
+[10:55:49] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[10:55:49] [Controller] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[10:55:49] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:49] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:49] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:49] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:49] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:49] [Controller] -> --CURRENT TREE:
+[10:55:49] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[10:55:49] [Controller] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[10:55:49] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:49] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:49] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:49] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:49] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:49] [Controller] -> --CURRENT TREE:
+[10:55:49] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[10:55:49] [Controller] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[10:55:49] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:49] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:49] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:50] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:50] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:50] [Controller] -> --CURRENT TREE:
+[10:55:50] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[10:55:50] [Controller] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[10:55:50] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:50] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:50] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:50] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:50] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:50] [Controller] -> --CURRENT TREE:
+[10:55:50] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[10:55:50] [Controller] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[10:55:50] [Controller] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[10:55:50] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:50] [Controller] ->  ** JOINING THE JUNCTION ** 
+[10:55:50] [Controller] ->  ** STATE SENSING ARISE ** 
+
+[10:55:51] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:51] [Controller] ->  --MODE: Mode.EXPLORING
+
+[10:55:51] [Controller] -> *** 1) UPDATING TREE (MODE EXPLORING) ***
+[10:55:51] [Controller] -> ADDED LEFT
+
+[10:55:51] [Controller] -> *** 2) UPDATING TREE (MODE EXPLORING) ***
+[10:55:51] [Controller] -> --CURRENT TREE:
+[10:55:51] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[10:55:51] [Controller] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[10:55:51] [Controller] -> --Available actions: [<Compass.OVEST: 180.0>]
+
+[10:55:51] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:51] [Controller] ->  ** COMMAND ROTATE ** 
+
+[10:55:51] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:55:51] [Controller] ->  >> Rotate anti-clockwise (LEFT) of 93.9645°
+
+[10:55:53] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:55:53] [Controller] ->  !! bad orientation !! 
+[10:55:53] [Controller] ->  >> curr state of the sensors: [-178, 178], curr_g: -176.5237
+
+[10:55:53] [Controller] ->  ** ADJUSTING ORIENTATION ** 
+
+[10:55:53] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:55:53] [Controller] ->  >> Rotate clockwise (RIGHT) of 3.4949°
+[10:55:53] [Controller] ->  --ATTEMPT: 1 / 10
+[10:55:53] [Controller] -> [Degrees_to_do, curr_g, final_g] = [-3.4949, -176.5051, 180.0]
+
+[10:55:55] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:55:55] [Controller] ->  ~~ perfect ~~ 
+[10:55:55] [Controller] ->  >> curr state of the sensors: [-178, 178], curr_g: -179.5968
+
+[10:55:55] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:55] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:55] [Controller] -> --CURRENT TREE:
+[10:55:55] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[10:55:55] [Controller] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[10:55:55] [Controller] -> --Available actions: [<Compass.OVEST: 180.0>]
+
+[10:55:55] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:55] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:55] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:55] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:55] [Controller] -> --CURRENT TREE:
+[10:55:55] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[10:55:55] [Controller] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[10:55:55] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:55] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:55] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:56] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:56] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:56] [Controller] -> --CURRENT TREE:
+[10:55:56] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[10:55:56] [Controller] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[10:55:56] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:56] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:56] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:56] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:56] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:56] [Controller] -> --CURRENT TREE:
+[10:55:56] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[10:55:56] [Controller] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[10:55:56] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:56] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:56] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:56] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:56] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:56] [Controller] -> --CURRENT TREE:
+[10:55:56] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[10:55:56] [Controller] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[10:55:56] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:56] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:56] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:57] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:57] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:57] [Controller] -> --CURRENT TREE:
+[10:55:57] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[10:55:57] [Controller] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[10:55:57] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:57] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:57] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:57] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:57] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:57] [Controller] -> --CURRENT TREE:
+[10:55:57] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[10:55:57] [Controller] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[10:55:57] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:57] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:57] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:57] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:57] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:57] [Controller] -> --CURRENT TREE:
+[10:55:57] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[10:55:57] [Controller] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[10:55:57] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:57] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:57] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:58] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:58] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:58] [Controller] -> --CURRENT TREE:
+[10:55:58] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[10:55:58] [Controller] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[10:55:58] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:55:58] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:58] [Controller] ->  ** COMMAND RUN ** 
+
+[10:55:58] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:58] [Controller] ->  --MODE: Mode.EXPLORING
+[10:55:58] [Controller] -> --CURRENT TREE:
+[10:55:58] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[10:55:58] [Controller] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[10:55:58] [Controller] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[10:55:58] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:58] [Controller] ->  ** JOINING THE JUNCTION ** 
+[10:55:58] [Controller] ->  ** STATE SENSING ARISE ** 
+
+[10:55:59] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:55:59] [Controller] ->  --MODE: Mode.EXPLORING
+
+[10:55:59] [Controller] -> *** 1) UPDATING TREE (MODE EXPLORING) ***
+[10:55:59] [Controller] -> ADDED RIGHT
+[10:55:59] [Controller] -> ADDED LEFT
+
+[10:55:59] [Controller] -> *** 2) UPDATING TREE (MODE EXPLORING) ***
+[10:55:59] [Controller] -> --CURRENT TREE:
+[10:55:59] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[10:55:59] [Controller] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[10:55:59] [Controller] -> --Available actions: [<Compass.NORD: 90.0>, <Compass.SUD: -90.0>]
+
+[10:55:59] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:55:59] [Controller] ->  ** COMMAND ROTATE ** 
+
+[10:55:59] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:55:59] [Controller] ->  >> Rotate clockwise (RIGHT) of 88.4597°
+
+[10:56:2] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:56:2] [Controller] ->  !! bad orientation !! 
+[10:56:2] [Controller] ->  >> curr state of the sensors: [92.0, 88.0], curr_g: 87.59
+
+[10:56:2] [Controller] ->  ** ADJUSTING ORIENTATION ** 
+
+[10:56:2] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:56:2] [Controller] ->  >> Rotate anti-clockwise (LEFT) of 2.4394°
+[10:56:2] [Controller] ->  --ATTEMPT: 1 / 10
+[10:56:2] [Controller] -> [Degrees_to_do, curr_g, final_g] = [2.4394, 87.5606, 90.0]
+
+[10:56:2] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:56:2] [Controller] ->  ~~ perfect ~~ 
+[10:56:2] [Controller] ->  >> curr state of the sensors: [92.0, 88.0], curr_g: 89.4172
+
+[10:56:3] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:3] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:3] [Controller] -> --CURRENT TREE:
+[10:56:3] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[10:56:3] [Controller] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[10:56:3] [Controller] -> --Available actions: [<Compass.NORD: 90.0>]
+
+[10:56:3] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:3] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:3] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:3] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:3] [Controller] -> --CURRENT TREE:
+[10:56:3] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[10:56:3] [Controller] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[10:56:3] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:3] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:3] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:3] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:3] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:3] [Controller] -> --CURRENT TREE:
+[10:56:3] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[10:56:3] [Controller] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[10:56:3] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:3] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:3] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:4] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:4] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:4] [Controller] -> --CURRENT TREE:
+[10:56:4] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[10:56:4] [Controller] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[10:56:4] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:4] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:4] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:4] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:4] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:4] [Controller] -> --CURRENT TREE:
+[10:56:4] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[10:56:4] [Controller] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[10:56:4] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:4] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:4] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:4] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:4] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:4] [Controller] -> --CURRENT TREE:
+[10:56:4] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[10:56:4] [Controller] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[10:56:4] [Controller] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[10:56:4] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:4] [Controller] ->  ** JOINING THE JUNCTION ** 
+[10:56:5] [Controller] ->  ** STATE SENSING ARISE ** 
+
+[10:56:5] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:5] [Controller] ->  --MODE: Mode.EXPLORING
+
+[10:56:5] [Controller] -> *** 1) UPDATING TREE (MODE EXPLORING) ***
+[10:56:5] [Controller] -> ADDED RIGHT
+[10:56:5] [Controller] -> ADDED LEFT
+
+[10:56:5] [Controller] -> *** 2) UPDATING TREE (MODE EXPLORING) ***
+[10:56:5] [Controller] -> --CURRENT TREE:
+[10:56:5] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[10:56:5] [Controller] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[10:56:5] [Controller] -> --Available actions: [<Compass.EST: 0.0>, <Compass.OVEST: 180.0>]
+
+[10:56:5] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:5] [Controller] ->  ** COMMAND ROTATE ** 
+
+[10:56:5] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:56:5] [Controller] ->  >> Rotate anti-clockwise (LEFT) of 90.9685°
+
+[10:56:8] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:56:8] [Controller] ->  !! bad orientation !! 
+[10:56:8] [Controller] ->  >> curr state of the sensors: [-178, 178], curr_g: -175.765
+
+[10:56:8] [Controller] ->  ** ADJUSTING ORIENTATION ** 
+
+[10:56:8] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:56:8] [Controller] ->  >> Rotate clockwise (RIGHT) of 4.3966°
+[10:56:8] [Controller] ->  --ATTEMPT: 1 / 10
+[10:56:8] [Controller] -> [Degrees_to_do, curr_g, final_g] = [-4.3966, -175.6034, 180.0]
+
+[10:56:9] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:56:9] [Controller] ->  ~~ perfect ~~ 
+[10:56:9] [Controller] ->  >> curr state of the sensors: [-178, 178], curr_g: -179.612
+
+[10:56:9] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:9] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:9] [Controller] -> --CURRENT TREE:
+[10:56:9] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[10:56:9] [Controller] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[10:56:9] [Controller] -> --Available actions: [<Compass.OVEST: 180.0>]
+
+[10:56:9] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:9] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:10] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:10] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:10] [Controller] -> --CURRENT TREE:
+[10:56:10] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[10:56:10] [Controller] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[10:56:10] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:10] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:10] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:10] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:10] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:10] [Controller] -> --CURRENT TREE:
+[10:56:10] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[10:56:10] [Controller] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[10:56:10] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:10] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:10] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:10] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:10] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:10] [Controller] -> --CURRENT TREE:
+[10:56:10] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[10:56:10] [Controller] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[10:56:10] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:10] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:10] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:11] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:11] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:11] [Controller] -> --CURRENT TREE:
+[10:56:11] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[10:56:11] [Controller] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[10:56:11] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:11] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:11] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:11] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:11] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:11] [Controller] -> --CURRENT TREE:
+[10:56:11] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[10:56:11] [Controller] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[10:56:11] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:11] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:11] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:11] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:11] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:11] [Controller] -> --CURRENT TREE:
+[10:56:11] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[10:56:11] [Controller] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[10:56:11] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:11] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:11] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:12] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:12] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:12] [Controller] -> --CURRENT TREE:
+[10:56:12] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[10:56:12] [Controller] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[10:56:12] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:12] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:12] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:12] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:12] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:12] [Controller] -> --CURRENT TREE:
+[10:56:12] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[10:56:12] [Controller] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[10:56:12] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:12] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:12] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:12] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:12] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:12] [Controller] -> --CURRENT TREE:
+[10:56:12] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[10:56:12] [Controller] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[10:56:12] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:12] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:12] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:13] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:13] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:13] [Controller] -> --CURRENT TREE:
+[10:56:13] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[10:56:13] [Controller] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[10:56:13] [Controller] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[10:56:13] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:13] [Controller] ->  ** JOINING THE JUNCTION ** 
+[10:56:13] [Controller] ->  ** STATE SENSING ARISE ** 
+
+[10:56:14] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:14] [Controller] ->  --MODE: Mode.EXPLORING
+
+[10:56:14] [Controller] -> *** 1) UPDATING TREE (MODE EXPLORING) ***
+[10:56:14] [Controller] -> ADDED RIGHT
+[10:56:14] [Controller] -> ADDED LEFT
+
+[10:56:14] [Controller] -> *** 2) UPDATING TREE (MODE EXPLORING) ***
+[10:56:14] [Controller] -> --CURRENT TREE:
+[10:56:14] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , O)'}, 'L_n13': {}, 'R_n12': {}, 'R_n10': {}}
+
+[10:56:14] [Controller] -> --CURRENT NODE: [ Name: R_n12, Type: Type.OBSERVED, Action: 90.0, Parent: L_n11, Left: None, Mid: None, Right: None ]
+[10:56:14] [Controller] -> --Available actions: [<Compass.NORD: 90.0>, <Compass.SUD: -90.0>]
+
+[10:56:14] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:14] [Controller] ->  ** COMMAND ROTATE ** 
+
+[10:56:14] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:56:14] [Controller] ->  >> Rotate clockwise (RIGHT) of 87.1571°
+
+[10:56:16] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:56:16] [Controller] ->  !! bad orientation !! 
+[10:56:16] [Controller] ->  >> curr state of the sensors: [92.0, 88.0], curr_g: 87.1654
+
+[10:56:16] [Controller] ->  ** ADJUSTING ORIENTATION ** 
+
+[10:56:16] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:56:16] [Controller] ->  >> Rotate anti-clockwise (LEFT) of 2.8907°
+[10:56:16] [Controller] ->  --ATTEMPT: 1 / 10
+[10:56:16] [Controller] -> [Degrees_to_do, curr_g, final_g] = [2.8907, 87.1093, 90.0]
+
+[10:56:17] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:56:17] [Controller] ->  ~~ perfect ~~ 
+[10:56:17] [Controller] ->  >> curr state of the sensors: [92.0, 88.0], curr_g: 89.4254
+
+[10:56:17] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:17] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:17] [Controller] -> --CURRENT TREE:
+[10:56:17] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , O)'}, 'L_n13': {}, 'R_n12': {}, 'R_n10': {}}
+
+[10:56:17] [Controller] -> --CURRENT NODE: [ Name: R_n12, Type: Type.OBSERVED, Action: 90.0, Parent: L_n11, Left: None, Mid: None, Right: None ]
+[10:56:17] [Controller] -> --Available actions: [<Compass.NORD: 90.0>]
+
+[10:56:17] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:17] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:18] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:18] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:18] [Controller] -> --CURRENT TREE:
+[10:56:18] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , O)'}, 'L_n13': {}, 'R_n12': {}, 'R_n10': {}}
+
+[10:56:18] [Controller] -> --CURRENT NODE: [ Name: R_n12, Type: Type.OBSERVED, Action: 90.0, Parent: L_n11, Left: None, Mid: None, Right: None ]
+[10:56:18] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:18] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:18] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:18] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:18] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:18] [Controller] -> --CURRENT TREE:
+[10:56:18] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , O)'}, 'L_n13': {}, 'R_n12': {}, 'R_n10': {}}
+
+[10:56:18] [Controller] -> --CURRENT NODE: [ Name: R_n12, Type: Type.OBSERVED, Action: 90.0, Parent: L_n11, Left: None, Mid: None, Right: None ]
+[10:56:18] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:18] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:18] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:18] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:18] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:18] [Controller] -> --CURRENT TREE:
+[10:56:18] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , O)'}, 'L_n13': {}, 'R_n12': {}, 'R_n10': {}}
+
+[10:56:18] [Controller] -> --CURRENT NODE: [ Name: R_n12, Type: Type.OBSERVED, Action: 90.0, Parent: L_n11, Left: None, Mid: None, Right: None ]
+[10:56:18] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:18] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:18] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:19] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:19] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:19] [Controller] -> --CURRENT TREE:
+[10:56:19] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , O)'}, 'L_n13': {}, 'R_n12': {}, 'R_n10': {}}
+
+[10:56:19] [Controller] -> --CURRENT NODE: [ Name: R_n12, Type: Type.OBSERVED, Action: 90.0, Parent: L_n11, Left: None, Mid: None, Right: None ]
+[10:56:19] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:19] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:19] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:19] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:19] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:19] [Controller] -> --CURRENT TREE:
+[10:56:19] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , O)'}, 'L_n13': {}, 'R_n12': {}, 'R_n10': {}}
+
+[10:56:19] [Controller] -> --CURRENT NODE: [ Name: R_n12, Type: Type.OBSERVED, Action: 90.0, Parent: L_n11, Left: None, Mid: None, Right: None ]
+[10:56:19] [Controller] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[10:56:19] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:19] [Controller] ->  ** JOINING THE JUNCTION ** 
+[10:56:19] [Controller] ->  ** STATE SENSING ARISE ** 
+
+[10:56:20] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:20] [Controller] ->  --MODE: Mode.EXPLORING
+
+[10:56:20] [Controller] -> *** 1) UPDATING TREE (MODE EXPLORING) ***
+[10:56:20] [Controller] -> ADDED RIGHT
+
+[10:56:20] [Controller] -> *** 2) UPDATING TREE (MODE EXPLORING) ***
+[10:56:20] [Controller] -> --CURRENT TREE:
+[10:56:20] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:20] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:20] [Controller] -> --Available actions: [<Compass.EST: 0.0>]
+
+[10:56:20] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:20] [Controller] ->  ** COMMAND ROTATE ** 
+
+[10:56:20] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:56:20] [Controller] ->  >> Rotate clockwise (RIGHT) of 87.8151°
+
+[10:56:22] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:56:22] [Controller] ->  !! bad orientation !! 
+[10:56:22] [Controller] ->  >> curr state of the sensors: [2.0, -2.0], curr_g: -3.2336
+
+[10:56:22] [Controller] ->  ** ADJUSTING ORIENTATION ** 
+
+[10:56:22] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:56:22] [Controller] ->  >> Rotate anti-clockwise (LEFT) of 3.485°
+[10:56:22] [Controller] ->  --ATTEMPT: 1 / 10
+[10:56:22] [Controller] -> [Degrees_to_do, curr_g, final_g] = [3.485, -3.485, 0.0]
+
+[10:56:23] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:56:23] [Controller] ->  ~~ perfect ~~ 
+[10:56:23] [Controller] ->  >> curr state of the sensors: [2.0, -2.0], curr_g: -0.5039
+
+[10:56:24] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:24] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:24] [Controller] -> --CURRENT TREE:
+[10:56:24] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:24] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:24] [Controller] -> --Available actions: [<Compass.EST: 0.0>]
+
+[10:56:24] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:24] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:24] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:24] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:24] [Controller] -> --CURRENT TREE:
+[10:56:24] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:24] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:24] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:24] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:24] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:24] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:24] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:24] [Controller] -> --CURRENT TREE:
+[10:56:24] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:24] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:24] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:24] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:24] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:25] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:25] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:25] [Controller] -> --CURRENT TREE:
+[10:56:25] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:25] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:25] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:25] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:25] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:25] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:25] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:25] [Controller] -> --CURRENT TREE:
+[10:56:25] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:25] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:25] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:25] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:25] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:25] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:25] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:25] [Controller] -> --CURRENT TREE:
+[10:56:25] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:25] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:25] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:25] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:25] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:26] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:26] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:26] [Controller] -> --CURRENT TREE:
+[10:56:26] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:26] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:26] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:26] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:26] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:26] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:26] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:26] [Controller] -> --CURRENT TREE:
+[10:56:26] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:26] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:26] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:26] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:26] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:26] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:26] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:26] [Controller] -> --CURRENT TREE:
+[10:56:26] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:26] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:26] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:26] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:26] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:27] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:27] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:27] [Controller] -> --CURRENT TREE:
+[10:56:27] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:27] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:27] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:27] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:27] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:27] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:27] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:27] [Controller] -> --CURRENT TREE:
+[10:56:27] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:27] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:27] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:27] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:27] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:27] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:27] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:27] [Controller] -> --CURRENT TREE:
+[10:56:27] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:27] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:27] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:27] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:27] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:28] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:28] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:28] [Controller] -> --CURRENT TREE:
+[10:56:28] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:28] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:28] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:28] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:28] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:28] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:28] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:28] [Controller] -> --CURRENT TREE:
+[10:56:28] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:28] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:28] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:28] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:28] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:28] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:28] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:28] [Controller] -> --CURRENT TREE:
+[10:56:28] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:28] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:28] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:28] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:28] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:29] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:29] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:29] [Controller] -> --CURRENT TREE:
+[10:56:29] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , O)'}, 'R_n14': {}, 'R_n10': {}}
+
+[10:56:29] [Controller] -> --CURRENT NODE: [ Name: R_n14, Type: Type.OBSERVED, Action: 0.0, Parent: R_n12, Left: None, Mid: None, Right: None ]
+[10:56:29] [Controller] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[10:56:29] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:29] [Controller] ->  ** JOINING THE JUNCTION ** 
+[10:56:29] [Controller] ->  ** STATE SENSING ARISE ** 
+
+[10:56:30] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:30] [Controller] ->  --MODE: Mode.EXPLORING
+
+[10:56:30] [Controller] -> *** 1) UPDATING TREE (MODE EXPLORING) ***
+[10:56:30] [Controller] -> ADDED LEFT
+
+[10:56:30] [Controller] -> *** 2) UPDATING TREE (MODE EXPLORING) ***
+[10:56:30] [Controller] -> --CURRENT TREE:
+[10:56:30] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , O)'}, 'L_n15': {}, 'R_n10': {}}
+
+[10:56:30] [Controller] -> --CURRENT NODE: [ Name: L_n15, Type: Type.OBSERVED, Action: 90.0, Parent: R_n14, Left: None, Mid: None, Right: None ]
+[10:56:30] [Controller] -> --Available actions: [<Compass.NORD: 90.0>]
+
+[10:56:30] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:30] [Controller] ->  ** COMMAND ROTATE ** 
+
+[10:56:30] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:56:30] [Controller] ->  >> Rotate anti-clockwise (LEFT) of 94.6247°
+
+[10:56:32] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:56:32] [Controller] ->  !! bad orientation !! 
+[10:56:32] [Controller] ->  >> curr state of the sensors: [92.0, 88.0], curr_g: 93.9576
+
+[10:56:32] [Controller] ->  ** ADJUSTING ORIENTATION ** 
+
+[10:56:32] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:56:32] [Controller] ->  >> Rotate clockwise (RIGHT) of 4.0916°
+[10:56:32] [Controller] ->  --ATTEMPT: 1 / 10
+[10:56:32] [Controller] -> [Degrees_to_do, curr_g, final_g] = [-4.0916, 94.0916, 90.0]
+
+[10:56:33] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:56:33] [Controller] ->  ~~ perfect ~~ 
+[10:56:33] [Controller] ->  >> curr state of the sensors: [92.0, 88.0], curr_g: 90.4846
+
+[10:56:33] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:33] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:33] [Controller] -> --CURRENT TREE:
+[10:56:33] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , O)'}, 'L_n15': {}, 'R_n10': {}}
+
+[10:56:33] [Controller] -> --CURRENT NODE: [ Name: L_n15, Type: Type.OBSERVED, Action: 90.0, Parent: R_n14, Left: None, Mid: None, Right: None ]
+[10:56:33] [Controller] -> --Available actions: [<Compass.NORD: 90.0>]
+
+[10:56:33] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:33] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:34] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:34] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:34] [Controller] -> --CURRENT TREE:
+[10:56:34] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , O)'}, 'L_n15': {}, 'R_n10': {}}
+
+[10:56:34] [Controller] -> --CURRENT NODE: [ Name: L_n15, Type: Type.OBSERVED, Action: 90.0, Parent: R_n14, Left: None, Mid: None, Right: None ]
+[10:56:34] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:34] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:34] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:34] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:34] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:34] [Controller] -> --CURRENT TREE:
+[10:56:34] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , O)'}, 'L_n15': {}, 'R_n10': {}}
+
+[10:56:34] [Controller] -> --CURRENT NODE: [ Name: L_n15, Type: Type.OBSERVED, Action: 90.0, Parent: R_n14, Left: None, Mid: None, Right: None ]
+[10:56:34] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:34] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:34] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:34] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:34] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:34] [Controller] -> --CURRENT TREE:
+[10:56:34] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , O)'}, 'L_n15': {}, 'R_n10': {}}
+
+[10:56:34] [Controller] -> --CURRENT NODE: [ Name: L_n15, Type: Type.OBSERVED, Action: 90.0, Parent: R_n14, Left: None, Mid: None, Right: None ]
+[10:56:34] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:34] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:34] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:35] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:35] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:35] [Controller] -> --CURRENT TREE:
+[10:56:35] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , O)'}, 'L_n15': {}, 'R_n10': {}}
+
+[10:56:35] [Controller] -> --CURRENT NODE: [ Name: L_n15, Type: Type.OBSERVED, Action: 90.0, Parent: R_n14, Left: None, Mid: None, Right: None ]
+[10:56:35] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:35] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:35] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:35] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:35] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:35] [Controller] -> --CURRENT TREE:
+[10:56:35] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , O)'}, 'L_n15': {}, 'R_n10': {}}
+
+[10:56:35] [Controller] -> --CURRENT NODE: [ Name: L_n15, Type: Type.OBSERVED, Action: 90.0, Parent: R_n14, Left: None, Mid: None, Right: None ]
+[10:56:35] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:35] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:35] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:35] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:35] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:35] [Controller] -> --CURRENT TREE:
+[10:56:35] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , O)'}, 'L_n15': {}, 'R_n10': {}}
+
+[10:56:35] [Controller] -> --CURRENT NODE: [ Name: L_n15, Type: Type.OBSERVED, Action: 90.0, Parent: R_n14, Left: None, Mid: None, Right: None ]
+[10:56:35] [Controller] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[10:56:35] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:35] [Controller] ->  ** JOINING THE JUNCTION ** 
+[10:56:36] [Controller] ->  ** STATE SENSING ARISE ** 
+
+[10:56:37] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:37] [Controller] ->  --MODE: Mode.EXPLORING
+
+[10:56:37] [Controller] -> *** 1) UPDATING TREE (MODE EXPLORING) ***
+[10:56:37] [Controller] -> ADDED LEFT
+[10:56:37] [Controller] -> ADDED MID
+
+[10:56:37] [Controller] -> *** 2) UPDATING TREE (MODE EXPLORING) ***
+[10:56:37] [Controller] -> --CURRENT TREE:
+[10:56:37] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , E)'}, 'L_n15': {'L_n16': ' (L , O , O)', 'M_n17': ' (M , N , O )'}, 'L_n16': {}, 'M_n17': {}, 'R_n10': {}}
+
+[10:56:37] [Controller] -> --CURRENT NODE: [ Name: M_n17, Type: Type.OBSERVED, Action: 90.0, Parent: L_n15, Left: None, Mid: None, Right: None ]
+[10:56:37] [Controller] -> --Available actions: [<Compass.OVEST: 180.0>, <Compass.NORD: 90.0>]
+
+[10:56:37] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:37] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:37] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:37] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:37] [Controller] -> --CURRENT TREE:
+[10:56:37] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , E)'}, 'L_n15': {'L_n16': ' (L , O , O)', 'M_n17': ' (M , N , O )'}, 'L_n16': {}, 'M_n17': {}, 'R_n10': {}}
+
+[10:56:37] [Controller] -> --CURRENT NODE: [ Name: M_n17, Type: Type.OBSERVED, Action: 90.0, Parent: L_n15, Left: None, Mid: None, Right: None ]
+[10:56:37] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:37] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:37] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:37] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:37] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:37] [Controller] -> --CURRENT TREE:
+[10:56:37] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , E)'}, 'L_n15': {'L_n16': ' (L , O , O)', 'M_n17': ' (M , N , O )'}, 'L_n16': {}, 'M_n17': {}, 'R_n10': {}}
+
+[10:56:37] [Controller] -> --CURRENT NODE: [ Name: M_n17, Type: Type.OBSERVED, Action: 90.0, Parent: L_n15, Left: None, Mid: None, Right: None ]
+[10:56:37] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:37] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:37] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:38] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:38] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:38] [Controller] -> --CURRENT TREE:
+[10:56:38] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , E)'}, 'L_n15': {'L_n16': ' (L , O , O)', 'M_n17': ' (M , N , O )'}, 'L_n16': {}, 'M_n17': {}, 'R_n10': {}}
+
+[10:56:38] [Controller] -> --CURRENT NODE: [ Name: M_n17, Type: Type.OBSERVED, Action: 90.0, Parent: L_n15, Left: None, Mid: None, Right: None ]
+[10:56:38] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:38] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:38] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:38] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:38] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:38] [Controller] -> --CURRENT TREE:
+[10:56:38] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , E)'}, 'L_n15': {'L_n16': ' (L , O , O)', 'M_n17': ' (M , N , O )'}, 'L_n16': {}, 'M_n17': {}, 'R_n10': {}}
+
+[10:56:38] [Controller] -> --CURRENT NODE: [ Name: M_n17, Type: Type.OBSERVED, Action: 90.0, Parent: L_n15, Left: None, Mid: None, Right: None ]
+[10:56:38] [Controller] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[10:56:38] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:38] [Controller] ->  ** JOINING THE JUNCTION ** 
+[10:56:38] [Controller] ->  ** STATE SENSING ARISE ** 
+
+[10:56:39] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:39] [Controller] ->  --MODE: Mode.EXPLORING
+
+[10:56:39] [Controller] -> *** 1) UPDATING TREE (MODE EXPLORING) ***
+[10:56:39] [Controller] -> ADDED RIGHT
+[10:56:39] [Controller] -> ADDED LEFT
+
+[10:56:39] [Controller] -> *** 2) UPDATING TREE (MODE EXPLORING) ***
+[10:56:39] [Controller] -> --CURRENT TREE:
+[10:56:39] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , E)'}, 'L_n15': {'L_n16': ' (L , O , O)', 'M_n17': ' (M , N , E )'}, 'L_n16': {}, 'M_n17': {'L_n19': ' (L , O , O)', 'R_n18': ' (R , E , O)'}, 'L_n19': {}, 'R_n18': {}, 'R_n10': {}}
+
+[10:56:39] [Controller] -> --CURRENT NODE: [ Name: L_n19, Type: Type.OBSERVED, Action: 180.0, Parent: M_n17, Left: None, Mid: None, Right: None ]
+[10:56:39] [Controller] -> --Available actions: [<Compass.EST: 0.0>, <Compass.OVEST: 180.0>]
+
+[10:56:39] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:39] [Controller] ->  ** COMMAND ROTATE ** 
+
+[10:56:39] [Controller] ->  ** BEST ANGLE COMPUTATION ** 
+[10:56:39] [Controller] ->  >> Rotate anti-clockwise (LEFT) of 93.3794°
+
+[10:56:41] [Controller] ->  ** ORIENTATION CHECKING ** 
+[10:56:41] [Controller] ->  ~~ perfect ~~ 
+[10:56:41] [Controller] ->  >> curr state of the sensors: [-178, 178], curr_g: -178.117
+
+[10:56:42] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:42] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:42] [Controller] -> --CURRENT TREE:
+[10:56:42] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , E)'}, 'L_n15': {'L_n16': ' (L , O , O)', 'M_n17': ' (M , N , E )'}, 'L_n16': {}, 'M_n17': {'L_n19': ' (L , O , O)', 'R_n18': ' (R , E , O)'}, 'L_n19': {}, 'R_n18': {}, 'R_n10': {}}
+
+[10:56:42] [Controller] -> --CURRENT NODE: [ Name: L_n19, Type: Type.OBSERVED, Action: 180.0, Parent: M_n17, Left: None, Mid: None, Right: None ]
+[10:56:42] [Controller] -> --Available actions: [<Compass.OVEST: 180.0>]
+
+[10:56:42] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:42] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:42] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:42] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:42] [Controller] -> --CURRENT TREE:
+[10:56:42] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , E)'}, 'L_n15': {'L_n16': ' (L , O , O)', 'M_n17': ' (M , N , E )'}, 'L_n16': {}, 'M_n17': {'L_n19': ' (L , O , O)', 'R_n18': ' (R , E , O)'}, 'L_n19': {}, 'R_n18': {}, 'R_n10': {}}
+
+[10:56:42] [Controller] -> --CURRENT NODE: [ Name: L_n19, Type: Type.OBSERVED, Action: 180.0, Parent: M_n17, Left: None, Mid: None, Right: None ]
+[10:56:42] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:42] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:42] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:42] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:42] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:42] [Controller] -> --CURRENT TREE:
+[10:56:42] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , E)'}, 'L_n15': {'L_n16': ' (L , O , O)', 'M_n17': ' (M , N , E )'}, 'L_n16': {}, 'M_n17': {'L_n19': ' (L , O , O)', 'R_n18': ' (R , E , O)'}, 'L_n19': {}, 'R_n18': {}, 'R_n10': {}}
+
+[10:56:42] [Controller] -> --CURRENT NODE: [ Name: L_n19, Type: Type.OBSERVED, Action: 180.0, Parent: M_n17, Left: None, Mid: None, Right: None ]
+[10:56:42] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:42] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:42] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:43] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:43] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:43] [Controller] -> --CURRENT TREE:
+[10:56:43] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , E)'}, 'L_n15': {'L_n16': ' (L , O , O)', 'M_n17': ' (M , N , E )'}, 'L_n16': {}, 'M_n17': {'L_n19': ' (L , O , O)', 'R_n18': ' (R , E , O)'}, 'L_n19': {}, 'R_n18': {}, 'R_n10': {}}
+
+[10:56:43] [Controller] -> --CURRENT NODE: [ Name: L_n19, Type: Type.OBSERVED, Action: 180.0, Parent: M_n17, Left: None, Mid: None, Right: None ]
+[10:56:43] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:43] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:43] [Controller] ->  ** COMMAND RUN ** 
+
+[10:56:43] [Controller] -> !!! NEW ALGORTHM CYCLE !!!
+[10:56:43] [Controller] ->  --MODE: Mode.EXPLORING
+[10:56:43] [Controller] -> --CURRENT TREE:
+[10:56:43] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , E)', 'R_n10': ' (R , E , O)'}, 'L_n11': {'L_n13': ' (L , S , O)', 'R_n12': ' (R , N , E)'}, 'L_n13': {}, 'R_n12': {'R_n14': ' (R , E , E)'}, 'R_n14': {'L_n15': ' (L , N , E)'}, 'L_n15': {'L_n16': ' (L , O , O)', 'M_n17': ' (M , N , E )'}, 'L_n16': {}, 'M_n17': {'L_n19': ' (L , O , O)', 'R_n18': ' (R , E , O)'}, 'L_n19': {}, 'R_n18': {}, 'R_n10': {}}
+
+[10:56:43] [Controller] -> --CURRENT NODE: [ Name: L_n19, Type: Type.OBSERVED, Action: 180.0, Parent: M_n17, Left: None, Mid: None, Right: None ]
+[10:56:43] [Controller] -> --Available actions: [<Command.RUN: 1>]
+
+[10:56:43] [Controller] ->  ~~~ [ACTION TIME] ~~~ 
+[10:56:43] [Controller] ->  ** COMMAND RUN ** 
+[10:56:43] [PhysicalBody] -> Coppelia connection stopped!
+

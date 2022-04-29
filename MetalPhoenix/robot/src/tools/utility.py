@@ -124,7 +124,7 @@ class StringBuilder:
 
 class Logger:
     """
-    Class to menage stdout log colors.
+    Class to menage stdout log colors && log files.
     """
 
     def __init__(self, class_name: str, color: str):
@@ -144,8 +144,9 @@ class Logger:
 
         self.file = CFG.logger_data()["FILE"] + sign + "." + CFG.logger_data()["EXT"]
 
-    def log(self, msg, severity: int = 0, italic: bool = False):
-        """Print on stdout he message with selected color.
+    def log(self, msg, color: str = "green", newline: bool = False, italic: bool = False,
+            noheader: bool = False):
+        """Print on stdout the message with selected color.
 
         #PARAMS: -> msg: any. Message to print.
                  -> severity: int. [-1 to 4] refer color.
@@ -157,27 +158,38 @@ class Logger:
             if italic:
                 out = "\033[03m"
 
-            if severity == 4:
+            if color == "dkred":
                 out = out + "\033[31m{0}\033[00m".format(msg)  # dk red
-            elif severity == 3:
+            elif color == "red":
                 out = out + "\033[91m{0}\033[00m".format(msg)  # red
-            elif severity == 2:
+            elif color == "yellow":
                 out = out + "\033[93m{0}\033[00m".format(msg)  # yellow
-            elif severity == 1:
+            elif color == "dkgreen":
                 out = out + "\033[32m{0}\033[00m".format(msg)  # dk green
-            elif severity == 0:
+            elif color == "green":
                 out = out + "\033[92m{0}\033[00m".format(msg)  # green
-            else:
+            elif color == "gray":
                 out = out + "\033[37m{0}\033[00m".format(msg)  # lite gray
 
-            print(self.__class, end=' \033[97m---> \033[00m')
-            print(out)
+            if newline:
+                print()
+
+            if noheader:
+                print(out)
+            else:
+                print(self.__class, end=' \033[97m---> \033[00m')
+                print(out)
 
             time = datetime.datetime.now()
             time = "[" + str(time.hour) + ":" + str(time.minute) + ":" + str(time.second) + "]"
 
-            data_to_write = time + " " + self.__class_name + " -> " + msg + "\n"
+            if noheader:
+                data_to_write = time + " -> " + msg + "\n"
+            else:
+                data_to_write = time + " [" + self.__class_name + "] -> " + msg + "\n"
 
+            if newline:
+                file.write("\n")
             file.write(data_to_write)
 
 

@@ -56,17 +56,17 @@ class PhysicalBody:
                                          simx_opmode_oneshot_wait)
 
         except SimConnectionException as sce:
-            self.__class_logger.log("[ERR] -> {0}\n".format(sce), 4)
+            self.__class_logger.log("[ERR] -> {0}\n".format(sce), "red", True, True)
             exit(-1)
 
         except SimHandleException as she:
-            self.__class_logger.log("[ERR] -> {0}\n".format(she), 4)
+            self.__class_logger.log("[ERR] -> {0}\n".format(she), "red", True, True)
             self.__sim.stop_simulation()
             self.__sim.end_connection()
             exit(-1)
 
         except Exception as e:
-            self.__class_logger.log("Something went wrong:\n[ERR] -> {0}".format(e), 4)
+            self.__class_logger.log("Something went wrong:\n[ERR] -> {0}".format(e), "red", True, True)
             self.__sim.stop_simulation()
             self.__sim.end_connection()
             exit(-1)
@@ -77,7 +77,7 @@ class PhysicalBody:
         -Log on stdout
         -Close coppelia connection (if it will be called, the connection to coppelia exists)
         """
-        self.__class_logger.log("Coppelia connection stopped!\n", severity=4, italic=True)
+        self.__class_logger.log("Coppelia connection stopped!\n", "red", italic=True)
         self.__sim.stop_simulation()
         self.__sim.end_connection()
 
