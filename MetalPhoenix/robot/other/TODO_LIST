@@ -8,13 +8,13 @@
 
 3°) redis
 
-4°) cfg file ( module configparser )
+4°) cfg file ( module configparser ) !! FATTO !!
 
-5°) log (?) { runtime log > file ( module logging ) }
+5°) log (?) { runtime log > file ( module logging ) } !! FATTO !!
 
 6°) balancing
 
-7°) reformat worktree
+7°) reformat worktree   !! FATTO !!
 
 8°) documentation
 
