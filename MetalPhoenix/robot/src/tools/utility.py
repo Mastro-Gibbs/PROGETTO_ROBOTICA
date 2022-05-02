@@ -127,7 +127,7 @@ class Logger:
     Class to menage stdout log colors && log files.
     """
 
-    def __init__(self, class_name: str, color: str):
+    def __init__(self, class_name: str, color: str = "gray"):
         """Constructor
 
         #PARAMS -> class_name: str. Name of the class.
@@ -139,10 +139,17 @@ class Logger:
             self.__class = "\033[95m[{0}]\033[00m".format(class_name)
         elif color == "cyan":
             self.__class = "\033[96m[{0}]\033[00m".format(class_name)
+        elif color == "yellow":
+            self.__class = "\033[93m[{0}]\033[00m".format(class_name)
+        else:
+            self.__class = "\033[37m[{0}]\033[00m".format(class_name)
 
         self.__class_name = class_name
 
-        self.file = CFG.logger_data()["FILE"] + sign + "." + CFG.logger_data()["EXT"]
+        self.__file = None
+
+    def set_logfile(self, path: str):
+        self.__file = path + "_" + self.__class_name + sign + "." + CFG.logger_data()["EXT"]
 
     def log(self, msg, color: str = "green", newline: bool = False, italic: bool = False,
             noheader: bool = False):
@@ -152,45 +159,66 @@ class Logger:
                  -> severity: int. [-1 to 4] refer color.
                  -> italic: bool. Italic font
         """
-        with open(self.file, "a") as file:
-            out: str = str()
 
-            if italic:
-                out = "\033[03m"
+        if self.__file is not None:
+            with open(self.__file, "a") as file:
+                time = datetime.datetime.now()
+                time = "[" + str(time.hour) + ":" + str(time.minute) + ":" + str(time.second) + "]"
 
-            if color == "dkred":
-                out = out + "\033[31m{0}\033[00m".format(msg)  # dk red
-            elif color == "red":
-                out = out + "\033[91m{0}\033[00m".format(msg)  # red
-            elif color == "yellow":
-                out = out + "\033[93m{0}\033[00m".format(msg)  # yellow
-            elif color == "dkgreen":
-                out = out + "\033[32m{0}\033[00m".format(msg)  # dk green
-            elif color == "green":
-                out = out + "\033[92m{0}\033[00m".format(msg)  # green
-            elif color == "gray":
-                out = out + "\033[37m{0}\033[00m".format(msg)  # lite gray
+                if noheader:
+                    data_to_write = time + " -> " + msg + "\n"
+                else:
+                    if color == "dkred" or color == "red":
+                        data_to_write = time + " [" + self.__class_name + "]" + "[ERR]"
+                    elif color == "yellow":
+                        data_to_write = time + " [" + self.__class_name + "]" + "[INFO]"
+                    elif color == "dkgreen" or color == "green":
+                        data_to_write = time + " [" + self.__class_name + "]" + "[FLOW]"
+                    elif color == "gray":
+                        data_to_write = time + " [" + self.__class_name + "]" + "[NOHEADER]"
 
-            if newline:
-                print()
+                    data_to_write += " -> " + msg + "\n"
 
-            if noheader:
-                print(out)
-            else:
-                print(self.__class, end=' \033[97m---> \033[00m')
-                print(out)
+                if newline:
+                    file.write("\n")
+                file.write(data_to_write)
 
-            time = datetime.datetime.now()
-            time = "[" + str(time.hour) + ":" + str(time.minute) + ":" + str(time.second) + "]"
+        out: str = str()
 
-            if noheader:
-                data_to_write = time + " -> " + msg + "\n"
-            else:
-                data_to_write = time + " [" + self.__class_name + "] -> " + msg + "\n"
+        if italic:
+            out = "\033[03m"
 
-            if newline:
-                file.write("\n")
-            file.write(data_to_write)
+        if color == "dkred":
+            out = out + "\033[31m{0}\033[00m".format(msg)  # dk red
+        elif color == "red":
+            out = out + "\033[91m{0}\033[00m".format(msg)  # red
+        elif color == "yellow":
+            out = out + "\033[93m{0}\033[00m".format(msg)  # yellow
+        elif color == "dkgreen":
+            out = out + "\033[32m{0}\033[00m".format(msg)  # dk green
+        elif color == "green":
+            out = out + "\033[92m{0}\033[00m".format(msg)  # green
+        elif color == "gray":
+            out = out + "\033[37m{0}\033[00m".format(msg)  # lite gray
+
+        if newline:
+            print()
+
+        if noheader:
+            print(out)
+        else:
+            print(self.__class, end=' \033[97m---> \033[00m')
+            print(out)
+
+    @staticmethod
+    def is_loggable(severity: str, comparator: str) -> bool:
+        if severity == "none":
+            return False
+
+        if severity == comparator:
+            return True
+        else:
+            return False
 
 
 class CFG:
@@ -223,6 +251,9 @@ class CFG:
         psr = configparser.ConfigParser()
         psr.read('../resources/data/config.conf')
         return {
-                "FILE": psr["UTILITY"]["filename"],
-                "EXT": psr["UTILITY"]["ext"]
+                "CLOGFILE": psr["UTILITY"]["controllerlog"],
+                "BLOGFILE": psr["UTILITY"]["bodylog"],
+                "ALOGFILE": psr["UTILITY"]["agentlog"],
+                "EXT": psr["UTILITY"]["ext"],
+                "SEVERITY": psr["UTILITY"]["severity"]
                 }
