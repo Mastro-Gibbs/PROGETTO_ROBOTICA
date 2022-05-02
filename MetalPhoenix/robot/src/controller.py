@@ -180,6 +180,7 @@ class Controller:
             print("UPDATE_TREE NO ACTIONS")
             exit(-1)
         """
+        global LOGSEVERITY
 
         if not self._state == State.SENSING:
             return
@@ -302,6 +303,8 @@ class Controller:
                     # if the children are all dead end the maze cannot be solved"""
 
     def control_policy(self) -> list:
+        global LOGSEVERITY
+
         actions = list()
 
         left = self.left_value
@@ -423,6 +426,8 @@ class Controller:
                     return action
 
     def do_action(self, action):
+        global LOGSEVERITY
+
         if Logger.is_loggable(LOGSEVERITY, "high"):
             self.__class_logger.log(" ~~~ [ACTION TIME] ~~~ ", "yellow", True, True)
 
@@ -540,6 +545,8 @@ class Controller:
         self._body.stop()
 
     def __do_rotation(self, vel, c: Clockwise, degrees, final_g):
+        global LOGSEVERITY
+
         degrees = abs(degrees)
         it = 0
 
@@ -605,6 +612,8 @@ class Controller:
         return archived, init_g, performed_deg, degrees
 
     def check_orientation(self, final_g, delta=2):
+        global LOGSEVERITY
+
         if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(" ** ORIENTATION CHECKING ** ", "yellow", True, True)
 
@@ -642,6 +651,8 @@ class Controller:
         return ok, curr_g, limit_range
 
     def adjust_orientation(self, final_g):
+        global LOGSEVERITY
+
         if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(" ** ADJUSTING ORIENTATION ** ", "yellow", True, True)
 
@@ -698,6 +709,7 @@ class Controller:
 
     def best_angle_and_rotation_way(self, init_g, final_g):
         """Calculate the best (minimum) angle between init_g and final_g and how you need to rotate"""
+        global LOGSEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(" ** BEST ANGLE COMPUTATION ** ", "yellow", True, True)
@@ -730,6 +742,8 @@ class Controller:
         return smallest, c
 
     def goal_reached(self) -> bool:
+        global LOGSEVERITY
+
         res = self._body.get_gate()
 
         if res:
