@@ -215,10 +215,14 @@ class Logger:
         if severity == "none":
             return False
 
-        if severity == comparator:
+        if severity == "high":
             return True
-        else:
-            return False
+        elif severity == "mid" and comparator != "high":
+            return True
+        elif severity == "low" and (comparator == "low" or comparator == "none"):
+            return True
+
+        return False
 
 
 class CFG:
