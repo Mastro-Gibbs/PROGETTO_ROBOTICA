@@ -18,7 +18,6 @@ PREV_ACTION = None
 LOGSEVERITY = CFG.logger_data()["SEVERITY"]
 
 
-
 def generate_node_id() -> str:
     global NODE_COUNT
     NODE_COUNT += 1
