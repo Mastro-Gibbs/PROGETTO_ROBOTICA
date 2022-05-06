@@ -18,6 +18,9 @@ NODE_COUNT = 0
 
 PREV_ACTION = None
 LOGSEVERITY = CFG.logger_data()["SEVERITY"]
+B_TOPIC = CFG.redis_data()["B_TOPIC"]
+C_TOPIC = CFG.redis_data()["C_TOPIC"]
+MOTORS_KEY = CFG.redis_data()["MOTORS_KEY"]
 
 
 def generate_node_id() -> str:
@@ -71,24 +74,30 @@ Se non ci sono né OBSERVED né EXPLORED allora il nodo successivo è il parent 
 
 class Controller:
     def __init__(self):
+        """<!-- REDIS SECTION -->"""
+        self.__redis = Redis(host=CFG.redis_data()["HOST"], port=CFG.redis_data()["PORT"], decode_responses=True)
+        self.__pubsub = self.__redis.pubsub()
+        self.__pubsub.subscribe(B_TOPIC)
+
         self.__class_logger = Logger(class_name="Controller", color="cyan")
         self.__class_logger.set_logfile(CFG.logger_data()["CLOGFILE"])
         self.__class_logger.log(f"LOG SEVERYTY: {str.upper(LOGSEVERITY)}\n", color="dkgreen")
         self.__class_logger.log("CONTROLLER LAUNCHED", color="green", italic=True)
-
-        self._body = PhysicalBody()
 
         self._state = State.STARTING
         self._position = Position.INITIAL
         self.mode = Mode.EXPLORING
         # self._state_position = list()
 
-        self._body.stop()
+        self.send_command(0, 0, 0, 0)
 
         self._speed = CFG.controller_data()["SPEED"]
         self._rot_speed = CFG.controller_data()["ROT_SPEED"]
 
-        self._speed_m_on_sec = self._speed * 0.25 / (self._speed // 5)
+        try:
+            self._speed_m_on_sec = self._speed * 0.25 / (self._speed // 5)
+        except ZeroDivisionError:
+            self._speed_m_on_sec = 1
         # Tempo che serve per posizionarsi al centro di una giunzione
         self.junction_sim_time = 0.25 / self._speed_m_on_sec
 
@@ -97,6 +106,7 @@ class Controller:
         self.front_value = None
         self.right_value = None
         self.back_value = None
+        self.gate = None
 
         self.front_values = list()
         self.left_values = list()
@@ -117,17 +127,23 @@ class Controller:
         self.tree = Tree()
 
     def virtual_destructor(self):
-        self._body.virtual_destructor()
+        # self._body.virtual_destructor()
         self.__class_logger.log("CONTROLLER STOPPED", "green", italic=True)
 
     def algorithm(self):
         global PREV_ACTION
         global LOGSEVERITY
 
-        self.__class_logger.log(" >>>>>> NEW ALGORITHM CYCLE <<<<<< ", "green", newline=True)
-
         # SENSE
         self.read_sensors()
+
+        print(self.orientation)
+
+        if self.orientation is None:
+            return
+
+        self.__class_logger.log(" >>>>>> NEW ALGORITHM CYCLE <<<<<< ", "green", newline=True)
+
         self.left_values.append(self.left_value)
         self.front_values.append(self.front_value)
         self.right_values.append(self.right_value)
@@ -434,7 +450,7 @@ class Controller:
             self.__class_logger.log(" ~~~ [ACTION TIME] ~~~ ", "gray", True, True)
 
         if action == Command.START:
-            self._body.stop()
+            self.send_command(0, 0, 0, 0)
 
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND START ** ", "gray")
@@ -444,7 +460,7 @@ class Controller:
 
         # Stop
         elif action == Command.STOP:
-            self._body.stop()
+            self.send_command(0, 0, 0, 0)
 
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND STOP ** ", "gray")
@@ -454,7 +470,7 @@ class Controller:
 
         # Go on
         elif action == detect_target(self.orientation) or action == Command.RUN:
-            self._body.move_forward(self._speed)
+            self.send_command(self._speed, self._speed, self._speed, self._speed)
 
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND RUN ** ", "gray")
@@ -470,12 +486,13 @@ class Controller:
             start_time = time.time()
             time_expired = False
 
-            while not time_expired and (self._body.get_proxF() is None or self._body.get_proxF() > SAFE_DISTANCE):
-                self._body.move_forward(self._speed)
+            while not time_expired and (self.read_sensors_oneshot()["FRONT"] is None
+                                        or self.read_sensors_oneshot()["FRONT"] > SAFE_DISTANCE):
+                self.send_command(self._speed, self._speed, self._speed, self._speed)
                 if time.time() - start_time >= self.junction_sim_time:
                     time_expired = True
 
-            self._body.stop()
+            self.send_command(0, 0, 0, 0)
             self._state = State.SENSING
             self._position = Position.JUNCTION
 
@@ -490,20 +507,73 @@ class Controller:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND ROTATE ** ", "gray")
 
-            self._body.stop()
+            self.send_command(0, 0, 0, 0)
             self.rotate_to_final_g(self._rot_speed, action.value)
-            self._body.stop()
+            self.send_command(0, 0, 0, 0)
             # self._state = State.STOPPED
             self._state = State.ROTATING
             # self._position = Position.JUNCTION
             return True
 
     def read_sensors(self):
-        self.left_value = self._body.get_proxL()
-        self.front_value = self._body.get_proxF()
-        self.right_value = self._body.get_proxR()
-        self.back_value = self._body.get_proxB()
-        self.orientation = self._body.get_orientation_deg()
+        msg = self.__pubsub.get_message(timeout=0.1)
+
+        try:
+            if msg["type"] == 'message':
+                key = msg["data"]
+
+                values = str(self.__redis.get(key))
+                read_values = values.split(';')
+
+                self.left_value = float(read_values[0]) if read_values[0] != 'None' else None
+                self.front_value = float(read_values[1]) if read_values[1] != 'None' else None
+                self.right_value = float(read_values[2]) if read_values[2] != 'None' else None
+                self.back_value = float(read_values[3]) if read_values[3] != 'None' else None
+                self.gate = True if read_values[3] == 'True' else False
+                self.orientation = float(read_values[5]) if read_values[5] != 'None' else None
+
+        except TypeError:
+            pass
+
+    def read_sensors_oneshot(self):
+        msg = self.__pubsub.get_message(timeout=0.1)
+
+        res = {"LEFT": self.left_value, "FRONT": self.front_value, "RIGHT": self.right_value,
+               "BACK": self.back_value, "GATE": self.gate, "ORI": self.orientation}
+
+        try:
+            if msg["type"] == 'message':
+                key = msg["data"]
+
+                values = str(self.__redis.get(key))
+                read_values = values.split(';')
+
+                res = {"LEFT": float(read_values[0]) if read_values[0] != 'None' else None,
+                       "FRONT": float(read_values[1]) if read_values[1] != 'None' else None,
+                       "RIGHT": float(read_values[2]) if read_values[2] != 'None' else None,
+                       "BACK": float(read_values[3]) if read_values[3] != 'None' else None,
+                       "GATE": True if read_values[3] == 'True' else False,
+                       "ORI": float(read_values[5]) if read_values[5] != 'None' else None
+                       }
+
+        except TypeError:
+            pass
+
+        return res
+
+    def send_command(self, v1, v2, v3, v4):
+        global MOTORS_KEY
+        global C_TOPIC
+
+        v1 = str(v1)
+        v2 = str(v2)
+        v3 = str(v3)
+        v4 = str(v4)
+
+        msg = ';'.join([v1, v2, v3, v4])
+
+        self.__redis.set(MOTORS_KEY, msg)
+        self.__redis.publish(C_TOPIC, MOTORS_KEY)
 
     def verify_gate(self, c: Compass) -> bool:
         global OR_MAX_ATTEMPT
@@ -515,18 +585,18 @@ class Controller:
         _not_none_counter = 0
 
         if c == Compass.OVEST:
-            _sens = self._body.get_proxL()
+            _sens = self.read_sensors_oneshot()["LEFT"]
         elif c == Compass.EST:
-            _sens = self._body.get_proxR()
+            _sens = self.read_sensors_oneshot()["RIGHT"]
 
         while it < OR_MAX_ATTEMPT:
             it += 1
             if _sens is None:
                 _gate = True
                 if c == Compass.OVEST:
-                    _sens = self._body.get_proxL()
+                    _sens = self.read_sensors_oneshot()["LEFT"]
                 elif c == Compass.EST:
-                    _sens = self._body.get_proxR()
+                    _sens = self.read_sensors_oneshot()["RIGHT"]
             else:
                 _gate = False
                 _not_none_counter += 1
@@ -537,14 +607,14 @@ class Controller:
 
     def rotate_to_final_g(self, vel, final_g):
         """Rotate function that rotates the robot until it reaches final_g"""
-        self._body.stop()
+        self.send_command(0, 0, 0, 0)
 
-        init_g = self._body.get_orientation_deg()
+        init_g = self.read_sensors_oneshot()["ORI"]
         degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
 
         self.__do_rotation(vel=vel, c=c, degrees=degrees, final_g=final_g)
 
-        self._body.stop()
+        self.send_command(0, 0, 0, 0)
 
     def __do_rotation(self, vel, c: Clockwise, degrees, final_g):
         global LOGSEVERITY
@@ -552,7 +622,7 @@ class Controller:
         degrees = abs(degrees)
         it = 0
 
-        self._body.stop()
+        self.send_command(0, 0, 0, 0)
         self.__rotate(vel, c, degrees)
 
         ok, curr_g, limit_range = self.check_orientation(final_g)
@@ -572,7 +642,7 @@ class Controller:
         the rotation of the Robot around the z axis
         """
         degrees = abs(degrees)
-        init_g = self._body.get_orientation_deg()
+        init_g = self.read_sensors_oneshot()["ORI"]
 
         delta = 0.8
         stop = False
@@ -580,12 +650,12 @@ class Controller:
         performed_deg = 0.0
 
         while not stop:
-            curr_g = self._body.get_orientation_deg()
+            curr_g = self.read_sensors_oneshot()["ORI"]
 
             if c == Clockwise.RIGHT:
-                self._body.turn(vel, -vel)
+                self.send_command(-vel, vel, -vel, vel)
             elif c == Clockwise.LEFT:
-                self._body.turn(-vel, vel)
+                self.send_command(vel, -vel, vel, -vel)
 
             performed_deg_temp = self.compute_performed_degrees(c, init_g, curr_g)
             # DA SPIEGARE MEGLIO
@@ -601,15 +671,15 @@ class Controller:
             # self.__class_logger.log(f"Performed: {performed_deg}")
 
             if degrees - delta < performed_deg < degrees + delta:
-                self._body.stop()
+                self.send_command(0, 0, 0, 0)
                 archived = True
                 stop = True
             elif performed_deg > degrees + delta:
-                self._body.stop()
+                self.send_command(0, 0, 0, 0)
                 archived = False
                 stop = True
 
-        self._body.stop()
+        self.send_command(0, 0, 0, 0)
         return archived, init_g, performed_deg, degrees
 
     def check_orientation(self, final_g, delta=2):
@@ -618,7 +688,7 @@ class Controller:
         if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(" ** ORIENTATION CHECKING ** ", "gray", True, True)
 
-        curr_g = self._body.get_orientation_deg()
+        curr_g = self.read_sensors_oneshot()["ORI"]
 
         ok = False
         if abs(final_g) + delta > 180:
@@ -657,13 +727,13 @@ class Controller:
         if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(" ** ADJUSTING ORIENTATION ** ", "gray", True, True)
 
-        self._body.stop()
+        self.send_command(0, 0, 0, 0)
 
         ok = False
         it = 0
 
         while not ok and it < OR_MAX_ATTEMPT:
-            curr_g = self._body.get_orientation_deg()
+            curr_g = self.read_sensors_oneshot()["ORI"]
 
             degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
 
@@ -745,7 +815,7 @@ class Controller:
     def goal_reached(self) -> bool:
         global LOGSEVERITY
 
-        res = self._body.get_gate()
+        res = self.read_sensors_oneshot()["GATE"]
 
         if res:
             if Logger.is_loggable(LOGSEVERITY, "low"):
@@ -770,4 +840,3 @@ class Controller:
         LOGSEVERITY = CFG.logger_data()["SEVERITY"]
 
         PhysicalBody.update_cfg()
-
