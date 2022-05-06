@@ -127,13 +127,20 @@ class Logger:
     Class to menage stdout log colors && log files.
     """
 
+    class LOGLEVEL(Enum):
+        CRITICAL = 5,
+        ERROR = 4,
+        WARNING = 3,
+        INFO = 2,
+        DEBUG = 1
+
     def __init__(self, class_name: str, color: str = "gray"):
         """Constructor
 
         #PARAMS -> class_name: str. Name of the class.
                 -> color: str. Color to set to the class name.
 
-        [AVAILABLE COLORS] = {purple, cyan}
+        [AVAILABLE COLORS] = {purple, cyan, yellow}
         """
         if color == "purple":
             self.__class = "\033[95m[{0}]\033[00m".format(class_name)
@@ -166,16 +173,20 @@ class Logger:
                 time = "[" + str(time.hour) + ":" + str(time.minute) + ":" + str(time.second) + "]"
 
                 if noheader:
-                    data_to_write = time + " -> " + msg + "\n"
+                    data_to_write = time + "[NOHEADER] -> " + msg + "\n"
                 else:
-                    if color == "dkred" or color == "red":
-                        data_to_write = time + " [" + self.__class_name + "]" + "[ERR]"
+                    if color == "dkred":
+                        data_to_write = time + " [" + self.__class_name + "]" + "[CRITICAL]"
+                    elif color == "red":
+                        data_to_write = time + " [" + self.__class_name + "]" + "[ERROR]"
                     elif color == "yellow":
-                        data_to_write = time + " [" + self.__class_name + "]" + "[INFO]"
+                        data_to_write = time + " [" + self.__class_name + "]" + "[WARNING]"
+                    elif color == "yellow+":
+                        data_to_write = time + " [" + self.__class_name + "]" + "[WARNING][DEBUG]"
                     elif color == "dkgreen" or color == "green":
-                        data_to_write = time + " [" + self.__class_name + "]" + "[FLOW]"
+                        data_to_write = time + " [" + self.__class_name + "]" + "[INFO]"
                     elif color == "gray":
-                        data_to_write = time + " [" + self.__class_name + "]" + "[NOHEADER]"
+                        data_to_write = time + " [" + self.__class_name + "]" + "[DEBUG]"
 
                     data_to_write += " -> " + msg + "\n"
 
@@ -194,6 +205,8 @@ class Logger:
             out = out + "\033[91m{0}\033[00m".format(msg)  # red
         elif color == "yellow":
             out = out + "\033[93m{0}\033[00m".format(msg)  # yellow
+        elif color == "yellow+":
+            out = out + "[DEBUG]\033[93m{0}\033[00m".format(msg)  # yellow+
         elif color == "dkgreen":
             out = out + "\033[32m{0}\033[00m".format(msg)  # dk green
         elif color == "green":

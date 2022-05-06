@@ -23,8 +23,8 @@ class PhysicalBody:
         print()  # \n
         self.__class_logger = Logger(class_name="PhysicalBody", color="purple")
         self.__class_logger.set_logfile(CFG.logger_data()["BLOGFILE"])
-        self.__class_logger.log(f"LOG SEVERYTY: {str.upper(LOGSEVERITY)}\n", color="yellow")
-        self.__class_logger.log("PHYSICAL BODY LAUNCHED", color="dkgreen", italic=True)
+        self.__class_logger.log(f"LOG SEVERYTY: {str.upper(LOGSEVERITY)}\n", color="dkgreen")
+        self.__class_logger.log("PHYSICAL BODY LAUNCHED", color="green", italic=True)
 
         self.__sim = SimConnection(ip=CFG.physical_data()["IP"], port=CFG.physical_data()["PORT"])
 
@@ -62,17 +62,17 @@ class PhysicalBody:
                                          simx_opmode_oneshot_wait)
 
         except SimConnectionException as sce:
-            self.__class_logger.log("[ERR] -> {0}\n".format(sce), "red", True, True)
+            self.__class_logger.log("[ERR] -> {0}\n".format(sce), "dkred", True, True)
             exit(-1)
 
         except SimHandleException as she:
-            self.__class_logger.log("[ERR] -> {0}\n".format(she), "red", True, True)
+            self.__class_logger.log("[ERR] -> {0}\n".format(she), "dkred", True, True)
             self.__sim.stop_simulation()
             self.__sim.end_connection()
             exit(-1)
 
         except Exception as e:
-            self.__class_logger.log("Something went wrong:\n[ERR] -> {0}".format(e), "red", True, True)
+            self.__class_logger.log("Something went wrong:\n[ERR] -> {0}".format(e), "dkred", True, True)
             self.__sim.stop_simulation()
             self.__sim.end_connection()
             exit(-1)
@@ -88,18 +88,14 @@ class PhysicalBody:
         self.__sim.end_connection()
 
     def virtual_destructor(self):
-        self.__class_logger.log("COPPELIA CONNECTION STOPPED", "yellow", italic=True)
-        self.__class_logger.log("PHYSICAL BODY STOPPED", "yellow", italic=True)
+        self.__class_logger.log("COPPELIA CONNECTION STOPPED", "green", italic=True)
+        self.__class_logger.log("PHYSICAL BODY STOPPED", "green", italic=True)
 
     def move_forward(self, vel) -> None:
         """Move forward robot wheels
         #PARAM:
             -vel -> velocity to set
         """
-        global LOGSEVERITY
-
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log(f"Moving forward, vel = {vel}", color="gray")
 
         self.__set_motor_velocity(vel, vel, vel, vel)
 
@@ -108,10 +104,6 @@ class PhysicalBody:
         #PARAM:
             -vel -> velocity to set
         """
-        global LOGSEVERITY
-
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log(f"Moving backward, vel = {vel}", color="gray")
 
         self.__set_motor_velocity(-vel, -vel, -vel, -vel)
 
@@ -121,19 +113,11 @@ class PhysicalBody:
             -vel_rail_l -> velocity to set at left rail
             -vel_rail_r -> velocity to set at right rail
         """
-        global LOGSEVERITY
-
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log(f"Turning: vel_rail_l = {vel_rail_l}, vel_rail_r = {vel_rail_r}", color="gray")
 
         self.__set_motor_velocity(vel_rail_l, vel_rail_r, vel_rail_l, vel_rail_r)
 
     def stop(self) -> None:
         """Stop robot wheels"""
-        global LOGSEVERITY
-
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log("Stopping", color="gray")
 
         self.__set_motor_velocity(0, 0, 0, 0)
 
@@ -154,10 +138,6 @@ class PhysicalBody:
         sim.simxSetJointTargetVelocity(_id, self.__fl_motor_handler, vel_FL, _op_mode)
 
     def get_proxF(self) -> float | None:
-        global LOGSEVERITY
-
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log("Getting frontal proximity", color="gray")
 
         _, _, point, _, _ = sim.simxReadProximitySensor(self.__sim.id(), self.__front_prox_handler,
                                                         simx_opmode_oneshot_wait)
@@ -165,10 +145,6 @@ class PhysicalBody:
         return _val if 0.03 <= _val <= 0.40 else None
 
     def get_proxL(self) -> float | None:
-        global LOGSEVERITY
-
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log("Getting left proximity", color="gray")
 
         _, _, point, _, _ = sim.simxReadProximitySensor(self.__sim.id(), self.__left_prox_handler,
                                                         simx_opmode_oneshot_wait)
@@ -176,10 +152,6 @@ class PhysicalBody:
         return _val if 0.03 <= _val <= 0.40 else None
 
     def get_proxR(self) -> float | None:
-        global LOGSEVERITY
-
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log("Getting right proximity", color="gray")
 
         _, _, point, _, _ = sim.simxReadProximitySensor(self.__sim.id(), self.__right_prox_handler,
                                                         simx_opmode_oneshot_wait)
@@ -187,10 +159,6 @@ class PhysicalBody:
         return _val if 0.03 <= _val <= 0.40 else None
 
     def get_proxB(self) -> float | None:
-        global LOGSEVERITY
-
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log("Getting back proximity", color="gray")
 
         _, _, point, _, _ = sim.simxReadProximitySensor(self.__sim.id(), self.__back_prox_handler,
                                                         simx_opmode_oneshot_wait)
@@ -198,10 +166,6 @@ class PhysicalBody:
         return _val if 0.03 <= _val <= 0.40 else None
 
     def get_gate(self) -> bool:
-        global LOGSEVERITY
-
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log("Reading gate", color="gray")
 
         _, _, point, _, _ = sim.simxReadProximitySensor(self.__sim.id(), self.__gate_handler,
                                                         simx_opmode_oneshot_wait)
@@ -209,10 +173,6 @@ class PhysicalBody:
         return True if 0.25 < _val <= 0.30 else False
 
     def get_orientation(self) -> float:
-        global LOGSEVERITY
-
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log("Getting car orientation", color="gray")
 
         return sim.simxGetObjectOrientation(self.__sim.id(), self.__robot_handler, self.__parent_handler,
                                             simx_opmode_oneshot_wait)[1][2]

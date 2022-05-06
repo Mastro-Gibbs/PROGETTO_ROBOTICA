@@ -71,8 +71,8 @@ class Controller:
     def __init__(self):
         self.__class_logger = Logger(class_name="Controller", color="cyan")
         self.__class_logger.set_logfile(CFG.logger_data()["CLOGFILE"])
-        self.__class_logger.log(f"LOG SEVERYTY: {str.upper(LOGSEVERITY)}\n", color="yellow")
-        self.__class_logger.log("CONTROLLER LAUNCHED", color="dkgreen", italic=True)
+        self.__class_logger.log(f"LOG SEVERYTY: {str.upper(LOGSEVERITY)}\n", color="dkgreen")
+        self.__class_logger.log("CONTROLLER LAUNCHED", color="green", italic=True)
 
         self._body = PhysicalBody()
 
@@ -116,7 +116,7 @@ class Controller:
 
     def virtual_destructor(self):
         self._body.virtual_destructor()
-        self.__class_logger.log("CONTROLLER STOPPED", "yellow", italic=True)
+        self.__class_logger.log("CONTROLLER STOPPED", "green", italic=True)
 
     def algorithm(self):
         global PREV_ACTION
@@ -129,17 +129,15 @@ class Controller:
         self.right_values.append(self.right_value)
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
-            self.__class_logger.log("!!! NEW ALGORTHM CYCLE !!!", "yellow", newline=True)
+            self.__class_logger.log("!!! NEW ALGORTHM CYCLE !!!", "gray", newline=True)
 
         # THINK
         actions = self.control_policy()
 
         if Logger.is_loggable(LOGSEVERITY, "low"):
-            self.__class_logger.log(f" --MODE: {self.mode}")
-
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}")
+            self.__class_logger.log(f"--MODE: {self.mode}")
             self.__class_logger.log(f"--ACTIONS: {actions}")
+            self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}")
 
         # Update tree adding the children if only if the actions are correct (namely the robot is in sensing mode)
         self.update_tree(actions)
@@ -150,24 +148,27 @@ class Controller:
         # Updating tree setting the current node
         self.update_tree(action)
 
-        if Logger.is_loggable(LOGSEVERITY, "mid"):
-            self.__class_logger.log("--CURRENT TREE:")
+        if Logger.is_loggable(LOGSEVERITY, "low"):
+            self.__class_logger.log("--CURRENT TREE:", "gray")
             self.__class_logger.log(f"{self.tree.build_tree_dict()}", "gray", noheader=True)
-            self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}", "yellow", newline=True)
-            self.__class_logger.log(f"--Available actions: {actions}")
+            self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}", "gray", newline=True)
+            self.__class_logger.log(f"--Available actions: {actions}", "green")
 
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})")
-            self.__class_logger.log(f"--Performing action: {action}")
+        if Logger.is_loggable(LOGSEVERITY, "mid"):
+            self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})", "gray")
+            self.__class_logger.log(f"--Performing action: {action}", "gray")
 
         if action is None:
+            self.__class_logger.log("NO ACTION AVAILABLE!", "dkred", newline=True)
+            self.__class_logger.log(" >>>>  EXITING  <<<< ", "dkred", italic=True)
+            self.virtual_destructor()
             exit(-1)
 
         # ACT
         performed = self.do_action(action)
 
-        if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})")
+        if Logger.is_loggable(LOGSEVERITY, "mid"):
+            self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})", "gray")
 
         if performed and PREV_ACTION != action:
             self.performed_commands.append(action)
@@ -191,7 +192,7 @@ class Controller:
             # Only one action, l'azione è stata decisa dalla DMP ed è di tipo Compass
             if isinstance(actions, Compass):
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
-                    self.__class_logger.log("*** 2) UPDATING TREE (MODE EXPLORING) ***", "yellow", newline=True)
+                    self.__class_logger.log("*** 2) UPDATING TREE (MODE EXPLORING) ***", "gray", newline=True)
 
                 action = actions
                 dict_ = f_r_l_b_to_compass(self.orientation)
@@ -206,7 +207,7 @@ class Controller:
 
             else:
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
-                    self.__class_logger.log("*** 1) UPDATING TREE (MODE EXPLORING) ***", "yellow", newline=True)
+                    self.__class_logger.log("*** 1) UPDATING TREE (MODE EXPLORING) ***", "gray", newline=True)
                 # print(self.tree.current)
 
                 for action in actions:
@@ -237,7 +238,7 @@ class Controller:
         elif self.mode == Mode.ESCAPING:
             if isinstance(actions, Compass):
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
-                    self.__class_logger.log("*** 2) UPDATING TREE (MODE ESCAPING) ***", "yellow", newline=True)
+                    self.__class_logger.log("*** 2) UPDATING TREE (MODE ESCAPING) ***", "gray", newline=True)
 
                 action = actions
 
@@ -268,7 +269,7 @@ class Controller:
 
             else:
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
-                    self.__class_logger.log("*** 1) UPDATING TREE (MODE ESCAPING) ***", "yellow", newline=True)
+                    self.__class_logger.log("*** 1) UPDATING TREE (MODE ESCAPING) ***", "gray", newline=True)
                 # print(self.tree.current)
 
                 # The node is a leaf
@@ -276,7 +277,7 @@ class Controller:
                     self.tree.current.set_type(Type.DEAD_END)
                     if Logger.is_loggable(LOGSEVERITY, "low"):
                         self.__class_logger.log("*** DEAD END NODE DETECTED ***", "green")
-                        self.__class_logger.log(f"-- CURRENT NODE: {self.tree.current}", "yellow")
+                        self.__class_logger.log(f"-- CURRENT NODE: {self.tree.current}", "gray")
 
                 # The children are all DEAD END
                 elif ((self.tree.current.has_left and self.tree.current.left.type == Type.DEAD_END) or
@@ -289,12 +290,12 @@ class Controller:
 
                     if Logger.is_loggable(LOGSEVERITY, "low"):
                         self.__class_logger.log("*** ALL CHILDREN ARE DEAD END NODE ***", "green")
-                        self.__class_logger.log(f"-- CURRENT NODE: {self.tree.current} IS DEAD END TOO", "yellow")
+                        self.__class_logger.log(f"-- CURRENT NODE: {self.tree.current} IS DEAD END TOO", "gray")
 
                 else:
                     if Logger.is_loggable(LOGSEVERITY, "low"):
-                        self.__class_logger.log("No DEAD END children, tree'll be updated on next loop", "yellow",
-                                                italic=True)
+                        self.__class_logger.log("No DEAD END children, tree'll be updated on next loop", "yellow+",
+                                                italic=True)  # aka warning + debug (?)
 
                 """elif self.tree.current.is_root:
                     ...
@@ -334,7 +335,8 @@ class Controller:
                 self._state = State.SENSING
 
             if self.mode == Mode.EXPLORING:
-                # print("Control policy EXPLORING")
+                if Logger.is_loggable(LOGSEVERITY, "mid"):
+                    self.__class_logger.log("Control policy EXPLORING", "gray")
                 if front is None:
                     # verificare se il nodo è OSSERVATO e quindi non ESPLORATO
                     action = f_r_l_b_to_compass(ori)["FRONT"]
@@ -355,7 +357,8 @@ class Controller:
                     self._state = State.SENSING
 
             elif self.mode == Mode.ESCAPING:
-                # print("Control policy ESCAPING")
+                if Logger.is_loggable(LOGSEVERITY, "mid"):
+                    self.__class_logger.log("Control policy ESCAPING", "gray")
 
                 if self.tree.current.left is not None and self.tree.current.left.type == Type.OBSERVED:
                     action = self.tree.current.left.action
@@ -387,7 +390,7 @@ class Controller:
                 if not actions:
                     if Logger.is_loggable(LOGSEVERITY, "low"):
                         self.__class_logger.log("NO OBSERVED NO EXPLORED NO ACTIONS", "dkred", True, True)
-                        self.__class_logger.log(" >>>>  EXITING  <<<< ", "red", italic=True)
+                        self.__class_logger.log(" >>>>  EXITING  <<<< ", "dkred", italic=True)
                     exit(-1)
                 else:
                     ...
@@ -429,13 +432,13 @@ class Controller:
         global LOGSEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "high"):
-            self.__class_logger.log(" ~~~ [ACTION TIME] ~~~ ", "yellow", True, True)
+            self.__class_logger.log(" ~~~ [ACTION TIME] ~~~ ", "gray", True, True)
 
         if action == Command.START:
             self._body.stop()
 
             if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log(" ** COMMAND START ** ", "yellow")
+                self.__class_logger.log(" ** COMMAND START ** ", "gray")
 
             # segnalare con un suono che si è avviato
             return True
@@ -445,7 +448,7 @@ class Controller:
             self._body.stop()
 
             if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log(" ** COMMAND STOP ** ", "yellow")
+                self.__class_logger.log(" ** COMMAND STOP ** ", "gray")
 
             self._state = State.STOPPED
             return True
@@ -455,7 +458,7 @@ class Controller:
             self._body.move_forward(self._speed)
 
             if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log(" ** COMMAND RUN ** ", "yellow")
+                self.__class_logger.log(" ** COMMAND RUN ** ", "gray")
 
             self._state = State.RUNNING
             return True
@@ -463,7 +466,7 @@ class Controller:
         # Go to Junction
         elif action == Command.GO_TO_JUNCTION:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log(" ** JOINING THE JUNCTION ** ", "yellow")
+                self.__class_logger.log(" ** JOINING THE JUNCTION ** ", "gray")
 
             start_time = time.time()
             time_expired = False
@@ -478,7 +481,7 @@ class Controller:
             self._position = Position.JUNCTION
 
             if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log(" ** STATE SENSING ARISE ** ", "yellow")
+                self.__class_logger.log(" ** STATE SENSING ARISE ** ", "gray")
 
             time.sleep(0.5)
             return True
@@ -486,7 +489,7 @@ class Controller:
         # Rotate (DA GESTIRE MEGLIO)
         else:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log(" ** COMMAND ROTATE ** ", "yellow")
+                self.__class_logger.log(" ** COMMAND ROTATE ** ", "gray")
 
             self._body.stop()
             self.rotate_to_final_g(self._rot_speed, action.value)
@@ -558,11 +561,10 @@ class Controller:
         if not ok:
             ok, it = self.adjust_orientation(final_g)
 
-        if it == OR_MAX_ATTEMPT:  # porca vacca!
+        if it == OR_MAX_ATTEMPT:  # CRITICAL CASE
             if Logger.is_loggable(LOGSEVERITY, "low"):
-                self.__class_logger.log(" ** MAX ATTEMPTS REACHED ** ", "red", True, True)
-                self.__class_logger.log(" >>>>  EXITING  <<<< ", "red", italic=True)
-            #  DA GESTIRE MEGLIO
+                self.__class_logger.log(" ** MAX ATTEMPTS REACHED ** ", "dkred", True, True)
+                self.__class_logger.log(" >>>>  EXITING  <<<< ", "dkred", italic=True)
             exit(-1)
 
     def __rotate(self, vel, c: Clockwise, degrees):
@@ -615,7 +617,7 @@ class Controller:
         global LOGSEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
-            self.__class_logger.log(" ** ORIENTATION CHECKING ** ", "yellow", True, True)
+            self.__class_logger.log(" ** ORIENTATION CHECKING ** ", "gray", True, True)
 
         curr_g = self._body.get_orientation_deg()
 
@@ -642,10 +644,10 @@ class Controller:
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
                     self.__class_logger.log(" !! bad orientation !! ", "red")
 
-        if Logger.is_loggable(LOGSEVERITY, "high"):
+        if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(
                 f" >> curr state of the sensors: "
-                f"[{round_v(limit_g_sx)}, {round_v(limit_g_dx)}], curr_g: {round_v(curr_g)}")
+                f"[{round_v(limit_g_sx)}, {round_v(limit_g_dx)}], curr_g: {round_v(curr_g)}", "gray")
 
         limit_range = [limit_g_sx, limit_g_dx]
         return ok, curr_g, limit_range
@@ -654,7 +656,7 @@ class Controller:
         global LOGSEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
-            self.__class_logger.log(" ** ADJUSTING ORIENTATION ** ", "yellow", True, True)
+            self.__class_logger.log(" ** ADJUSTING ORIENTATION ** ", "gray", True, True)
 
         self._body.stop()
 
@@ -667,10 +669,10 @@ class Controller:
             degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
 
             if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log(f" --ATTEMPT: {it + 1} / {OR_MAX_ATTEMPT}", "green")
+                self.__class_logger.log(f" --ATTEMPT: {it + 1} / {OR_MAX_ATTEMPT}", "gray")
                 self.__class_logger.log(
                     f"[Degrees_to_do, curr_g, final_g] = [{round_v(degrees)}, {round_v(curr_g)}, {round_v(final_g)}]",
-                    "green")
+                    "gray")
 
             if abs(degrees) < 6:
                 self.__rotate(0.25, c, abs(degrees))
@@ -712,7 +714,7 @@ class Controller:
         global LOGSEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
-            self.__class_logger.log(" ** BEST ANGLE COMPUTATION ** ", "yellow", True, True)
+            self.__class_logger.log(" ** BEST ANGLE COMPUTATION ** ", "gray", True, True)
 
         if init_g == final_g:
             return 0
@@ -730,12 +732,12 @@ class Controller:
 
         if smallest < 0:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log(f" >> Rotate clockwise (RIGHT) of {abs(round_v(smallest))}°", "green")
+                self.__class_logger.log(f" >> Rotate clockwise (RIGHT) of {abs(round_v(smallest))}°", "gray")
 
             c = Clockwise.RIGHT
         else:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log(f" >> Rotate anti-clockwise (LEFT) of {abs(round_v(smallest))}°", "green")
+                self.__class_logger.log(f" >> Rotate anti-clockwise (LEFT) of {abs(round_v(smallest))}°", "gray")
 
             c = Clockwise.LEFT
 
@@ -748,12 +750,12 @@ class Controller:
 
         if res:
             if Logger.is_loggable(LOGSEVERITY, "low"):
-                self.__class_logger.log(" :D SO HAPPY :D ", "yellow", True, True)
-                self.__class_logger.log(" >> MAZE SOLVED << ", "yellow", italic=True)
-                self.__class_logger.log(" ~~ WATCHING THE LIGHTS ~~ ", "yellow", True, True)
-                self.__class_logger.log(" ~~ SAYING GOODBYE TO DEAD END CHILDREN :( ~~ ", "yellow", True)
-                self.__class_logger.log(" ~~ THANKS TO DEVELOPERS THAT HAVE DONE THIS  ~~ ", "yellow", True)
-                self.__class_logger.log(" ^^ FLYING TO THE HEAVEN ^^ ", "red", True, True)
+                self.__class_logger.log(" :D SO HAPPY :D ", "green", True, True)
+                self.__class_logger.log(" >> MAZE SOLVED << ", "green", italic=True)
+                self.__class_logger.log(" ~~ WATCHING THE LIGHTS ~~ ", "green", True, True)
+                self.__class_logger.log(" ~~ SAYING GOODBYE TO DEAD END CHILDREN :( ~~ ", "green", True)
+                self.__class_logger.log(" ~~ THANKS TO DEVELOPERS THAT HAVE DONE THIS  ~~ ", "green", True)
+                self.__class_logger.log(" ^^ FLYING TO THE HEAVEN ^^ ", "green", True, True)
 
         return res
 
