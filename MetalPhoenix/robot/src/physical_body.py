@@ -62,19 +62,22 @@ class PhysicalBody:
                                          simx_opmode_oneshot_wait)
 
         except SimConnectionException as sce:
-            self.__class_logger.log("[ERR] -> {0}\n".format(sce), "dkred", True, True)
+            self.__class_logger.log("{0}\n".format(sce), "dkred", True, True)
+            self.virtual_destructor()
             exit(-1)
 
         except SimHandleException as she:
-            self.__class_logger.log("[ERR] -> {0}\n".format(she), "dkred", True, True)
+            self.__class_logger.log("{0}\n".format(she), "dkred", True, True)
             self.__sim.stop_simulation()
             self.__sim.end_connection()
+            self.virtual_destructor()
             exit(-1)
 
         except Exception as e:
-            self.__class_logger.log("Something went wrong:\n[ERR] -> {0}".format(e), "dkred", True, True)
+            self.__class_logger.log("Something went wrong: {0}".format(e), "dkred", True, True)
             self.__sim.stop_simulation()
             self.__sim.end_connection()
+            self.virtual_destructor()
             exit(-1)
 
     def __del__(self):

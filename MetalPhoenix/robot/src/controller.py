@@ -86,7 +86,7 @@ class Controller:
         self._speed = CFG.controller_data()["SPEED"]
         self._rot_speed = CFG.controller_data()["ROT_SPEED"]
 
-        self._speed_m_on_sec = self._speed * 0.25 / (self._speed // 3)
+        self._speed_m_on_sec = self._speed * 0.25 / (self._speed // 5)
         # Tempo che serve per posizionarsi al centro di una giunzione
         self.junction_sim_time = 0.25 / self._speed_m_on_sec
 
@@ -122,14 +122,13 @@ class Controller:
         global PREV_ACTION
         global LOGSEVERITY
 
+        self.__class_logger.log(" >>>>>> NEW ALGORITHM CYCLE <<<<<< ", "green", newline=True)
+
         # SENSE
         self.read_sensors()
         self.left_values.append(self.left_value)
         self.front_values.append(self.front_value)
         self.right_values.append(self.right_value)
-
-        if Logger.is_loggable(LOGSEVERITY, "mid"):
-            self.__class_logger.log("!!! NEW ALGORTHM CYCLE !!!", "gray", newline=True)
 
         # THINK
         actions = self.control_policy()
@@ -277,7 +276,6 @@ class Controller:
                     self.tree.current.set_type(Type.DEAD_END)
                     if Logger.is_loggable(LOGSEVERITY, "low"):
                         self.__class_logger.log("*** DEAD END NODE DETECTED ***", "green")
-                        self.__class_logger.log(f"-- CURRENT NODE: {self.tree.current}", "gray")
 
                 # The children are all DEAD END
                 elif ((self.tree.current.has_left and self.tree.current.left.type == Type.DEAD_END) or
@@ -290,7 +288,6 @@ class Controller:
 
                     if Logger.is_loggable(LOGSEVERITY, "low"):
                         self.__class_logger.log("*** ALL CHILDREN ARE DEAD END NODE ***", "green")
-                        self.__class_logger.log(f"-- CURRENT NODE: {self.tree.current} IS DEAD END TOO", "gray")
 
                 else:
                     if Logger.is_loggable(LOGSEVERITY, "low"):
