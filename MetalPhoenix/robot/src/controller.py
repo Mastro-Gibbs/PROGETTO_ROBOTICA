@@ -8,6 +8,8 @@ from tools.utility import Logger, Compass, f_r_l_b_to_compass, negate_compass, \
 
 from tools.tree import Tree, Node, WAY, Type
 
+from redis import Redis
+
 OR_MAX_ATTEMPT = CFG.controller_data()["MAX_ATTEMPTS"]
 SAFE_DISTANCE = CFG.controller_data()["SAFE_DIST"]
 
