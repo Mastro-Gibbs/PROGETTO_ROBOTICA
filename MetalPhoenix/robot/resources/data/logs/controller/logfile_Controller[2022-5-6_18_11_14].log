@@ -1,0 +1,214 @@
+[18:11:14] [Controller][INFO] -> LOG SEVERYTY: LOW
+
+[18:11:14] [Controller][INFO] -> CONTROLLER LAUNCHED
+
+[18:11:15] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:15] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:15] [Controller][INFO] -> --ACTIONS: [<Command.START: -1>]
+[18:11:15] [Controller][INFO] -> --CURRENT NODE: [ Name: root, Type: Type.OBSERVED, Action: None, Parent: None, Left: None, Mid: None, Right: None ]
+[18:11:15] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:15][NOHEADER] -> {'root': {}}
+
+[18:11:15] [Controller][DEBUG] -> --CURRENT NODE: [ Name: root, Type: Type.OBSERVED, Action: None, Parent: None, Left: None, Mid: None, Right: None ]
+[18:11:15] [Controller][INFO] -> --Available actions: [<Command.START: -1>]
+
+[18:11:15] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:16] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:16] [Controller][INFO] -> --ACTIONS: [<Compass.NORD: 90.0>]
+[18:11:16] [Controller][INFO] -> --CURRENT NODE: [ Name: root, Type: Type.OBSERVED, Action: None, Parent: None, Left: None, Mid: None, Right: None ]
+[18:11:16] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:16][NOHEADER] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[18:11:16] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:11:16] [Controller][INFO] -> --Available actions: [<Compass.NORD: 90.0>]
+
+[18:11:16] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:16] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:16] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:16] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:11:16] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:16][NOHEADER] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[18:11:16] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:11:16] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:16] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:16] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:16] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:16] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:11:16] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:16][NOHEADER] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[18:11:16] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:11:16] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:16] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:16] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:16] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:16] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:11:16] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:16][NOHEADER] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[18:11:16] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:11:16] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:16] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:17] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:17] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:17] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:11:17] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:17][NOHEADER] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[18:11:17] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:11:17] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:17] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:17] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:17] [Controller][INFO] -> --ACTIONS: [<Command.GO_TO_JUNCTION: 3>]
+[18:11:17] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:11:17] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:17][NOHEADER] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[18:11:17] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:11:17] [Controller][INFO] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[18:11:18] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:18] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:18] [Controller][INFO] -> --ACTIONS: [<Compass.OVEST: 180.0>]
+[18:11:18] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:11:18] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:18][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:11:18] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:18] [Controller][INFO] -> --Available actions: [<Compass.OVEST: 180.0>]
+
+[18:11:20] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:20] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:20] [Controller][INFO] -> --ACTIONS: [<Compass.OVEST: 180.0>]
+[18:11:20] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:20] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:20][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:11:20] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:20] [Controller][INFO] -> --Available actions: [<Compass.OVEST: 180.0>]
+
+[18:11:20] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:20] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:20] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:20] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:20] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:20][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:11:20] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:20] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:20] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:21] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:21] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:21] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:21] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:21][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:11:21] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:21] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:21] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:21] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:21] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:21] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:21] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:21][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:11:21] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:21] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:21] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:21] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:21] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:21] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:21] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:21][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:11:21] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:21] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:21] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:21] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:21] [Controller][INFO] -> --ACTIONS: [<Command.GO_TO_JUNCTION: 3>]
+[18:11:21] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:21] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:21][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:11:21] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:21] [Controller][INFO] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+
+[18:11:23] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:23] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:23] [Controller][INFO] -> --ACTIONS: [<Compass.OVEST: 180.0>]
+[18:11:23] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:11:23] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:23][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'M_n3': ' (M , O , O )'}, 'M_n3': {}}
+
+[18:11:23] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:23] [Controller][INFO] -> --Available actions: [<Compass.OVEST: 180.0>]
+
+[18:11:23] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:23] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:23] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:23] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:23] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:23][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'M_n3': ' (M , O , O )'}, 'M_n3': {}}
+
+[18:11:23] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:23] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:23] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:23] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:23] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:23] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:23] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:23][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'M_n3': ' (M , O , O )'}, 'M_n3': {}}
+
+[18:11:23] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:23] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:23] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:24] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:24] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:24] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:24] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:24][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'M_n3': ' (M , O , O )'}, 'M_n3': {}}
+
+[18:11:24] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:24] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:24] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:24] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:24] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:24] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:24] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:24][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'M_n3': ' (M , O , O )'}, 'M_n3': {}}
+
+[18:11:24] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:24] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:24] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:24] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:24] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:11:24] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:24] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:24][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'M_n3': ' (M , O , O )'}, 'M_n3': {}}
+
+[18:11:24] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:24] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+
+[18:11:24] [Controller][INFO] ->  >>>>>> NEW ALGORITHM CYCLE <<<<<< 
+[18:11:24] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:11:24] [Controller][INFO] -> --ACTIONS: [<Command.GO_TO_JUNCTION: 3>]
+[18:11:24] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:24] [Controller][DEBUG] -> --CURRENT TREE:
+[18:11:24][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'M_n3': ' (M , O , O )'}, 'M_n3': {}}
+
+[18:11:24] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n3, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:11:24] [Controller][INFO] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+[18:11:25] [Controller][INFO] -> CONTROLLER STOPPED

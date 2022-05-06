@@ -1,0 +1,492 @@
+[18:7:30] [Controller][INFO] -> LOG SEVERYTY: LOW
+
+[18:7:30] [Controller][INFO] -> CONTROLLER LAUNCHED
+[18:7:31] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:31] [Controller][INFO] -> --ACTIONS: [<Command.START: -1>]
+[18:7:31] [Controller][INFO] -> --CURRENT NODE: [ Name: root, Type: Type.OBSERVED, Action: None, Parent: None, Left: None, Mid: None, Right: None ]
+[18:7:31] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:31][NOHEADER] -> {'root': {}}
+
+[18:7:31] [Controller][DEBUG] -> --CURRENT NODE: [ Name: root, Type: Type.OBSERVED, Action: None, Parent: None, Left: None, Mid: None, Right: None ]
+[18:7:31] [Controller][INFO] -> --Available actions: [<Command.START: -1>]
+[18:7:31] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:31] [Controller][INFO] -> --ACTIONS: [<Compass.NORD: 90.0>]
+[18:7:31] [Controller][INFO] -> --CURRENT NODE: [ Name: root, Type: Type.OBSERVED, Action: None, Parent: None, Left: None, Mid: None, Right: None ]
+[18:7:31] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:31][NOHEADER] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[18:7:31] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:7:31] [Controller][INFO] -> --Available actions: [<Compass.NORD: 90.0>]
+[18:7:32] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:32] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:32] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:7:32] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:32][NOHEADER] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[18:7:32] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:7:32] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:32] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:32] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:32] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:7:32] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:32][NOHEADER] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[18:7:32] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:7:32] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:32] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:32] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:32] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:7:32] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:32][NOHEADER] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[18:7:32] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:7:32] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:32] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:32] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:32] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:7:32] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:32][NOHEADER] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[18:7:32] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:7:32] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:33] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:33] [Controller][INFO] -> --ACTIONS: [<Command.GO_TO_JUNCTION: 3>]
+[18:7:33] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:7:33] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:33][NOHEADER] -> {'root': {'M_n1': ' (M , N , O )'}, 'M_n1': {}}
+
+[18:7:33] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:7:33] [Controller][INFO] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+[18:7:33] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:33] [Controller][INFO] -> --ACTIONS: [<Compass.OVEST: 180.0>]
+[18:7:33] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n1, Type: Type.OBSERVED, Action: 90.0, Parent: root, Left: None, Mid: None, Right: None ]
+[18:7:33] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:33][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:7:33] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:33] [Controller][INFO] -> --Available actions: [<Compass.OVEST: 180.0>]
+[18:7:36] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:36] [Controller][INFO] -> --ACTIONS: [<Compass.OVEST: 180.0>]
+[18:7:36] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:36] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:36][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:7:36] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:36] [Controller][INFO] -> --Available actions: [<Compass.OVEST: 180.0>]
+[18:7:36] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:36] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:36] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:36] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:36][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:7:36] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:36] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:36] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:36] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:36] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:36] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:36][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:7:36] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:36] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:37] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:37] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:37] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:37] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:37][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:7:37] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:37] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:37] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:37] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:37] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:37] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:37][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:7:37] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:37] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:37] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:37] [Controller][INFO] -> --ACTIONS: [<Command.GO_TO_JUNCTION: 3>]
+[18:7:37] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:37] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:37][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , O)'}, 'L_n2': {}}
+
+[18:7:37] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:37] [Controller][INFO] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+[18:7:38] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:38] [Controller][INFO] -> --ACTIONS: [<Compass.SUD: -90.0>, <Compass.OVEST: 180.0>]
+[18:7:38] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n2, Type: Type.OBSERVED, Action: 180.0, Parent: M_n1, Left: None, Mid: None, Right: None ]
+[18:7:38] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:38][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , O )'}, 'L_n3': {}, 'M_n4': {}}
+
+[18:7:38] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:7:38] [Controller][INFO] -> --Available actions: [<Compass.SUD: -90.0>, <Compass.OVEST: 180.0>]
+[18:7:38] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:38] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:38] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:7:38] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:38][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , O )'}, 'L_n3': {}, 'M_n4': {}}
+
+[18:7:38] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:7:38] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:39] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:39] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:39] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:7:39] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:39][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , O )'}, 'L_n3': {}, 'M_n4': {}}
+
+[18:7:39] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:7:39] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:39] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:39] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:39] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:7:39] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:39][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , O )'}, 'L_n3': {}, 'M_n4': {}}
+
+[18:7:39] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:7:39] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:39] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:39] [Controller][INFO] -> --ACTIONS: [<Command.GO_TO_JUNCTION: 3>]
+[18:7:39] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:7:39] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:39][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , O )'}, 'L_n3': {}, 'M_n4': {}}
+
+[18:7:39] [Controller][DEBUG] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:7:39] [Controller][INFO] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+[18:7:40] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:40] [Controller][INFO] -> --ACTIONS: [<Compass.NORD: 90.0>, <Compass.OVEST: 180.0>]
+[18:7:40] [Controller][INFO] -> --CURRENT NODE: [ Name: M_n4, Type: Type.OBSERVED, Action: 180.0, Parent: L_n2, Left: None, Mid: None, Right: None ]
+[18:7:40] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:40][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[18:7:40] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:40] [Controller][INFO] -> --Available actions: [<Compass.NORD: 90.0>, <Compass.OVEST: 180.0>]
+[18:7:43] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:43] [Controller][INFO] -> --ACTIONS: [<Compass.NORD: 90.0>]
+[18:7:43] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:43] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:43][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[18:7:43] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:43] [Controller][INFO] -> --Available actions: [<Compass.NORD: 90.0>]
+[18:7:43] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:43] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:43] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:43] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:43][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[18:7:43] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:43] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:43] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:43] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:43] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:43] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:43][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[18:7:43] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:43] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:43] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:43] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:43] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:43] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:43][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[18:7:43] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:43] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:43] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:43] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:43] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:43] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:43][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[18:7:43] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:43] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:44] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:44] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:44] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:44] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:44][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[18:7:44] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:44] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:44] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:44] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:44] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:44] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:44][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[18:7:44] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:44] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:44] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:44] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:44] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:44] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:44][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[18:7:44] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:44] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:44] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:44] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:44] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:44] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:44][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[18:7:44] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:44] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:45] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:45] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:45] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:45] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:45][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[18:7:45] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:45] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:45] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:45] [Controller][INFO] -> --ACTIONS: [<Command.GO_TO_JUNCTION: 3>]
+[18:7:45] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:45] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:45][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , O)'}, 'M_n6': {}, 'R_n5': {}}
+
+[18:7:45] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:45] [Controller][INFO] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+[18:7:46] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:46] [Controller][INFO] -> --ACTIONS: [<Compass.OVEST: 180.0>]
+[18:7:46] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n5, Type: Type.OBSERVED, Action: 90.0, Parent: M_n4, Left: None, Mid: None, Right: None ]
+[18:7:46] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:46][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[18:7:46] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:46] [Controller][INFO] -> --Available actions: [<Compass.OVEST: 180.0>]
+[18:7:48] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:48] [Controller][INFO] -> --ACTIONS: [<Compass.OVEST: 180.0>]
+[18:7:48] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:48] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:48][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[18:7:48] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:48] [Controller][INFO] -> --Available actions: [<Compass.OVEST: 180.0>]
+[18:7:48] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:48] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:48] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:48] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:48][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[18:7:48] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:48] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:48] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:48] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:48] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:48] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:48][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[18:7:48] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:48] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:49] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:49] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:49] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:49] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:49][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[18:7:49] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:49] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:49] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:49] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:49] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:49] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:49][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[18:7:49] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:49] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:49] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:49] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:49] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:49] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:49][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[18:7:49] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:49] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:49] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:49] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:49] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:49] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:49][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[18:7:49] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:49] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:50] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:50] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:50] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:50] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:50][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[18:7:50] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:50] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:50] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:50] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:50] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:50] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:50][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[18:7:50] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:50] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:50] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:50] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:50] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:50] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:50][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[18:7:50] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:50] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:50] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:50] [Controller][INFO] -> --ACTIONS: [<Command.GO_TO_JUNCTION: 3>]
+[18:7:50] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:50] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:50][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , O)'}, 'L_n7': {}}
+
+[18:7:50] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:50] [Controller][INFO] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+[18:7:51] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:51] [Controller][INFO] -> --ACTIONS: [<Compass.NORD: 90.0>, <Compass.SUD: -90.0>]
+[18:7:51] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n7, Type: Type.OBSERVED, Action: 180.0, Parent: R_n5, Left: None, Mid: None, Right: None ]
+[18:7:51] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:51][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[18:7:51] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:51] [Controller][INFO] -> --Available actions: [<Compass.NORD: 90.0>, <Compass.SUD: -90.0>]
+[18:7:54] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:54] [Controller][INFO] -> --ACTIONS: [<Compass.NORD: 90.0>]
+[18:7:54] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:54] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:54][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[18:7:54] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:54] [Controller][INFO] -> --Available actions: [<Compass.NORD: 90.0>]
+[18:7:54] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:54] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:54] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:54] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:54][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[18:7:54] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:54] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:55] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:55] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:55] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:55] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:55][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[18:7:55] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:55] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:55] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:55] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:55] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:55] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:55][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[18:7:55] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:55] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:55] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:55] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:55] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:55] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:55][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[18:7:55] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:55] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:55] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:55] [Controller][INFO] -> --ACTIONS: [<Command.GO_TO_JUNCTION: 3>]
+[18:7:55] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:55] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:55][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , O)'}, 'L_n9': {}, 'R_n8': {}}
+
+[18:7:55] [Controller][DEBUG] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:55] [Controller][INFO] -> --Available actions: [<Command.GO_TO_JUNCTION: 3>]
+[18:7:56] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:56] [Controller][INFO] -> --ACTIONS: [<Compass.EST: 0.0>, <Compass.OVEST: 180.0>]
+[18:7:56] [Controller][INFO] -> --CURRENT NODE: [ Name: R_n8, Type: Type.OBSERVED, Action: 90.0, Parent: L_n7, Left: None, Mid: None, Right: None ]
+[18:7:56] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:56][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[18:7:56] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:7:56] [Controller][INFO] -> --Available actions: [<Compass.EST: 0.0>, <Compass.OVEST: 180.0>]
+[18:7:59] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:59] [Controller][INFO] -> --ACTIONS: [<Compass.OVEST: 180.0>]
+[18:7:59] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:7:59] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:59][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[18:7:59] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:7:59] [Controller][INFO] -> --Available actions: [<Compass.OVEST: 180.0>]
+[18:7:59] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:59] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:59] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:7:59] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:59][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[18:7:59] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:7:59] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:59] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:59] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:59] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:7:59] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:59][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[18:7:59] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:7:59] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:7:59] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:7:59] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:7:59] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:7:59] [Controller][DEBUG] -> --CURRENT TREE:
+[18:7:59][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[18:7:59] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:7:59] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:8:0] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:8:0] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:8:0] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:8:0] [Controller][DEBUG] -> --CURRENT TREE:
+[18:8:0][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[18:8:0] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:8:0] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:8:0] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:8:0] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:8:0] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:8:0] [Controller][DEBUG] -> --CURRENT TREE:
+[18:8:0][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[18:8:0] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:8:0] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:8:0] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:8:0] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:8:0] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:8:0] [Controller][DEBUG] -> --CURRENT TREE:
+[18:8:0][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[18:8:0] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:8:0] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:8:0] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:8:0] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:8:0] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:8:0] [Controller][DEBUG] -> --CURRENT TREE:
+[18:8:0][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[18:8:0] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:8:0] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:8:1] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:8:1] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:8:1] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:8:1] [Controller][DEBUG] -> --CURRENT TREE:
+[18:8:1][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[18:8:1] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:8:1] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:8:1] [Controller][INFO] -> --MODE: Mode.EXPLORING
+[18:8:1] [Controller][INFO] -> --ACTIONS: [<Command.RUN: 1>]
+[18:8:1] [Controller][INFO] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:8:1] [Controller][DEBUG] -> --CURRENT TREE:
+[18:8:1][NOHEADER] -> {'root': {'M_n1': ' (M , N , E )'}, 'M_n1': {'L_n2': ' (L , O , E)'}, 'L_n2': {'L_n3': ' (L , S , O)', 'M_n4': ' (M , O , E )'}, 'L_n3': {}, 'M_n4': {'M_n6': ' (M , O , O )', 'R_n5': ' (R , N , E)'}, 'M_n6': {}, 'R_n5': {'L_n7': ' (L , O , E)'}, 'L_n7': {'L_n9': ' (L , S , O)', 'R_n8': ' (R , N , E)'}, 'L_n9': {}, 'R_n8': {'L_n11': ' (L , O , O)', 'R_n10': ' (R , E , O)'}, 'L_n11': {}, 'R_n10': {}}
+
+[18:8:1] [Controller][DEBUG] -> --CURRENT NODE: [ Name: L_n11, Type: Type.OBSERVED, Action: 180.0, Parent: R_n8, Left: None, Mid: None, Right: None ]
+[18:8:1] [Controller][INFO] -> --Available actions: [<Command.RUN: 1>]
+[18:8:1] [Controller][INFO] -> CONTROLLER STOPPED
