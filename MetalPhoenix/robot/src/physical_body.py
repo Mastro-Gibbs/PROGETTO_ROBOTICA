@@ -125,7 +125,7 @@ class PhysicalBody:
         self.__redis.publish(B_TOPIC, SENSORS_K)
 
     def get_commands(self):
-        msg = self.__pubsub.get_message(timeout=0.1)
+        msg = self.__pubsub.get_message()
 
         try:
             if msg["type"] == 'message':

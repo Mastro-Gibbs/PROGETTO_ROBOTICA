@@ -15,6 +15,7 @@ SAFE_DISTANCE = CFG.controller_data()["SAFE_DIST"]
 
 NODE_ID = "n"
 NODE_COUNT = 0
+GATE = False
 
 PREV_ACTION = None
 LOGSEVERITY = CFG.logger_data()["SEVERITY"]
@@ -106,7 +107,6 @@ class Controller:
         self.front_value = None
         self.right_value = None
         self.back_value = None
-        self.gate = None
 
         self.front_values = list()
         self.left_values = list()
@@ -486,8 +486,10 @@ class Controller:
             start_time = time.time()
             time_expired = False
 
-            while not time_expired and (self.read_sensors_oneshot()["FRONT"] is None
-                                        or self.read_sensors_oneshot()["FRONT"] > SAFE_DISTANCE):
+            self.read_sensors()
+            while not time_expired and (self.front_value is None
+                                        or self.front_value > SAFE_DISTANCE):
+                self.read_sensors()
                 self.send_command(self._speed, self._speed, self._speed, self._speed)
                 if time.time() - start_time >= self.junction_sim_time:
                     time_expired = True
@@ -516,7 +518,8 @@ class Controller:
             return True
 
     def read_sensors(self):
-        msg = self.__pubsub.get_message(timeout=0.1)
+        global GATE
+        msg = self.__pubsub.get_message(timeout=0.05)
 
         try:
             if msg["type"] == 'message':
@@ -529,37 +532,12 @@ class Controller:
                 self.front_value = float(read_values[1]) if read_values[1] != 'None' else None
                 self.right_value = float(read_values[2]) if read_values[2] != 'None' else None
                 self.back_value = float(read_values[3]) if read_values[3] != 'None' else None
-                self.gate = True if read_values[3] == 'True' else False
+                if not GATE:
+                    GATE = True if read_values[3] == 'True' else False
                 self.orientation = float(read_values[5]) if read_values[5] != 'None' else None
 
         except TypeError:
             pass
-
-    def read_sensors_oneshot(self):
-        msg = self.__pubsub.get_message(timeout=0.1)
-
-        res = {"LEFT": self.left_value, "FRONT": self.front_value, "RIGHT": self.right_value,
-               "BACK": self.back_value, "GATE": self.gate, "ORI": self.orientation}
-
-        try:
-            if msg["type"] == 'message':
-                key = msg["data"]
-
-                values = str(self.__redis.get(key))
-                read_values = values.split(';')
-
-                res = {"LEFT": float(read_values[0]) if read_values[0] != 'None' else None,
-                       "FRONT": float(read_values[1]) if read_values[1] != 'None' else None,
-                       "RIGHT": float(read_values[2]) if read_values[2] != 'None' else None,
-                       "BACK": float(read_values[3]) if read_values[3] != 'None' else None,
-                       "GATE": True if read_values[3] == 'True' else False,
-                       "ORI": float(read_values[5]) if read_values[5] != 'None' else None
-                       }
-
-        except TypeError:
-            pass
-
-        return res
 
     def send_command(self, v1, v2, v3, v4):
         global MOTORS_KEY
@@ -578,6 +556,8 @@ class Controller:
     def verify_gate(self, c: Compass) -> bool:
         global OR_MAX_ATTEMPT
 
+        self.read_sensors()
+
         it = 0
         _gate: bool = False
 
@@ -585,18 +565,20 @@ class Controller:
         _not_none_counter = 0
 
         if c == Compass.OVEST:
-            _sens = self.read_sensors_oneshot()["LEFT"]
+            _sens = self.left_value
         elif c == Compass.EST:
-            _sens = self.read_sensors_oneshot()["RIGHT"]
+            _sens = self.right_value
+
+        self.read_sensors()
 
         while it < OR_MAX_ATTEMPT:
             it += 1
             if _sens is None:
                 _gate = True
                 if c == Compass.OVEST:
-                    _sens = self.read_sensors_oneshot()["LEFT"]
+                    _sens = self.left_value
                 elif c == Compass.EST:
-                    _sens = self.read_sensors_oneshot()["RIGHT"]
+                    _sens = self.right_value
             else:
                 _gate = False
                 _not_none_counter += 1
@@ -609,7 +591,9 @@ class Controller:
         """Rotate function that rotates the robot until it reaches final_g"""
         self.send_command(0, 0, 0, 0)
 
-        init_g = self.read_sensors_oneshot()["ORI"]
+        self.read_sensors()
+
+        init_g = self.orientation
         degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
 
         self.__do_rotation(vel=vel, c=c, degrees=degrees, final_g=final_g)
@@ -642,7 +626,9 @@ class Controller:
         the rotation of the Robot around the z axis
         """
         degrees = abs(degrees)
-        init_g = self.read_sensors_oneshot()["ORI"]
+        self.read_sensors()
+
+        init_g = self.orientation
 
         delta = 0.8
         stop = False
@@ -650,7 +636,9 @@ class Controller:
         performed_deg = 0.0
 
         while not stop:
-            curr_g = self.read_sensors_oneshot()["ORI"]
+            self.read_sensors()
+
+            curr_g = self.orientation
 
             if c == Clockwise.RIGHT:
                 self.send_command(-vel, vel, -vel, vel)
@@ -688,7 +676,10 @@ class Controller:
         if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(" ** ORIENTATION CHECKING ** ", "gray", True, True)
 
-        curr_g = self.read_sensors_oneshot()["ORI"]
+        self.read_sensors()
+
+        curr_g = self.orientation
+        # print(curr_g)
 
         ok = False
         if abs(final_g) + delta > 180:
@@ -707,7 +698,6 @@ class Controller:
             if limit_g_dx <= curr_g <= limit_g_sx:
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
                     self.__class_logger.log(" ~~ perfect ~~ ", "green")
-
                 ok = True
             else:
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
@@ -733,7 +723,9 @@ class Controller:
         it = 0
 
         while not ok and it < OR_MAX_ATTEMPT:
-            curr_g = self.read_sensors_oneshot()["ORI"]
+            self.read_sensors()
+
+            curr_g = self.orientation
 
             degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
 
@@ -815,9 +807,9 @@ class Controller:
     def goal_reached(self) -> bool:
         global LOGSEVERITY
 
-        res = self.read_sensors_oneshot()["GATE"]
+        self.read_sensors()
 
-        if res:
+        if GATE:
             if Logger.is_loggable(LOGSEVERITY, "low"):
                 self.__class_logger.log(" :D SO HAPPY :D ", "green", True, True)
                 self.__class_logger.log(" >> MAZE SOLVED << ", "green", italic=True)
@@ -826,7 +818,7 @@ class Controller:
                 self.__class_logger.log(" ~~ THANKS TO DEVELOPERS THAT HAVE DONE THIS  ~~ ", "green", True)
                 self.__class_logger.log(" ^^ FLYING TO THE HEAVEN ^^ ", "green", True, True)
 
-        return res
+        return GATE
 
     def update_cfg(self):
         global OR_MAX_ATTEMPT
