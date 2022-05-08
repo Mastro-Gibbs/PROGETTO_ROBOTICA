@@ -1,0 +1,34 @@
+CoppeliaSim
+---Model Info---
+FreeNove4wd
+    Bounding box size:
+        X[m] = 4.0000e-02
+        Y[m] = 1.6589e-01
+        Z[m] = 4.0000e-02
+    Scaling factors:
+        X = 1
+        Y = 1
+        Z = 1
+Base_plate_stl
+    Bounding box size:
+        X[m] = 1.4250e-01 (non serve)
+        Y[m] = 1.5000e-01 (0.15m di larghezza parte metallica)
+        Z[m] = 2.5856e-01 (0.25m di lunghezza parte metallica)
+    Scaling factors:
+        X = 1
+        Y = 1
+        Z = 1
+
+Distanza tra due muri: 0.45 [m]
+
+Freenove4wd:
+
+       0.25m
+        #
+        #
+    #########  0.15 m
+        #
+        #
+
+CRITICAL_SIDE_DISTANCE = 0.070
+
