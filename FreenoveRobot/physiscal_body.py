@@ -131,13 +131,14 @@ class PhysicalBody:
     def magic_rainbow(self, mode: bool = False) -> None:
         """
             @Warning: possible multithread method.
-            @param beta: boolean -> True: activate multithread
+            @param mode: boolean -> True: activate multithread
                                     False: deactivated multithread/normal mode
 
             It emits a wonderful animation through the LEDs.
             It turns out to be a blocking method if called in normal mode, 
             otherwise a thread will unleash and take care of the task.
-            The thread will live as long as the animation is not finished.
+            The thread will live as long as the animation is not finished or 
+            virtual destructor will be called.
         """
         if mode:
             self.__wizard.start()
@@ -147,7 +148,7 @@ class PhysicalBody:
     def oritentation(self) -> tuple:
         """
         It informs about the position of the robot on the 
-        x, y, z axes otherwise known as roll, pitch and yaw.
+        x, y, z axes also known as roll, pitch and yaw.
         This only works if the begin method is invoked beforehand.
 
         @return tuple: (int, int, int) -> (roll, pitch, yaw)
