@@ -2,7 +2,6 @@ import time
 from math import pi
 from enum import Enum
 
-from physical_body import PhysicalBody
 from tools.utility import Logger, Compass, f_r_l_b_to_compass, negate_compass, \
     normalize_angle, round_v, Clockwise, detect_target, CFG
 
@@ -22,6 +21,9 @@ LOGSEVERITY = CFG.logger_data()["SEVERITY"]
 B_TOPIC = CFG.redis_data()["B_TOPIC"]
 C_TOPIC = CFG.redis_data()["C_TOPIC"]
 MOTORS_KEY = CFG.redis_data()["MOTORS_KEY"]
+
+OLD_CMD = [None, None, None, None]
+
 
 
 def generate_node_id() -> str:
@@ -519,7 +521,7 @@ class Controller:
 
     def read_sensors(self):
         global GATE
-        msg = self.__pubsub.get_message(timeout=0.05)
+        msg = self.__pubsub.get_message()
 
         try:
             if msg["type"] == 'message':
@@ -542,6 +544,14 @@ class Controller:
     def send_command(self, v1, v2, v3, v4):
         global MOTORS_KEY
         global C_TOPIC
+        global OLD_CMD
+
+        vels = [v1, v2, v3, v4]
+
+        if vels[0] == OLD_CMD[0] and vels[1] == OLD_CMD[1] and vels[2] == OLD_CMD[2] and vels[3] == OLD_CMD[3]:
+            return
+
+        OLD_CMD = [v1, v2, v3, v4]
 
         v1 = str(v1)
         v2 = str(v2)
@@ -639,6 +649,8 @@ class Controller:
             self.read_sensors()
 
             curr_g = self.orientation
+
+            print("ROTATION CURR_G: ", curr_g)
 
             if c == Clockwise.RIGHT:
                 self.send_command(-vel, vel, -vel, vel)
