@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 from time import sleep
-from utils import deprecated
+from lib.robotAPI.utils import deprecated
 
 
 class Buzzer:

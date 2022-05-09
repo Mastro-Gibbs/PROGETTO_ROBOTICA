@@ -1,4 +1,4 @@
-from PCA9685 import PCA9685
+from lib.robotAPI.PCA9685 import PCA9685
 from enum import Enum
 
 class Command(Enum):

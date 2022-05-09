@@ -1,4 +1,4 @@
-from MPU6050lib.MPU6050 import MPU6050
+from lib.MPU6050lib.MPU6050 import MPU6050
 from os import getpid
 from sys import argv
 from time import sleep
@@ -11,7 +11,7 @@ FIFO_buffer: list = [0] * 64
 packet_size: int = 0
 
 
-class MPU:
+class MPUSensor:
     def __init__(self, bus: int = 1, debug: bool = True):
         global packet_size
 
@@ -31,16 +31,17 @@ class MPU:
         self.__discover.start()
 
     def virtual_destructor(self):
-        exctype = SystemExit
-        tid = ct.c_long(self.__discover.ident)
-        if not inspect.isclass(exctype):
-            exctype = type(exctype)
-        res = ct.pythonapi.PyThreadState_SetAsyncExc(tid, ct.py_object(exctype))
-        if res == 0:
-            raise ValueError("invalid thread id")
-        elif res != 1:
-            ct.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-            raise SystemError("PyThreadState_SetAsyncExc failed")
+        if self.__discover.is_alive():
+            exctype = SystemExit
+            tid = ct.c_long(self.__discover.ident)
+            if not inspect.isclass(exctype):
+                exctype = type(exctype)
+            res = ct.pythonapi.PyThreadState_SetAsyncExc(tid, ct.py_object(exctype))
+            if res == 0:
+                raise ValueError("invalid thread id")
+            elif res != 1:
+                ct.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+                raise SystemError("PyThreadState_SetAsyncExc failed")
 
     def __update_vals(self):
         global FIFO_buffer

@@ -4,10 +4,55 @@ from time import sleep
 # from buzzer import Buzzer
 # from led import Led
 # from ADC import Adc
+# from FreenoveRobot.lib.MPU6050lib.MPUSensor import MPUSensor as MPU
 
-from MPU6050lib.MPU import MPU as Mpu
+from physiscal_body import PhysicalBody
 
-m = Mpu(bus=1, debug=True)
+pb = PhysicalBody()
+pb.begin()
+pb.magic_rainbow(True)
+pb.trill()
+sleep(2)
+pb.interrupt_trill()
+pb.virtual_destructor()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""m = MPU(bus=1, debug=True)
 m.begin()
 
 try:
@@ -15,7 +60,7 @@ try:
         print(m.roll_pitch_yaw)
         sleep(5)
 except KeyboardInterrupt:
-    m.virtual_destructor()
+    m.virtual_destructor()"""
 
 
 

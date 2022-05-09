@@ -51,9 +51,9 @@ import ctypes
 import time
 import smbus
 import csv
-from MPU6050lib.MPUConstants import MPUConstants as C
-from MPU6050lib.Quaternion import Quaternion as Q
-from MPU6050lib.Quaternion import XYZVector as V
+from lib.MPU6050lib.MPUConstants import MPUConstants as C
+from lib.MPU6050lib.Quaternion import Quaternion as Q
+from lib.MPU6050lib.Quaternion import XYZVector as V
 
 
 class MPU6050:
