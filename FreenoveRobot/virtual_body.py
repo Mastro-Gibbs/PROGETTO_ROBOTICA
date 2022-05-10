@@ -34,7 +34,7 @@ class VirtualBody:
         self.__runner = self.__pubsub.run_in_thread(sleep_time=0.01)
 
         while True:
-            _distances = self.__body.read_distances
+            _distances = self.__body.read_distances()
             _distances = ';'.join([str(_distances[0]), str(_distances[1]), str(_distances[2])])
             
             _orientation = self.__body.oritentation()
