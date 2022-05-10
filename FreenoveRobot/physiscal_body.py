@@ -4,15 +4,14 @@
     @author: Stefano Fattore
     @last update: 9/5/22
 """
-import inspect
-import ctypes as ct
+
 from threading import Thread
 from lib.robotAPI.motor import Motor, Command
 from lib.robotAPI.ultrasonic import Ultrasonic
 from lib.robotAPI.infrared import Infrared
 from lib.robotAPI.led import Led, Color
 from lib.robotAPI.buzzer import Buzzer
-from lib.robotAPI.utils import deprecated
+from lib.robotAPI.utils import thread_ripper
 from lib.robotAPI.utils import ROBOTAPIConstants as RC
 from lib.MPU6050lib.MPUSensor import MPUSensor as MPU 
 
@@ -39,7 +38,7 @@ class PhysicalBody:
 
         # led strip instance
         self.__strip = Led()
-        self.__wizard = Thread(target=self.__strip.rainbowCycle, name='wizard', args=(20, 5,))
+        self.__wizard = Thread(target=self.__strip.rainbowCycle, name='led_wizard', args=(RC.LED_ANIM_DELAY, RC.LED_ANIM_LOOPS,))
 
         # orientation sensor instance (MPU6050)
         self.__mpu6050 = MPU(RC.MPU_SMBUS_ID, RC.MPU_DEBUG_MODE)
@@ -54,17 +53,11 @@ class PhysicalBody:
 
             IT MUST BE INVOKED.
         """
-        if self.__wizard.is_alive():
-            exctype = SystemExit
-            tid = ct.c_long(self.__wizard.ident)
-            if not inspect.isclass(exctype):
-                exctype = type(exctype)
-            res = ct.pythonapi.PyThreadState_SetAsyncExc(tid, ct.py_object(exctype))
-            if res == 0:
-                raise ValueError("invalid thread id")
-            elif res != 1:
-                ct.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-                raise SystemError("PyThreadState_SetAsyncExc failed")
+        try:
+            if thread_ripper(self.__wizard):
+                print(f"Thread {self.__wizard} buried")
+        except ValueError or SystemError as error:
+            print(f"Issues while trying to kill the thread {self.__wizard}")
 
         self.__mpu6050.virtual_destructor()
         self.__infrared.virtual_destructor()

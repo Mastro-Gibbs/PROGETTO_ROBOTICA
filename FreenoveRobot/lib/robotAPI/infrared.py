@@ -4,6 +4,7 @@ import RPi.GPIO as GPIO
 from time import sleep
 from threading import Thread
 from lib.robotAPI.utils import ROBOTAPIConstants as RC
+from lib.robotAPI.utils import thread_ripper
 
 class Infrared:
     def __init__(self):
@@ -16,20 +17,14 @@ class Infrared:
         self.__mid_status: bool = False
         self.__right_status: bool = False
 
-        self.__discover = Thread(target=self.__detect, name='discover')
+        self.__discover = Thread(target=self.__detect, name='ir_discover')
 
     def virtual_destructor(self):
-        if self.__discover.is_alive():
-            exctype = SystemExit
-            tid = ct.c_long(self.__discover.ident)
-            if not inspect.isclass(exctype):
-                exctype = type(exctype)
-            res = ct.pythonapi.PyThreadState_SetAsyncExc(tid, ct.py_object(exctype))
-            if res == 0:
-                raise ValueError("invalid thread id")
-            elif res != 1:
-                ct.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-                raise SystemError("PyThreadState_SetAsyncExc failed")
+        try:
+            if thread_ripper(self.__discover):
+                print(f"Thread {self.__discover} buried")
+        except ValueError or SystemError as error:
+            print(f"Issues while trying to kill the thread {self.__discover}")
 
     def begin(self):
         self.__discover.start()

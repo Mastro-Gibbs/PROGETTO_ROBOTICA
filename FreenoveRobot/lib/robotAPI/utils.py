@@ -1,6 +1,9 @@
 import warnings
 import functools
+import inspect
+import ctypes as ct
 from enum import IntEnum
+from threading import Thread
 
 
 def deprecated(func):
@@ -20,6 +23,22 @@ def deprecated(func):
         return func(*args, **kwargs)
     return new_func
 
+
+def thread_ripper(th: Thread) -> bool:
+    if th.is_alive():
+        exctype = SystemExit
+        tid = ct.c_long(th.ident)
+        if not inspect.isclass(exctype):
+            exctype = type(exctype)
+        res = ct.pythonapi.PyThreadState_SetAsyncExc(tid, ct.py_object(exctype))
+        if res == 0:
+            raise ValueError("invalid thread id")
+        elif res != 1:
+            ct.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+            raise SystemError("PyThreadState_SetAsyncExc failed")
+        
+        return True
+    return False
 
 class ROBOTAPIConstants(IntEnum):
     FRONT_ECHO_PIN = 22,
@@ -45,6 +64,8 @@ class ROBOTAPIConstants(IntEnum):
     LED_BRIGHTNESS = 255, # Set to 0 for darkest and 255 for brightest
     LED_INVERT = False,   # True to invert the signal (when using NPN transistor level shift)
     LED_CHANNEL = 0,      # set to '1' for GPIOs 13, 19, 41, 45 or 53
+    LED_ANIM_DELAY = 20,
+    LED_ANIM_LOOPS = 5,
 
     MPU_SMBUS_ID = 1,
     MPU_DEBUG_MODE = 1

@@ -1,4 +1,5 @@
 from lib.MPU6050lib.MPU6050 import MPU6050
+from lib.robotAPI.utils import thread_ripper
 from os import getpid
 from sys import argv
 from time import sleep
@@ -25,23 +26,17 @@ class MPUSensor:
         self.__pitch: int = 0.0
         self.__yaw: int = 0.0
 
-        self.__discover = Thread(target=self.__update_vals)
+        self.__discover = Thread(target=self.__update_vals, name='mpu_discover')
         
     def begin(self):
         self.__discover.start()
 
     def virtual_destructor(self):
-        if self.__discover.is_alive():
-            exctype = SystemExit
-            tid = ct.c_long(self.__discover.ident)
-            if not inspect.isclass(exctype):
-                exctype = type(exctype)
-            res = ct.pythonapi.PyThreadState_SetAsyncExc(tid, ct.py_object(exctype))
-            if res == 0:
-                raise ValueError("invalid thread id")
-            elif res != 1:
-                ct.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-                raise SystemError("PyThreadState_SetAsyncExc failed")
+        try:
+            if thread_ripper(self.__discover):
+                print(f"Thread {self.__discover} buried")
+        except ValueError or SystemError as error:
+            print(f"Issues while trying to kill the thread {self.__discover}")
 
     def __update_vals(self):
         global FIFO_buffer
