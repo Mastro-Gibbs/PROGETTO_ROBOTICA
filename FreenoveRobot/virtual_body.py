@@ -42,7 +42,7 @@ class VirtualBody:
             _distances = ';'.join([str(_distances[0]), str(_distances[1]), str(_distances[2])])
             
             _orientation = self.__body.oritentation()
-            _yaw = _orientation[2]
+            _yaw = str(_orientation[2])
 
             _infrared = self.__body.infrared_status()
             _infrared = ';'.join([str(_infrared[0]), str(_infrared[1]), str(_infrared[2])])
