@@ -74,7 +74,7 @@ class PhysicalBody:
         self.__infrared.begin()
 
 
-    def set_motor_model(self, cmd: Command, rate: int = 0) -> None:
+    def set_motor_model(self, cmd: str, rate: int = 0) -> None:
         """
             Set speed value for motors.
 
@@ -89,7 +89,19 @@ class PhysicalBody:
         
         _vel = (rate * 4095) // 100
 
-        self.__motors.set_model(cmd, _vel)
+        if cmd == Command.RUN.value:
+            _cmd = Command.RUN
+        elif cmd == Command.STOP.value:
+            _cmd = Command.STOP
+        elif cmd == Command.ROTATEL.value:
+            _cmd = Command.ROTATEL
+        elif cmd == Command.ROTATER.value:
+            _cmd = Command.ROTATER
+        else:
+            _cmd = None
+
+        if _cmd != None:
+            self.__motors.set_model(_cmd, _vel)
 
     def read_distances(self) -> tuple:
         """
@@ -150,10 +162,24 @@ class PhysicalBody:
             virtual destructor will be called.
         """
         if mode:
+            self.__wizard = Thread(target=self.__strip.rainbowCycle, name='led_wizard', args=(RC.LED_ANIM_DELAY, RC.LED_ANIM_LOOPS,))
             self.__wizard.start()
         else:
             self.__strip.rainbowCycle()
+    
+    def interrupt_magic_rainbow(self) -> None:
+        """
+            Interrupt wizard thread if it is alive.
+            Turn off leds.
+        """
+        try:
+            if thread_ripper(self.__wizard):
+                print(f"Thread {self.__wizard.name} buried")
+        except ValueError or SystemError as error:
+            print(f"Issues while trying to kill the thread {self.__wizard.name}")
 
+        self.__strip.colorWipe(Color(0,0,0), 10)
+    
     def oritentation(self) -> tuple:
         """
         It informs about the position of the robot on the 

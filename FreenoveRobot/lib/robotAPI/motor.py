@@ -1,11 +1,11 @@
 from lib.robotAPI.PCA9685 import PCA9685
 from enum import Enum
 
-class Command(Enum):
-    RUN = 1,
-    STOP = 2,
-    ROTATEL = 3,
-    ROTATER = 4
+class Command(str, Enum):
+    RUN = 'RUN',
+    STOP = 'STOP',
+    ROTATEL = 'ROTATEL',
+    ROTATER = 'ROTATER'
 
 class Motor:
     def __init__(self):

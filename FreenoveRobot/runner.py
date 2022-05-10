@@ -9,8 +9,6 @@ from time import sleep
 from physiscal_body import PhysicalBody
 
 pb = PhysicalBody()
-pb.begin()
-pb.magic_rainbow(True)
 pb.trill()
 sleep(2)
 pb.interrupt_trill()
