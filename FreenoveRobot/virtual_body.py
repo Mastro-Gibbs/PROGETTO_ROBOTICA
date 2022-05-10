@@ -33,6 +33,10 @@ class VirtualBody:
         self.__body.begin()
         self.__runner = self.__pubsub.run_in_thread(sleep_time=0.01)
 
+        _old_distances = str()
+        _old_yaw = str()
+        _old_infrared = str()
+
         while True:
             _distances = self.__body.read_distances()
             _distances = ';'.join([str(_distances[0]), str(_distances[1]), str(_distances[2])])
@@ -43,13 +47,20 @@ class VirtualBody:
             _infrared = self.__body.infrared_status()
             _infrared = ';'.join([str(_infrared[0]), str(_infrared[1]), str(_infrared[2])])
 
-            self.__redis.set(KEYS.ULTRASONIC.value, _distances)
-            self.__redis.set(KEYS.MPU.value, _yaw)
-            self.__redis.set(KEYS.INFRARED.value, _infrared)
+            if _old_distances != _distances:
+                self.__redis.set(KEYS.ULTRASONIC.value, _distances)
+                self.__redis.publish(TOPICS.BODY_TOPIC.value, KEYS.ULTRASONIC.value)
+                _old_distances = _distances
 
-            self.__redis.publish(TOPICS.BODY_TOPIC.value, KEYS.ULTRASONIC.value)
-            self.__redis.publish(TOPICS.BODY_TOPIC.value, KEYS.MPU.value)
-            self.__redis.publish(TOPICS.BODY_TOPIC.value, KEYS.INFRARED.value)
+            if _old_yaw != _yaw:
+                self.__redis.set(KEYS.MPU.value, _yaw)
+                self.__redis.publish(TOPICS.BODY_TOPIC.value, KEYS.MPU.value)
+                _old_yaw = _yaw
+
+            if _old_infrared != _infrared:
+                self.__redis.set(KEYS.INFRARED.value, _infrared)
+                self.__redis.publish(TOPICS.BODY_TOPIC.value, KEYS.INFRARED.value)
+                _old_infrared = _infrared
 
             sleep(0.01)
 
