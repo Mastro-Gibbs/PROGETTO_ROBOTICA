@@ -25,7 +25,7 @@ class VirtualBody:
         self.__body = Body()
 
         # redis instance
-        self.__redis = Redis(host='localhost', port=6379, decode_responses=True)
+        self.__redis = Redis(host='192.168.1.22', port=7777, decode_responses=True)
         self.__pubsub = self.__redis.pubsub()
         self.__pubsub.psubscribe(**{TOPICS.CONTROLLER_TOPIC.value: self.__on_message})
 
