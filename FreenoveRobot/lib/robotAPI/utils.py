@@ -34,6 +34,10 @@ class ROBOTAPIConstants(IntEnum):
     BUZZER_PIN = 12
     DEFAULT_BUZZER_FREQ = 440,
 
+    IR_LEFT = 14,
+    IR_MID = 15,
+    IR_RIGHT = 23,
+
     LED_COUNT = 8,        # Number of LED pixels.
     LED_PIN = 18,         # GPIO pin connected to the pixels (18 uses PWM!).
     LED_FREQ_HZ = 800000, # LED signal frequency in hertz (usually 800khz)

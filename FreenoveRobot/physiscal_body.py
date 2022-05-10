@@ -9,6 +9,7 @@ import ctypes as ct
 from threading import Thread
 from lib.robotAPI.motor import Motor, Command
 from lib.robotAPI.ultrasonic import Ultrasonic
+from lib.robotAPI.infrared import Infrared
 from lib.robotAPI.led import Led, Color
 from lib.robotAPI.buzzer import Buzzer
 from lib.robotAPI.utils import deprecated
@@ -29,6 +30,9 @@ class PhysicalBody:
         self.__left_sensor = Ultrasonic(RC.LEFT_ECHO_PIN, RC.LEFT_TRIGGER_PIN)
         self.__front_sensor = Ultrasonic(RC.FRONT_ECHO_PIN, RC.FRONT_TRIGGER_PIN)
         self.__right_sensor = Ultrasonic(RC.RIGHT_ECHO_PIN, RC.RIGHT_TRIGGER_PIN)
+
+        # infrared instance
+        self.__infrared = Infrared()
 
         # buzzer instance
         self.__buzzer = Buzzer(RC.BUZZER_PIN)
@@ -63,6 +67,7 @@ class PhysicalBody:
                 raise SystemError("PyThreadState_SetAsyncExc failed")
 
         self.__mpu6050.virtual_destructor()
+        self.__infrared.virtual_destructor()
         self.__strip.colorWipe(Color(0,0,0), 10)
 
     def begin(self) -> None:
@@ -73,6 +78,7 @@ class PhysicalBody:
             IT MUST BE INVOKED.
         """
         self.__mpu6050.begin()
+        self.__infrared.begin()
 
 
     def set_motor_model(self, cmd: Command, rate: int = 0) -> None:
@@ -97,14 +103,24 @@ class PhysicalBody:
             Reads the values of the proximity sensors (centimeters), 
             returns a tuple containing the same.
 
-            @return tuple: three elements of type int; 
-                           return order -> [left, front, right]
+            @return tuple: (int, int, int) -> (left, front, right)
         """
         _left = self.__left_sensor.distance
         _front = self.__front_sensor.distance
         _right = self.__right_sensor.distance
 
         return _left, _front, _right
+
+    def infrared_status(self) -> tuple:
+        """
+            @Warning: multithread method.
+
+            This only works if the begin method is invoked beforehand.
+            Give back the values of the infrared sensors.
+
+            @return tuple: (bool, bool, bool) -> (left, mid, right)
+        """
+        return self.__infrared.status
 
 
     def trill(self, freq: int = -1, duty: int = -1) -> None:
