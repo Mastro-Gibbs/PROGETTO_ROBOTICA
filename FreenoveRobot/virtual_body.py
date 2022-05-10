@@ -78,11 +78,13 @@ class VirtualBody:
                 self.__body.interrupt_trill()
             elif _value == 'EMIT':
                 self.__body.trill()
+                
         elif _key == KEYS.LED.value:
             if _value == 'STOP':
                 self.__body.interrupt_magic_rainbow()
             elif _value == 'EMIT':
                 self.__body.magic_rainbow(True)
+
         elif _key == KEYS.MOTORS.value:
             _values = _value.split(';')
             _cmd = _values[0]
