@@ -123,7 +123,7 @@ class PhysicalBody:
             This only works if the begin method is invoked beforehand.
             Give back the values of the infrared sensors.
 
-            @return tuple: (bool, bool, bool) -> (left, mid, right)
+            @return tuple: (bool[int], bool[int], bool[int]) -> (left, mid, right)
         """
         return self.__infrared.status
 

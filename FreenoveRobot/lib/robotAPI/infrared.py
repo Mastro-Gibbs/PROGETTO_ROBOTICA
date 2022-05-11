@@ -43,7 +43,7 @@ class Infrared:
 
     @property
     def status(self) -> tuple:
-        return self.__left_status, self.__mid_status, self.__right_status
+        return int(self.__left_status), int(self.__mid_status), int(self.__right_status)
 
     def __detect(self):
         while True:
