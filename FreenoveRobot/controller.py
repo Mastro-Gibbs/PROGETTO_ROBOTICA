@@ -32,7 +32,7 @@ class Controller:
         self.__pubsub.psubscribe(**{RT.BODY_TOPIC.value: self.__on_message})
 
         self.__logger = Logger('Controller', 'cyan')
-        self.__logger.set_logfile('lib/data/logs/log')
+        self.__logger.set_logfile(CFG.logger_data()["LOGPATH"])
 
         self.__robot_mode: Mode = Mode.EXPLORING
         self.__robot_state: State = State.STARTING
@@ -64,7 +64,7 @@ class Controller:
         self.__maze_performed_commands = list()
 
 
-    def virtual_destructor(self):
+    def virtual_destructor(self) -> None:
         self.__logger.log('Controller Stopped!', 'green', True, True)
         self.__runner.stop()
 
@@ -82,8 +82,20 @@ class Controller:
         
         return self.__goal_reached
 
+    # ending animation if maze were solved
+    def ending_animation(self) -> None:
+        if self.__goal_reached:
+            self.__send_command(RCMD.LEDEMIT)
+
+            for i in range(0, 5, 1):
+                self.__send_command(RCMD.BZZEMIT)
+                time.sleep(0.25)
+                self.__send_command(RCMD.BZZINTERRUPT)
+            
+            self.__send_command(RCMD.LEDINTERRUPT)
+
     # Updater controller configuration
-    def update_config(self):
+    def update_config(self) -> None:
         global OR_MAX_ATTEMPT
         global SAFE_DISTANCE
 
@@ -127,7 +139,7 @@ class Controller:
             self.__right_infrared_sensor = int(_values[2])
 
     # sender method
-    def __send_command(self, _cmd: RCMD, _val = None):
+    def __send_command(self, _cmd: RCMD, _val = 0) -> None:
         global OLD_CMD
         global OLD_VAL
 
@@ -148,12 +160,18 @@ class Controller:
 
         elif _cmd == RCMD.LEDEMIT or _cmd == RCMD.LEDINTERRUPT:
             if OLD_CMD != _cmd:
-                self.__redis.set(RK.LED.value, _msg)
+                if _cmd == RCMD.LEDEMIT:
+                    self.__redis.set(RK.LED.value, RCMD.LEDEMIT.value)
+                elif _cmd == RCMD.LEDINTERRUPT:
+                    self.__redis.set(RK.LED.value, RCMD.LEDINTERRUPT.value)
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.LED.value)
 
         elif _cmd == RCMD.BZZEMIT or _cmd == RCMD.BZZINTERRUPT:
             if OLD_CMD != _cmd:
-                self.__redis.set(RK.BUZZER.value, _msg)
+                if _cmd == RCMD.BZZEMIT:
+                    self.__redis.set(RK.BUZZER.value, RCMD.BZZEMIT.value)
+                elif _cmd == RCMD.BZZINTERRUPT:
+                    self.__redis.set(RK.BUZZER.value, RCMD.BZZINTERRUPT.value)
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.BUZZER.value)
         
         OLD_CMD = _cmd
@@ -175,7 +193,7 @@ class Controller:
     # ************************************************************************************************** #
 
     # Algorithm entry
-    def algorithm(self):
+    def algorithm(self) -> None:
         global PREV_ACTION
         global ITERATION
 
@@ -213,7 +231,7 @@ class Controller:
             PREV_ACTION = action
 
     # Tree updater
-    def __update_tree(self, actions):
+    def __update_tree(self, actions) -> None:
         self.__logger.log('Updating tree..', 'green')
 
         if not self.__robot_state == State.SENSING:
@@ -453,7 +471,7 @@ class Controller:
     # ******************************************************************************************** #
 
 
-    def __rotate_to_final_g(self, final_g):
+    def __rotate_to_final_g(self, final_g) -> None:
         """Rotate function that rotates the robot until it reaches final_g"""
 
         self.__logger.log(f'Rotating to {final_g}', 'green')
@@ -461,10 +479,13 @@ class Controller:
         _init_g = self.__orientation_sensor
         _degrees, _cloclwise = best_angle_and_rotation_way(_init_g, final_g)
 
-        self.__do_rotation(clk=_cloclwise, degrees=_degrees, final_g=final_g)
+        _ok = self.__do_rotation(clk=_cloclwise, degrees=_degrees, final_g=final_g)
+
+        if _ok:
+           self.__logger.log('Rotation complete', 'green') 
 
 
-    def __do_rotation(self, clk: Clockwise, degrees, final_g) -> None:
+    def __do_rotation(self, clk: Clockwise, degrees, final_g) -> bool:
         _degrees = abs(degrees)
         _it = 0
 
@@ -479,6 +500,8 @@ class Controller:
             self.__logger.log('Max adjusting attempts reached, force quitting..', 'red')
             self.virtual_destructor()
             exit(-1)
+
+        return _ok
 
 
     def __rotate(self, c: Clockwise, degrees) -> tuple:
@@ -580,22 +603,23 @@ class Controller:
         if action == Command.START:
             self.__send_command(RCMD.STOP)
 
-            # segnalare con un suono che si è avviato
-            return True
+            self.__send_command(RCMD.BZZEMIT)
+            self.__send_command(RCMD.LEDEMIT)
+            time.sleep(1)
+            self.__send_command(RCMD.BZZINTERRUPT)
+            self.__send_command(RCMD.LEDINTERRUPT)
 
         # Stop
         elif action == Command.STOP:
             self.__send_command(RCMD.STOP)
 
             self.__robot_state = State.STOPPED
-            return True
 
         # Go on
         elif action == detect_target(self.__orientation_sensor) or action == Command.RUN:
             self.__send_command(RCMD.RUN, self.__robot_speed)
 
             self.__robot_state = State.RUNNING
-            return True
 
         # Go to Junction
         elif action == Command.GO_TO_JUNCTION:
@@ -614,7 +638,6 @@ class Controller:
             self.__robot_position = Position.JUNCTION
 
             time.sleep(0.5)
-            return True
 
         # Rotate (DA GESTIRE MEGLIO)
         else:
@@ -622,5 +645,3 @@ class Controller:
             self.__rotate_to_final_g(self.__robot_rotation_speed, action.value)
             self.__send_command(RCMD.STOP)
             self.__robot_state = State.ROTATING
-
-            return True

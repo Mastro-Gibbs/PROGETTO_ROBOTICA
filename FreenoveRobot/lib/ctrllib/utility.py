@@ -266,7 +266,7 @@ class CFG:
     @staticmethod
     def redis_data() -> dict:
         psr = configparser.ConfigParser()
-        psr.read('lib/data/config.conf')
+        psr.read('data/config.conf')
         return {
                 "SPEED": float(psr["ROBOT"]["speed"]),
                 "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
@@ -274,22 +274,19 @@ class CFG:
                 "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"])
                 }
 
-    """@staticmethod
+    @staticmethod
     def logger_data() -> dict:
         psr = configparser.ConfigParser()
-        psr.read('lib/data/config.conf')
+        psr.read('data/config.conf')
         return {
-                "CLOGFILE": psr["UTILITY"]["controllerlog"],
-                "BLOGFILE": psr["UTILITY"]["bodylog"],
-                "ALOGFILE": psr["UTILITY"]["agentlog"],
-                "EXT": psr["UTILITY"]["ext"],
-                "SEVERITY": psr["UTILITY"]["severity"]
-                }"""
+                "LOGPATH": psr["LOGGER"]["logpath"],
+                "EXT": psr["LOGGER"]["ext"]
+                }
 
     @staticmethod
     def redis_data() -> dict:
         psr = configparser.ConfigParser()
-        psr.read('lib/data/config.conf')
+        psr.read('data/config.conf')
         return {
             "HOST": psr["REDIS"]["host"],
             "PORT": psr["REDIS"]["port"],

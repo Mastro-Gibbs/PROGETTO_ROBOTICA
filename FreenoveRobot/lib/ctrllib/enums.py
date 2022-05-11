@@ -54,14 +54,6 @@ class Type(Enum):
     FINAL = "FINAL"
 
 
-class LOGLEVEL(Enum):
-    CRITICAL = 5,
-    ERROR = 4,
-    WARNING = 3,
-    INFO = 2,
-    DEBUG = 1
-
-
 class RedisCOMMAND(str, Enum):
     RUN = 'MOTORS_RUN',
     STOP = 'MOTORS_STOP',
