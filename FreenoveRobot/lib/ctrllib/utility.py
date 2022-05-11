@@ -1,7 +1,6 @@
-from io import StringIO
-from enum import Enum
 import configparser
 import datetime
+from enums import Compass
 
 
 date = datetime.datetime.now()
@@ -9,20 +8,14 @@ sign = "[" + str(date.year) + "-" + str(date.month) + "-" + str(date.day) + "_" 
         + "_" + str(date.minute) + "_" + str(date.second) + "]"
 
 
-class Compass(float, Enum):
-    NORD = 90.0
-    SUD = -90.0
-    EST = 0.0
-    OVEST = 180.0
+NODE_ID = "n"
+NODE_COUNT = 0
 
 
-class Clockwise(Enum):
-    RIGHT = 0
-    LEFT = 1
-
-
-def round_v(value):
-    return round(value, 4)
+def generate_node_id() -> str:
+    global NODE_COUNT
+    NODE_COUNT += 1
+    return NODE_ID + str(NODE_COUNT)
 
 
 def normalize_angle(ang: float, type_t: int):
@@ -92,47 +85,10 @@ def negate_compass(compass: float) -> Compass:
         return Compass.EST
 
 
-class StringBuilder:
-    """C++ style StringStream class."""
-    _file_str = None
-
-    def __init__(self):
-        """Constructor"""
-        self._file_str = StringIO()
-
-    def concat(self, string: str, end: str = ''):
-        """Build string (append param: string)
-        #PARAMS: -> string: str. Entity to append.
-                 -> end: str. End char or string.
-
-        #WARNING: to set '\n' must pass it with 'end' param.
-        """
-        self._file_str.write(string)
-        self._file_str.write(end)
-
-    def erase(self):
-        """#WARNING: Must be called to destroy previous built string
-
-        Erase current StringBuilder buffer.
-        """
-        del self._file_str
-        self._file_str = StringIO()
-
-    def __str__(self):
-        return self._file_str.getvalue()
-
-
 class Logger:
     """
     Class to menage stdout log colors && log files.
     """
-
-    class LOGLEVEL(Enum):
-        CRITICAL = 5,
-        ERROR = 4,
-        WARNING = 3,
-        INFO = 2,
-        DEBUG = 1
 
     def __init__(self, class_name: str, color: str = "gray"):
         """Constructor
@@ -246,7 +202,7 @@ class CFG:
     @staticmethod
     def controller_data() -> dict:
         psr = configparser.ConfigParser()
-        psr.read('../resources/data/config.conf')
+        psr.read('lib/data/config.conf')
         return {
                 "SPEED": float(psr["ROBOT"]["speed"]),
                 "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
@@ -255,18 +211,9 @@ class CFG:
                 }
 
     @staticmethod
-    def physical_data() -> dict:
-        psr = configparser.ConfigParser()
-        psr.read('../resources/data/config.conf')
-        return {
-                "IP": psr["COPPELIA"]["ip"],
-                "PORT": int(psr["COPPELIA"]["port"])
-                }
-
-    @staticmethod
     def logger_data() -> dict:
         psr = configparser.ConfigParser()
-        psr.read('../resources/data/config.conf')
+        psr.read('lib/data/config.conf')
         return {
                 "CLOGFILE": psr["UTILITY"]["controllerlog"],
                 "BLOGFILE": psr["UTILITY"]["bodylog"],
@@ -278,7 +225,7 @@ class CFG:
     @staticmethod
     def redis_data() -> dict:
         psr = configparser.ConfigParser()
-        psr.read('../resources/data/config.conf')
+        psr.read('lib/data/config.conf')
         return {
             "HOST": psr["REDIS"]["host"],
             "PORT": psr["REDIS"]["port"],
