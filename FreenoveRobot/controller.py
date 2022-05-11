@@ -1,7 +1,6 @@
-import time 
+import time
 
 from math import pi
-from enum import Enum
 
 from lib.ctrllib.utility import generate_node_id, f_r_l_b_to_compass, normalize_angle, negate_compass, detect_target
 from lib.ctrllib.utility import Logger, CFG
@@ -24,10 +23,12 @@ GATE = False
 PREV_ACTION = None
 OLD_CMD = [None, None, None, None]
 
+
 class Controller:
     def __init__(self):
         """<!-- REDIS SECTION -->"""
-        self.__redis = Redis(host=CFG.redis_data()["HOST"], port=CFG.redis_data()["PORT"], decode_responses=True)
+        self.__redis = Redis(host=CFG.redis_data()["HOST"], port=CFG.redis_data()[
+                             "PORT"], decode_responses=True)
         self.__pubsub = self.__redis.pubsub()
         self.__pubsub.subscribe(B_TOPIC)
 
@@ -59,16 +60,15 @@ class Controller:
 
         self.target = 0
 
-        self.priority_list = [Compass.NORD, Compass.OVEST, Compass.EST, Compass.SUD]
+        self.priority_list = [Compass.NORD,
+                              Compass.OVEST, Compass.EST, Compass.SUD]
 
         self.trajectory = list()
         self.performed_commands = list()
         self.tree = Tree()
 
-
     def virtual_destructor(self):
         pass
-
 
     def algorithm(self):
         global PREV_ACTION
@@ -170,7 +170,7 @@ class Controller:
                 # The node is a leaf
                 if self.tree.current.is_leaf:
                     self.tree.current.set_type(Type.DEAD_END)
-                    
+
                 # The children are all DEAD END
                 elif ((self.tree.current.has_left and self.tree.current.left.type == Type.DEAD_END) or
                       self.tree.current.left is None) and \
@@ -206,7 +206,8 @@ class Controller:
             actions.insert(0, Command.START)
 
         elif self._state == State.ROTATING:
-            actions.insert(0, self.performed_commands[len(self.performed_commands) - 1])
+            actions.insert(
+                0, self.performed_commands[len(self.performed_commands) - 1])
 
         elif self._state == State.STOPPED or \
                 self._state == State.SENSING or \
@@ -316,14 +317,15 @@ class Controller:
 
         # Go on
         elif action == detect_target(self.orientation) or action == Command.RUN:
-            self.send_command(self._speed, self._speed, self._speed, self._speed)
+            self.send_command(self._speed, self._speed,
+                              self._speed, self._speed)
 
             self._state = State.RUNNING
             return True
 
         # Go to Junction
         elif action == Command.GO_TO_JUNCTION:
-            
+
             start_time = time.time()
             time_expired = False
 
@@ -331,7 +333,8 @@ class Controller:
             while not time_expired and (self.front_value is None
                                         or self.front_value > SAFE_DISTANCE):
                 self.read_sensors()
-                self.send_command(self._speed, self._speed, self._speed, self._speed)
+                self.send_command(self._speed, self._speed,
+                                  self._speed, self._speed)
                 if time.time() - start_time >= self.junction_sim_time:
                     time_expired = True
 
@@ -362,13 +365,18 @@ class Controller:
                 values = str(self.__redis.get(key))
                 read_values = values.split(';')
 
-                self.left_value = float(read_values[0]) if read_values[0] != 'None' else None
-                self.front_value = float(read_values[1]) if read_values[1] != 'None' else None
-                self.right_value = float(read_values[2]) if read_values[2] != 'None' else None
-                self.back_value = float(read_values[3]) if read_values[3] != 'None' else None
+                self.left_value = float(
+                    read_values[0]) if read_values[0] != 'None' else None
+                self.front_value = float(
+                    read_values[1]) if read_values[1] != 'None' else None
+                self.right_value = float(
+                    read_values[2]) if read_values[2] != 'None' else None
+                self.back_value = float(
+                    read_values[3]) if read_values[3] != 'None' else None
                 if not GATE:
                     GATE = True if read_values[3] == 'True' else False
-                self.orientation = float(read_values[5]) if read_values[5] != 'None' else None
+                self.orientation = float(
+                    read_values[5]) if read_values[5] != 'None' else None
 
         except TypeError:
             pass
@@ -482,8 +490,9 @@ class Controller:
             elif c == Clockwise.LEFT:
                 self.send_command(vel, -vel, vel, -vel)
 
-            performed_deg_temp = self.compute_performed_degrees(c, init_g, curr_g)
-            
+            performed_deg_temp = self.compute_performed_degrees(
+                c, init_g, curr_g)
+
             if performed_deg_temp > 300:
                 continue
             performed_deg = performed_deg_temp
@@ -560,7 +569,8 @@ class Controller:
         curr_g_360 = normalize_angle(curr_g, 0)
 
         first_angle = curr_g_360 - init_g_360
-        second_angle = -1 * first_angle / abs(first_angle) * (360 - abs(first_angle))
+        second_angle = -1 * first_angle / \
+            abs(first_angle) * (360 - abs(first_angle))
 
         if c == Clockwise.RIGHT:
             if first_angle < 0:
@@ -584,7 +594,8 @@ class Controller:
 
         first_angle = final_g_360 - init_g_360
 
-        second_angle = -1 * first_angle / abs(first_angle) * (360 - abs(first_angle))
+        second_angle = -1 * first_angle / \
+            abs(first_angle) * (360 - abs(first_angle))
         smallest = first_angle
 
         if abs(first_angle) > 180:
