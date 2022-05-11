@@ -1,4 +1,4 @@
-from enums import Compass, WAY, Type
+from lib.ctrllib.enums import Compass, WAY, Type
 from enum import Enum
 
 

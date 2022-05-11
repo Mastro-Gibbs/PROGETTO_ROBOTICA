@@ -1,5 +1,21 @@
 from enum import Enum
-from utility import CFG
+import configparser
+
+def local_CFG_parser() -> dict:
+    psr = configparser.ConfigParser()
+    psr.read('data/config.conf')
+    return {
+        "HOST": psr["REDIS"]["host"],
+        "PORT": psr["REDIS"]["port"],
+        "BODY_TOPIC": psr["REDIS"]["body_topic"],
+        "CTRL_TOPIC": psr["REDIS"]["ctrl_topic"],
+        "LED": psr["REDIS"]["led_key"],
+        "BUZZER": psr["REDIS"]["buzzer_key"],
+        "INFRARED": psr["REDIS"]["infrared_key"],
+        "ULTRASONIC": psr["REDIS"]["ultrasonic_key"],
+        "MPU": psr["REDIS"]["mpu_key"],
+        "MOTORS": psr["REDIS"]["motors_key"]
+    }
 
 
 class State(Enum):
@@ -69,18 +85,18 @@ class RedisCOMMAND(str, Enum):
 
 
 class RedisKEYS(str, Enum):
-    LED = CFG.redis_data()["LED"],
-    BUZZER = CFG.redis_data()["BUZZER"],
-    INFRARED = CFG.redis_data()["INFRARED"],
-    ULTRASONIC = CFG.redis_data()["ULTRASONIC"],
-    MPU = CFG.redis_data()["MPU"],
-    MOTORS = CFG.redis_data()["LMOTORSED"]
+    LED = local_CFG_parser()["LED"],
+    BUZZER = local_CFG_parser()["BUZZER"],
+    INFRARED = local_CFG_parser()["INFRARED"],
+    ULTRASONIC = local_CFG_parser()["ULTRASONIC"],
+    MPU = local_CFG_parser()["MPU"],
+    MOTORS = local_CFG_parser()["MOTORS"]
 
 
 class RedisTOPICS(str, Enum):
-    BODY_TOPIC = CFG.redis_data()["BODY_TOPIC"],
-    CTRL_TOPIC = CFG.redis_data()["CTRL_TOPIC"]
+    BODY_TOPIC = local_CFG_parser()["BODY_TOPIC"],
+    CTRL_TOPIC = local_CFG_parser()["CTRL_TOPIC"]
 
 class RedisCONNECTION(str, Enum):
-    HOST = CFG.redis_data()["HOST"],
-    PORT = CFG.redis_data()["PORT"]
+    HOST = local_CFG_parser()["HOST"],
+    PORT = local_CFG_parser()["PORT"]

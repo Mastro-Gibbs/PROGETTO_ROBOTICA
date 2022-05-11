@@ -7,7 +7,7 @@ from lib.ctrllib.utility import negate_compass, detect_target, decision_making_p
 from lib.ctrllib.utility import compute_performed_degrees, best_angle_and_rotation_way
 from lib.ctrllib.utility import Logger, CFG
 
-from lib.ctrllib.tree import Tree, Node
+from tree import Tree, Node
 
 from lib.ctrllib.enums import Compass, Clockwise, WAY, Type, Command, Position, Mode, State
 from lib.ctrllib.enums import RedisKEYS as RK
@@ -39,8 +39,8 @@ class Controller:
         self.__robot_position: Position = Position.INITIAL
         self.__robot_preference_choice = [Compass.NORD, Compass.OVEST, Compass.EST, Compass.SUD]
 
-        self.__robot_speed = CFG.redis_data()["SPEED"]
-        self.__robot_rotation_speed = CFG.redis_data()["ROT_SPEED"]
+        self.__robot_speed = CFG.controller_data()["SPEED"]
+        self.__robot_rotation_speed = CFG.controller_data()["ROT_SPEED"]
 
         self.__speed_msec = self.__robot_speed * 0.25 / (self.__robot_speed // 5)
         self.__junction_sim_time = 0.25 / self.__speed_msec

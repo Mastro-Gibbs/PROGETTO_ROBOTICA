@@ -1,6 +1,6 @@
 import configparser
 import datetime
-from enums import Compass, Command, Clockwise
+from lib.ctrllib.enums import Compass, Command, Clockwise
 
 
 date = datetime.datetime.now()
@@ -37,7 +37,7 @@ def normalize_angle(ang: float, type_t: int):
     return bang
 
 
-def detect_target(begin: float) -> Compass | None:
+def detect_target(begin: float) -> Compass:
     """
     Detect nearest angle [0, 90, -90, 180] from 'begin' aka current angle.
 
@@ -85,7 +85,7 @@ def negate_compass(compass: float) -> Compass:
         return Compass.EST
 
 
-def decision_making_policy(priority: list, actions: list) -> Compass | None:
+def decision_making_policy(priority: list, actions: list) -> Compass:
         if not actions:
             return None
 
@@ -264,7 +264,7 @@ class CFG:
         ...
 
     @staticmethod
-    def redis_data() -> dict:
+    def controller_data() -> dict:
         psr = configparser.ConfigParser()
         psr.read('data/config.conf')
         return {

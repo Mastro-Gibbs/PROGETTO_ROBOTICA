@@ -2,10 +2,10 @@ from lib.robotAPI.PCA9685 import PCA9685
 from enum import Enum
 
 class Command(str, Enum):
-    RUN = 'RUN',
-    STOP = 'STOP',
-    ROTATEL = 'ROTATEL',
-    ROTATER = 'ROTATER'
+    RUN = 'MOTORS_RUN',
+    STOP = 'MOTORS_STOP',
+    ROTATEL = 'MOTORS_ROTATEL',
+    ROTATER = 'MOTORS_ROTATER'
 
 class Motor:
     def __init__(self):
