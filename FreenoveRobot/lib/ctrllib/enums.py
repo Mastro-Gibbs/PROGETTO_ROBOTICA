@@ -1,4 +1,6 @@
 from enum import Enum
+from utility import CFG
+
 
 class State(Enum):
     STARTING = -1
@@ -58,3 +60,35 @@ class LOGLEVEL(Enum):
     WARNING = 3,
     INFO = 2,
     DEBUG = 1
+
+
+class RedisCOMMAND(str, Enum):
+    RUN = 'MOTORS_RUN',
+    STOP = 'MOTORS_STOP',
+    ROTATEL = 'MOTORS_ROTATEL',
+    ROTATER = 'MOTORS_ROTATER',
+
+    LEDEMIT = 'LEDEMIT',
+    LEDINTERRUPT = 'LEDINT',
+
+    BZZEMIT = 'BZZEMIT',
+    BZZINTERRUPT = 'BZZINT'
+
+
+
+class RedisKEYS(str, Enum):
+    LED = CFG.redis_data()["LED"],
+    BUZZER = CFG.redis_data()["BUZZER"],
+    INFRARED = CFG.redis_data()["INFRARED"],
+    ULTRASONIC = CFG.redis_data()["ULTRASONIC"],
+    MPU = CFG.redis_data()["MPU"],
+    MOTORS = CFG.redis_data()["LMOTORSED"]
+
+
+class RedisTOPICS(str, Enum):
+    BODY_TOPIC = CFG.redis_data()["BODY_TOPIC"],
+    CTRL_TOPIC = CFG.redis_data()["CTRL_TOPIC"]
+
+class RedisCONNECTION(str, Enum):
+    HOST = CFG.redis_data()["HOST"],
+    PORT = CFG.redis_data()["PORT"]

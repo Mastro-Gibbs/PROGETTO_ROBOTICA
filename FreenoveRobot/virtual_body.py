@@ -74,13 +74,13 @@ class VirtualBody:
         _value = self.__redis.get(_key)
 
         if _key == KEYS.BUZZER.value:
-            if _value == 'STOP':
+            if _value == 'INTERRUPT':
                 self.__body.interrupt_trill()
             elif _value == 'EMIT':
                 self.__body.trill()
                 
         elif _key == KEYS.LED.value:
-            if _value == 'STOP':
+            if _value == 'INTERRUPT':
                 self.__body.interrupt_magic_rainbow()
             elif _value == 'EMIT':
                 self.__body.magic_rainbow(True)

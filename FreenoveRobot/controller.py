@@ -1,36 +1,35 @@
+from glob import glob
 import time
 
 from math import pi
 
-from lib.ctrllib.utility import generate_node_id, f_r_l_b_to_compass, normalize_angle, negate_compass, detect_target
+from lib.ctrllib.utility import generate_node_id, f_r_l_b_to_compass, normalize_angle
+from lib.ctrllib.utility import negate_compass, detect_target, decision_making_policy
+from lib.ctrllib.utility import compute_performed_degrees, best_angle_and_rotation_way
 from lib.ctrllib.utility import Logger, CFG
 
 from lib.ctrllib.tree import Tree, Node
 
 from lib.ctrllib.enums import Compass, Clockwise, WAY, Type, Command, Position, Mode, State
+from lib.ctrllib.enums import RedisKEYS as RK
+from lib.ctrllib.enums import RedisTOPICS as RT
+from lib.ctrllib.enums import RedisCONNECTION as RC
+from lib.ctrllib.enums import RedisCOMMAND as RCMD
 
 from redis import Redis
 
 
-OR_MAX_ATTEMPT = CFG.controller_data()["MAX_ATTEMPTS"]
-SAFE_DISTANCE = CFG.controller_data()["SAFE_DIST"]
-LOGSEVERITY = CFG.logger_data()["SEVERITY"]
-B_TOPIC = CFG.redis_data()["B_TOPIC"]
-C_TOPIC = CFG.redis_data()["C_TOPIC"]
-MOTORS_KEY = CFG.redis_data()["MOTORS_KEY"]
-
 GATE = False
-PREV_ACTION = None
-OLD_CMD = [None, None, None, None]
+OLD_CMD = None
+OLD_VAL = None
 
 
 class Controller:
     def __init__(self):
         """<!-- REDIS SECTION -->"""
-        self.__redis = Redis(host=CFG.redis_data()["HOST"], port=CFG.redis_data()[
-                             "PORT"], decode_responses=True)
+        self.__redis = Redis(host=RC.HOST.value, port=int(RC.PORT.value), decode_responses=True)
         self.__pubsub = self.__redis.pubsub()
-        self.__pubsub.subscribe(B_TOPIC)
+        self.__pubsub.psubscribe(**{RT.BODY_TOPIC.value: self.__on_message})
 
         self._state = State.STARTING
         self._position = Position.INITIAL
@@ -38,8 +37,8 @@ class Controller:
 
         self.send_command(0, 0, 0, 0)
 
-        self._speed = CFG.controller_data()["SPEED"]
-        self._rot_speed = CFG.controller_data()["ROT_SPEED"]
+        self._speed = CFG.redis_data()["SPEED"]
+        self._rot_speed = CFG.redis_data()["ROT_SPEED"]
 
         try:
             self._speed_m_on_sec = self._speed * 0.25 / (self._speed // 5)
@@ -68,8 +67,55 @@ class Controller:
         self.tree = Tree()
 
     def virtual_destructor(self):
+        self.__runner.stop()
+
+    def begin(self) -> None:
+        self.__runner = self.__pubsub.run_in_thread(sleep_time=0.01)
+
+    # ************************************* REDIS SECTION ************************************* #
+
+    # callback receiver
+    def __on_message(self, msg):
         pass
 
+    # sender method
+    def send_command(self, _cmd: RCMD, _val):
+        global OLD_CMD
+        global OLD_VAL
+
+        _msg = _cmd.value
+
+        if _cmd == RCMD.RUN or _cmd == RCMD.ROTATEL or _cmd == RCMD.ROTATER:
+            if OLD_VAL != _val:
+                self.__redis.set(RK.MOTORS.value, _msg)
+                self.__redis.publish(RT.CTRL_TOPIC.value, RK.MOTORS.value)
+
+        elif _cmd == RCMD.STOP:
+            if OLD_CMD != _cmd:
+                self.__redis.set(RK.MOTORS.value, _msg)
+                self.__redis.publish(RT.CTRL_TOPIC.value, RK.MOTORS.value)
+
+        elif _cmd == RCMD.LEDEMIT or _cmd == RCMD.LEDINTERRUPT:
+            if OLD_CMD != _cmd:
+                self.__redis.set(RK.LED.value, _msg)
+                self.__redis.publish(RT.CTRL_TOPIC.value, RK.LED.value)
+
+        elif _cmd == RCMD.BZZEMIT or _cmd == RCMD.BZZINTERRUPT:
+            if OLD_CMD != _cmd:
+                self.__redis.set(RK.BUZZER.value, _msg)
+                self.__redis.publish(RT.CTRL_TOPIC.value, RK.BUZZER.value)
+        
+        OLD_CMD = _cmd
+        OLD_VAL = _val
+
+    # ************************************* END REDIS SECTION ************************************* #
+
+
+
+
+    # ************************************* PURE ALGORITHM SECTION ************************************* #
+
+    # algorithm entry
     def algorithm(self):
         global PREV_ACTION
         global LOGSEVERITY
@@ -88,7 +134,7 @@ class Controller:
         self.update_tree(actions)
 
         # THINK
-        action = self.decision_making_policy(actions)
+        action = decision_making_policy(self.priority_list, actions)
 
         # Updating tree setting the current node
         self.update_tree(action)
@@ -106,6 +152,7 @@ class Controller:
                 self.trajectory.append(action)
             PREV_ACTION = action
 
+    # tree updater
     def update_tree(self, actions):
         global LOGSEVERITY
 
@@ -184,6 +231,7 @@ class Controller:
                     # No DEAD END children, tree'll be updated on next loop
                     pass
 
+    # action maker
     def control_policy(self) -> list:
         global LOGSEVERITY
 
@@ -288,18 +336,9 @@ class Controller:
 
         return actions
 
-    def decision_making_policy(self, actions: list) -> Compass | None:
 
-        if not actions:
-            return None
+    # ************************************* END PURE ALGORITHM SECTION ************************************* #
 
-        if isinstance(actions[0], Command):
-            return actions[0]
-
-        for direction in self.priority_list:  # [ S, N, O, E ]
-            for action in actions:  # [ E, O, N ]
-                if direction == action:
-                    return action
 
     def do_action(self, action):
         if action == Command.START:
@@ -354,54 +393,6 @@ class Controller:
 
             return True
 
-    def read_sensors(self):
-        global GATE
-        msg = self.__pubsub.get_message()
-
-        try:
-            if msg["type"] == 'message':
-                key = msg["data"]
-
-                values = str(self.__redis.get(key))
-                read_values = values.split(';')
-
-                self.left_value = float(
-                    read_values[0]) if read_values[0] != 'None' else None
-                self.front_value = float(
-                    read_values[1]) if read_values[1] != 'None' else None
-                self.right_value = float(
-                    read_values[2]) if read_values[2] != 'None' else None
-                self.back_value = float(
-                    read_values[3]) if read_values[3] != 'None' else None
-                if not GATE:
-                    GATE = True if read_values[3] == 'True' else False
-                self.orientation = float(
-                    read_values[5]) if read_values[5] != 'None' else None
-
-        except TypeError:
-            pass
-
-    def send_command(self, v1, v2, v3, v4):
-        global MOTORS_KEY
-        global C_TOPIC
-        global OLD_CMD
-
-        vels = [v1, v2, v3, v4]
-
-        if vels[0] == OLD_CMD[0] and vels[1] == OLD_CMD[1] and vels[2] == OLD_CMD[2] and vels[3] == OLD_CMD[3]:
-            return
-
-        OLD_CMD = [v1, v2, v3, v4]
-
-        v1 = str(v1)
-        v2 = str(v2)
-        v3 = str(v3)
-        v4 = str(v4)
-
-        msg = ';'.join([v1, v2, v3, v4])
-
-        self.__redis.set(MOTORS_KEY, msg)
-        self.__redis.publish(C_TOPIC, MOTORS_KEY)
 
     def verify_gate(self, c: Compass) -> bool:
         global OR_MAX_ATTEMPT
@@ -437,6 +428,10 @@ class Controller:
 
         return _gate
 
+
+    # ************************************* ROTATION SECTION ************************************* #
+
+
     def rotate_to_final_g(self, vel, final_g):
         """Rotate function that rotates the robot until it reaches final_g"""
         self.send_command(0, 0, 0, 0)
@@ -444,11 +439,12 @@ class Controller:
         self.read_sensors()
 
         init_g = self.orientation
-        degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
+        degrees, c = best_angle_and_rotation_way(init_g, final_g)
 
         self.__do_rotation(vel=vel, c=c, degrees=degrees, final_g=final_g)
 
         self.send_command(0, 0, 0, 0)
+
 
     def __do_rotation(self, vel, c: Clockwise, degrees, final_g):
         degrees = abs(degrees)
@@ -464,6 +460,7 @@ class Controller:
 
         if it == OR_MAX_ATTEMPT:  # CRITICAL CASE
             exit(-1)
+
 
     def __rotate(self, vel, c: Clockwise, degrees):
         """
@@ -490,8 +487,7 @@ class Controller:
             elif c == Clockwise.LEFT:
                 self.send_command(vel, -vel, vel, -vel)
 
-            performed_deg_temp = self.compute_performed_degrees(
-                c, init_g, curr_g)
+            performed_deg_temp = compute_performed_degrees(c, init_g, curr_g)
 
             if performed_deg_temp > 300:
                 continue
@@ -508,6 +504,7 @@ class Controller:
 
         self.send_command(0, 0, 0, 0)
         return archived, init_g, performed_deg, degrees
+
 
     def check_orientation(self, final_g, delta=2):
         self.read_sensors()
@@ -535,6 +532,7 @@ class Controller:
         limit_range = [limit_g_sx, limit_g_dx]
         return ok, curr_g, limit_range
 
+
     def adjust_orientation(self, final_g):
         self.send_command(0, 0, 0, 0)
 
@@ -546,7 +544,7 @@ class Controller:
 
             curr_g = self.orientation
 
-            degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
+            degrees, c = best_angle_and_rotation_way(curr_g, final_g)
 
             if abs(degrees) < 6:
                 self.__rotate(0.25, c, abs(degrees))
@@ -558,55 +556,9 @@ class Controller:
 
         return ok, it
 
-    @staticmethod
-    def compute_performed_degrees(c, init_g, curr_g):
-        """Calculates the angle between init_g and curr_g that the robot performed based on the direction of rotation"""
 
-        if init_g == curr_g:
-            return 0
+    # ************************************* END ROTATION SECTION ************************************* #
 
-        init_g_360 = normalize_angle(init_g, 0)
-        curr_g_360 = normalize_angle(curr_g, 0)
-
-        first_angle = curr_g_360 - init_g_360
-        second_angle = -1 * first_angle / \
-            abs(first_angle) * (360 - abs(first_angle))
-
-        if c == Clockwise.RIGHT:
-            if first_angle < 0:
-                performed_degrees = abs(first_angle)
-            else:
-                performed_degrees = abs(second_angle)
-        else:
-            if first_angle > 0:
-                performed_degrees = abs(first_angle)
-            else:
-                performed_degrees = abs(second_angle)
-        return performed_degrees
-
-    def best_angle_and_rotation_way(self, init_g, final_g):
-        """Calculate the best (minimum) angle between init_g and final_g and how you need to rotate"""
-        if init_g == final_g:
-            return 0
-
-        init_g_360 = normalize_angle(init_g, 0)
-        final_g_360 = normalize_angle(final_g, 0)
-
-        first_angle = final_g_360 - init_g_360
-
-        second_angle = -1 * first_angle / \
-            abs(first_angle) * (360 - abs(first_angle))
-        smallest = first_angle
-
-        if abs(first_angle) > 180:
-            smallest = second_angle
-
-        if smallest < 0:
-            c = Clockwise.RIGHT
-        else:
-            c = Clockwise.LEFT
-
-        return smallest, c
 
     def goal_reached(self) -> bool:
         global LOGSEVERITY
@@ -620,8 +572,8 @@ class Controller:
         global SAFE_DISTANCE
         global LOGSEVERITY
 
-        self._speed = CFG.controller_data()["SPEED"]
-        self._rot_speed = CFG.controller_data()["ROT_SPEED"]
-        OR_MAX_ATTEMPT = CFG.controller_data()["MAX_ATTEMPTS"]
-        SAFE_DISTANCE = CFG.controller_data()["SAFE_DIST"]
+        self._speed = CFG.redis_data()["SPEED"]
+        self._rot_speed = CFG.redis_data()["ROT_SPEED"]
+        OR_MAX_ATTEMPT = CFG.redis_data()["MAX_ATTEMPTS"]
+        SAFE_DISTANCE = CFG.redis_data()["SAFE_DIST"]
         LOGSEVERITY = CFG.logger_data()["SEVERITY"]

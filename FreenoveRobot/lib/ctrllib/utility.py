@@ -1,6 +1,6 @@
 import configparser
 import datetime
-from enums import Compass
+from enums import Compass, Command, Clockwise
 
 
 date = datetime.datetime.now()
@@ -83,6 +83,70 @@ def negate_compass(compass: float) -> Compass:
         return Compass.OVEST
     elif compass == Compass.OVEST:
         return Compass.EST
+
+
+def decision_making_policy(priority: list, actions: list) -> Compass | None:
+        if not actions:
+            return None
+
+        if isinstance(actions[0], Command):
+            return actions[0]
+
+        for direction in priority:  # [ S, N, O, E ]
+            for action in actions:  # [ E, O, N ]
+                if direction == action:
+                    return action
+
+
+def compute_performed_degrees(c, init_g, curr_g):
+        """Calculates the angle between init_g and curr_g that the robot performed based on the direction of rotation"""
+
+        if init_g == curr_g:
+            return 0
+
+        init_g_360 = normalize_angle(init_g, 0)
+        curr_g_360 = normalize_angle(curr_g, 0)
+
+        first_angle = curr_g_360 - init_g_360
+        second_angle = -1 * first_angle / \
+            abs(first_angle) * (360 - abs(first_angle))
+
+        if c == Clockwise.RIGHT:
+            if first_angle < 0:
+                performed_degrees = abs(first_angle)
+            else:
+                performed_degrees = abs(second_angle)
+        else:
+            if first_angle > 0:
+                performed_degrees = abs(first_angle)
+            else:
+                performed_degrees = abs(second_angle)
+        return performed_degrees
+
+
+def best_angle_and_rotation_way(init_g, final_g):
+        """Calculate the best (minimum) angle between init_g and final_g and how you need to rotate"""
+        if init_g == final_g:
+            return 0
+
+        init_g_360 = normalize_angle(init_g, 0)
+        final_g_360 = normalize_angle(final_g, 0)
+
+        first_angle = final_g_360 - init_g_360
+
+        second_angle = -1 * first_angle / \
+            abs(first_angle) * (360 - abs(first_angle))
+        smallest = first_angle
+
+        if abs(first_angle) > 180:
+            smallest = second_angle
+
+        if smallest < 0:
+            c = Clockwise.RIGHT
+        else:
+            c = Clockwise.LEFT
+
+        return smallest, c
 
 
 class Logger:
@@ -200,7 +264,7 @@ class CFG:
         ...
 
     @staticmethod
-    def controller_data() -> dict:
+    def redis_data() -> dict:
         psr = configparser.ConfigParser()
         psr.read('lib/data/config.conf')
         return {
@@ -210,7 +274,7 @@ class CFG:
                 "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"])
                 }
 
-    @staticmethod
+    """@staticmethod
     def logger_data() -> dict:
         psr = configparser.ConfigParser()
         psr.read('lib/data/config.conf')
@@ -220,7 +284,7 @@ class CFG:
                 "ALOGFILE": psr["UTILITY"]["agentlog"],
                 "EXT": psr["UTILITY"]["ext"],
                 "SEVERITY": psr["UTILITY"]["severity"]
-                }
+                }"""
 
     @staticmethod
     def redis_data() -> dict:
@@ -229,8 +293,12 @@ class CFG:
         return {
             "HOST": psr["REDIS"]["host"],
             "PORT": psr["REDIS"]["port"],
-            "B_TOPIC": psr["REDIS"]["b_topic"],
-            "C_TOPIC": psr["REDIS"]["c_topic"],
-            "SENSORS_KEY": psr["REDIS"]["sensors_k"],
-            "MOTORS_KEY": psr["REDIS"]["motors_k"]
+            "BODY_TOPIC": psr["REDIS"]["body_topic"],
+            "CTRL_TOPIC": psr["REDIS"]["ctrl_topic"],
+            "LED": psr["REDIS"]["led_key"],
+            "BUZZER": psr["REDIS"]["buzzer_key"],
+            "INFRARED": psr["REDIS"]["infrared_key"],
+            "ULTRASONIC": psr["REDIS"]["ultrasonic_key"],
+            "MPU": psr["REDIS"]["mpu_key"],
+            "MOTORS": psr["REDIS"]["motors_key"]
         }
