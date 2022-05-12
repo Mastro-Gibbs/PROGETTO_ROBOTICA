@@ -51,9 +51,9 @@ class Controller:
         self.__right_ultrasonic_sensor: int = None
         self.__front_ultrasonic_sensor: int = None
 
-        self.__front_ultrasonic_stored_values = list()
-        self.__left_ultrasonic_stored_values = list()
-        self.__right_ultrasonic_stored_values = list()
+        self.__front_ultrasonic_stored_values: list = list()
+        self.__left_ultrasonic_stored_values: list = list()
+        self.__right_ultrasonic_stored_values: list = list()
 
         self.__left_infrared_sensor: int = None
         self.__mid_infrared_sensor: int = None
@@ -92,6 +92,7 @@ class Controller:
                 self.__send_command(RCMD.BZZEMIT)
                 time.sleep(0.25)
                 self.__send_command(RCMD.BZZINTERRUPT)
+                time.sleep(0.25)
             
             self.__send_command(RCMD.LEDINTERRUPT)
 
@@ -441,41 +442,6 @@ class Controller:
             return True
 
         return False
-
-    # Check there is a gate
-    def __verify_gate(self, c: Compass) -> bool: # not used???
-        global OR_MAX_ATTEMPT
-
-        self.read_sensors()
-
-        it = 0
-        _gate: bool = False
-
-        _sens = 0.0
-        _not_none_counter = 0
-
-        if c == Compass.OVEST:
-            _sens = self.__left_ultrasonic_sensor
-        elif c == Compass.EST:
-            _sens = self.__right_ultrasonic_sensor
-
-        self.read_sensors()
-
-        while it < OR_MAX_ATTEMPT:
-            it += 1
-            if _sens is None:
-                _gate = True
-                if c == Compass.OVEST:
-                    _sens = self.__left_ultrasonic_sensor
-                elif c == Compass.EST:
-                    _sens = self.__right_ultrasonic_sensor
-            else:
-                _gate = False
-                _not_none_counter += 1
-                if _not_none_counter == 2:
-                    break
-
-        return _gate
 
     #                                                                                                    #
     #                                                                                                    #

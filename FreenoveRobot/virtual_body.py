@@ -1,5 +1,6 @@
 from time import sleep
 from redis import Redis
+from redis.client import PubSubWorkerThread
 from physiscal_body import PhysicalBody as Body
 
 from lib.ctrllib.enums import RedisKEYS as RK
@@ -22,7 +23,7 @@ class VirtualBody:
 
     def loop(self) -> None:
         self.__body.begin()
-        self.__runner = self.__pubsub.run_in_thread(sleep_time=0.01)
+        self.__runner: PubSubWorkerThread = self.__pubsub.run_in_thread(sleep_time=0.01)
 
         _old_distances = str()
         _old_yaw = str()

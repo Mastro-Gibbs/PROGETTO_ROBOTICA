@@ -9,8 +9,6 @@ from lib.ctrllib.enums import Color
 CONFIG_FILE_HASHCODE: str = None
 CONFIG_FILE_OLDHASHCODE: str = CONFIG_FILE_HASHCODE
 
-EXIT: bool = False
-
 class Agent:
     def __init__(self) -> None:
         global CONFIG_FILE_HASHCODE
@@ -30,18 +28,9 @@ class Agent:
         self.__logger.log('Agent fully initialized', Color.GREEN, newline=True, italic=True, blink=True)
         self.__controller.begin()
 
-    def stop(self) -> None:
-        self.__logger.log('Agent stopped', Color.GREEN, newline=True, italic=True, underline=True)
-
-        if self.__controller.goal_reached():
-            self.__controller.ending_animation()
-        
-        self.__controller.virtual_destructor()
-
     def loop(self) -> None:
         global CONFIG_FILE_HASHCODE
         global CONFIG_FILE_OLDHASHCODE
-        global EXIT
         
         while not self.__controller.goal_reached():
             self.__controller.algorithm()
@@ -54,6 +43,15 @@ class Agent:
                 CONFIG_FILE_OLDHASHCODE = CONFIG_FILE_HASHCODE
                 self.__controller.update_config()
         self.stop()
+
+
+    def stop(self) -> None:
+        self.__logger.log('Agent stopped', Color.GREEN, newline=True, italic=True, underline=True)
+
+        if self.__controller.goal_reached():
+            self.__controller.ending_animation()
+        
+        self.__controller.virtual_destructor()
 
 
 if __name__ == '__main__':

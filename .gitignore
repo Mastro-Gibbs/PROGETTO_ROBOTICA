@@ -10,3 +10,6 @@ FreenoveRobot/__pycache__/
 FreenoveRobot/lib/ctrllib/__pycache__/
 FreenoveRobot/lib/MPU6050lib/__pycache__/
 FreenoveRobot/lib/robotAPI/__pycache__/
+FreenoveRobot/data/logs/
+MetalPhoenix/robot/resources/data/logs/
+MetalPhoenix/robot_redis/resources/data/logs/
