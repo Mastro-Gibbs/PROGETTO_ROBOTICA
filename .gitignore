@@ -1,1 +1,12 @@
 .idea/
+MetalPhoenix/.idea/
+MetalPhoenix/robot/src/__pycache__/
+MetalPhoenix/robot/src/tools/__pycache__/
+MetalPhoenix/robot/src/tools/coppeliaAPI/__pycache__/
+MetalPhoenix/robot_redis/src/__pycache__/
+MetalPhoenix/robot_redis/src/tools/__pycache__/
+MetalPhoenix/robot_redis/src/tools/coppeliaAPI/__pycache__/
+FreenoveRobot/__pycache__/
+FreenoveRobot/lib/ctrllib/__pycache__/
+FreenoveRobot/lib/MPU6050lib/__pycache__/
+FreenoveRobot/lib/robotAPI/__pycache__/
