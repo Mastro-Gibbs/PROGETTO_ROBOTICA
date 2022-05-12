@@ -6,8 +6,10 @@ from tools.coppelia import *
 from tools.utility import Logger, CFG
 from redis import Redis
 
-
 LOGSEVERITY = CFG.logger_data()["SEVERITY"]
+SENSORS_K = CFG.redis_data()["SENSORS_KEY"]
+C_TOPIC = CFG.redis_data()["C_TOPIC"]
+B_TOPIC = CFG.redis_data()["B_TOPIC"]
 
 
 class PhysicalBody:
@@ -22,12 +24,23 @@ class PhysicalBody:
         if connection was made, it will be destroyed
         """
         print()  # \n
+
+        """<!-- REDIS SECTION -->"""
+        self.__redis = Redis(host=CFG.redis_data()["HOST"], port=CFG.redis_data()["PORT"], decode_responses=True)
+        self.__pubsub = self.__redis.pubsub()
+        self.__pubsub.subscribe(C_TOPIC)
+
         self.__class_logger = Logger(class_name="PhysicalBody", color="purple")
         self.__class_logger.set_logfile(CFG.logger_data()["BLOGFILE"])
         self.__class_logger.log(f"LOG SEVERYTY: {str.upper(LOGSEVERITY)}\n", color="dkgreen")
         self.__class_logger.log("PHYSICAL BODY LAUNCHED", color="green", italic=True)
 
         self.__sim = SimConnection(ip=CFG.physical_data()["IP"], port=CFG.physical_data()["PORT"])
+
+        self.__rum = 0
+        self.__lum = 0
+        self.__rlm = 0
+        self.__llm = 0
 
         try:
             self.__sim.begin_connection()
@@ -94,6 +107,46 @@ class PhysicalBody:
     def virtual_destructor(self):
         self.__class_logger.log("COPPELIA CONNECTION STOPPED", "green", italic=True)
         self.__class_logger.log("PHYSICAL BODY STOPPED", "green", italic=True)
+
+    def send_perceptions(self):
+        global SENSORS_K
+        global B_TOPIC
+
+        _l = str(self.get_proxL())
+        _f = str(self.get_proxF())
+        _r = str(self.get_proxR())
+        _b = str(self.get_proxB())
+        _g = str(self.get_gate())
+        _o = str(self.get_orientation_deg())
+
+        msg = ';'.join([_l, _f, _r, _b, _g, _o])
+
+        self.__redis.set(SENSORS_K, msg)
+        self.__redis.publish(B_TOPIC, SENSORS_K)
+
+    def get_commands(self):
+        msg = self.__pubsub.get_message()
+
+        try:
+            if msg["type"] == 'message':
+                key = msg["data"]
+
+                values = str(self.__redis.get(key))
+                read_values = values.split(';')
+
+                self.__rum = float(read_values[0]) if read_values[0] != 'None' else None
+                self.__lum = float(read_values[1]) if read_values[1] != 'None' else None
+                self.__rlm = float(read_values[2]) if read_values[2] != 'None' else None
+                self.__llm = float(read_values[3]) if read_values[3] != 'None' else None
+
+                if self.__rum is not None and \
+                        self.__lum is not None and \
+                        self.__rlm is not None and \
+                        self.__llm is not None:
+                    self.__set_motor_velocity(self.__lum, self.__rum, self.__llm, self.__rlm)
+
+        except TypeError:
+            pass
 
     def move_forward(self, vel) -> None:
         """Move forward robot wheels

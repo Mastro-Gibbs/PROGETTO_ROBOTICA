@@ -70,7 +70,7 @@ def detect_target(begin: float) -> Compass | None:
 
 
 # Front Right Left Back to compass
-def f_r_l_b_to_compass(curr_ori: float) -> {}:
+def f_r_l_b_to_compass(curr_ori: float) -> dict:
     if detect_target(curr_ori) == 0:  # Muso robot ad EST
         return {"FRONT": Compass.EST, "RIGHT": Compass.SUD, "LEFT": Compass.NORD, "BACK": Compass.OVEST}
     elif detect_target(curr_ori) == 90:  # Muso robot a NORD
@@ -274,3 +274,16 @@ class CFG:
                 "EXT": psr["UTILITY"]["ext"],
                 "SEVERITY": psr["UTILITY"]["severity"]
                 }
+
+    @staticmethod
+    def redis_data() -> dict:
+        psr = configparser.ConfigParser()
+        psr.read('../resources/data/config.conf')
+        return {
+            "HOST": psr["REDIS"]["host"],
+            "PORT": psr["REDIS"]["port"],
+            "B_TOPIC": psr["REDIS"]["b_topic"],
+            "C_TOPIC": psr["REDIS"]["c_topic"],
+            "SENSORS_KEY": psr["REDIS"]["sensors_k"],
+            "MOTORS_KEY": psr["REDIS"]["motors_k"]
+        }
