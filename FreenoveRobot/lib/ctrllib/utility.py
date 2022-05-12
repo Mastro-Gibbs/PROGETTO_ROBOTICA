@@ -1,6 +1,6 @@
 import configparser
 import datetime
-from lib.ctrllib.enums import Compass, Command, Clockwise
+from lib.ctrllib.enums import Compass, Command, Clockwise, Color, STDOUTDecor
 
 
 date = datetime.datetime.now()
@@ -154,37 +154,28 @@ class Logger:
     Class to menage stdout log colors && log files.
     """
 
-    def __init__(self, class_name: str, color: str = "gray"):
+    def __init__(self, class_name: str, color: Color = Color.GRAY):
         """Constructor
 
         #PARAMS -> class_name: str. Name of the class.
                 -> color: str. Color to set to the class name.
 
-        [AVAILABLE COLORS] = {purple, cyan, yellow}
+        [AVAILABLE COLORS] => Color enum values
         """
-        if color == "purple":
-            self.__class = "\033[95m[{0}]\033[00m".format(class_name)
-        elif color == "cyan":
-            self.__class = "\033[96m[{0}]\033[00m".format(class_name)
-        elif color == "yellow":
-            self.__class = "\033[93m[{0}]\033[00m".format(class_name)
-        else:
-            self.__class = "\033[37m[{0}]\033[00m".format(class_name)
+        self.__class = color.value + f"[{class_name}]" + STDOUTDecor.DEFAULT.value
 
         self.__class_name = class_name
 
-        self.__file = None
+        self.__file: str = None
 
     def set_logfile(self, path: str):
         self.__file = path + "_" + self.__class_name + sign + "." + CFG.logger_data()["EXT"]
 
-    def log(self, msg, color: str = "green", newline: bool = False, italic: bool = False,
-            noheader: bool = False):
-        """Print on stdout the message with selected color.
+    def log(self, msg, color: Color = Color.GREEN, newline: bool = False, italic: bool = False,
+            underline: bool = False, blink: bool = False, noheader: bool = False):
 
-        #PARAMS: -> msg: any. Message to print.
-                 -> severity: int. [-1 to 4] refer color.
-                 -> italic: bool. Italic font
+        """
+            Log on file, if it was set; Log on stdout everytime! 
         """
 
         if self.__file is not None:
@@ -195,17 +186,15 @@ class Logger:
                 if noheader:
                     data_to_write = time + "[NOHEADER] -> " + msg + "\n"
                 else:
-                    if color == "dkred":
+                    if color == Color.DARKRED:
                         data_to_write = time + " [" + self.__class_name + "]" + "[CRITICAL]"
-                    elif color == "red":
+                    elif color == Color.RED:
                         data_to_write = time + " [" + self.__class_name + "]" + "[ERROR]"
-                    elif color == "yellow":
+                    elif color == Color.YELLOW:
                         data_to_write = time + " [" + self.__class_name + "]" + "[WARNING]"
-                    elif color == "yellow+":
-                        data_to_write = time + " [" + self.__class_name + "]" + "[WARNING][DEBUG]"
-                    elif color == "dkgreen" or color == "green":
+                    elif color == Color.DARKGREEN or color == Color.GREEN:
                         data_to_write = time + " [" + self.__class_name + "]" + "[INFO]"
-                    elif color == "gray":
+                    elif color == Color.GRAY:
                         data_to_write = time + " [" + self.__class_name + "]" + "[DEBUG]"
 
                     data_to_write += " -> " + msg + "\n"
@@ -216,46 +205,26 @@ class Logger:
 
         out: str = str()
 
-        if italic:
-            out = "\033[03m"
-
-        if color == "dkred":
-            out = out + "\033[31m{0}\033[00m".format(msg)  # dk red
-        elif color == "red":
-            out = out + "\033[91m{0}\033[00m".format(msg)  # red
-        elif color == "yellow":
-            out = out + "\033[93m{0}\033[00m".format(msg)  # yellow
-        elif color == "yellow+":
-            out = out + "[DEBUG]\033[93m{0}\033[00m".format(msg)  # yellow+
-        elif color == "dkgreen":
-            out = out + "\033[32m{0}\033[00m".format(msg)  # dk green
-        elif color == "green":
-            out = out + "\033[92m{0}\033[00m".format(msg)  # green
-        elif color == "gray":
-            out = out + "\033[37m{0}\033[00m".format(msg)  # lite gray
-
         if newline:
             print()
 
+        if italic:
+            out += STDOUTDecor.ITALIC.value
+
+        if blink:
+            out += STDOUTDecor.SLOWBLINK.value
+
+        if underline:
+            out += STDOUTDecor.UNDERLINE.value
+
+        out += color.value + f"{msg}" + STDOUTDecor.DEFAULT.value
+
         if noheader:
             print(out)
+
         else:
-            print(self.__class, end=' \033[97m---> \033[00m')
+            print(self.__class, end=Color.WHITE.value + ' ---> ' + STDOUTDecor.DEFAULT.value)
             print(out)
-
-    @staticmethod
-    def is_loggable(severity: str, comparator: str) -> bool:
-        if severity == "none":
-            return False
-
-        if severity == "high":
-            return True
-        elif severity == "mid" and comparator != "high":
-            return True
-        elif severity == "low" and (comparator == "low" or comparator == "none"):
-            return True
-
-        return False
 
 
 class CFG:

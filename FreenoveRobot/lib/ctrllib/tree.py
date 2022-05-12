@@ -1,5 +1,4 @@
 from lib.ctrllib.enums import Compass, WAY, Type
-from enum import Enum
 
 
 class TreeException(Exception):

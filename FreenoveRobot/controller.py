@@ -2,28 +2,29 @@ import time
 
 from math import pi
 
-from lib.ctrllib.utility import generate_node_id, f_r_l_b_to_compass, normalize_angle
+from lib.ctrllib.utility import generate_node_id, f_r_l_b_to_compass
 from lib.ctrllib.utility import negate_compass, detect_target, decision_making_policy
 from lib.ctrllib.utility import compute_performed_degrees, best_angle_and_rotation_way
 from lib.ctrllib.utility import Logger, CFG
 
-from tree import Tree, Node
+from lib.ctrllib.tree import Tree, Node
 
 from lib.ctrllib.enums import Compass, Clockwise, WAY, Type, Command, Position, Mode, State
 from lib.ctrllib.enums import RedisKEYS as RK
 from lib.ctrllib.enums import RedisTOPICS as RT
 from lib.ctrllib.enums import RedisCONNECTION as RC
 from lib.ctrllib.enums import RedisCOMMAND as RCMD
+from lib.ctrllib.enums import Color, STDOUTDecor
 
 from redis import Redis
 from redis.client import PubSubWorkerThread
 
 
-OLD_CMD = None
-OLD_VAL = None
-PREV_ACTION = None
-ITERATION: int = 0
-
+_OLD_CMD = None
+_OLD_VAL = None
+_PREV_ACTION = None
+_ITERATION: int = 0
+_INIT_TIME: float = time.time()
 
 class Controller:
     def __init__(self):
@@ -31,7 +32,7 @@ class Controller:
         self.__pubsub = self.__redis.pubsub()
         self.__pubsub.psubscribe(**{RT.BODY_TOPIC.value: self.__on_message})
 
-        self.__logger = Logger('Controller', 'cyan')
+        self.__logger = Logger('Controller', Color.CYAN)
         self.__logger.set_logfile(CFG.logger_data()["LOGPATH"])
 
         self.__robot_mode: Mode = Mode.EXPLORING
@@ -65,18 +66,17 @@ class Controller:
 
 
     def virtual_destructor(self) -> None:
-        self.__logger.log('Controller Stopped!', 'green', True, True)
+        self.__logger.log('Controller Stopped!', Color.GREEN, newline=True, italic=True, underline=True)
         self.__runner.stop()
 
 
     def begin(self) -> None:
-        self.__logger.log('Controller full initialized', 'green', True, True)
+        self.__logger.log('Controller fully initialized', Color.GREEN, newline=True, italic=True, blink=True)
         self.__send_command(RCMD.STOP)
         self.__runner: PubSubWorkerThread = self.__pubsub.run_in_thread(sleep_time=0.01)
 
     # Check if maze was solved. 
     def goal_reached(self) -> bool:
-        self.__logger.log('Maze finished', 'green', True, True)
         if self.__left_infrared_sensor and self.__mid_infrared_sensor and self.__right_infrared_sensor:
             self.__goal_reached = True   
         
@@ -85,6 +85,7 @@ class Controller:
     # ending animation if maze were solved
     def ending_animation(self) -> None:
         if self.__goal_reached:
+            self.__logger.log('Maze finished', Color.GREEN, newline=True, italic=True, blink=True)
             self.__send_command(RCMD.LEDEMIT)
 
             for i in range(0, 5, 1):
@@ -140,8 +141,8 @@ class Controller:
 
     # sender method
     def __send_command(self, _cmd: RCMD, _val = 0) -> None:
-        global OLD_CMD
-        global OLD_VAL
+        global _OLD_CMD
+        global _OLD_VAL
 
         if _val:
             _msg = ';'.join([_cmd.value, _val])
@@ -149,17 +150,17 @@ class Controller:
             _msg = _cmd.value
 
         if _cmd == RCMD.RUN or _cmd == RCMD.ROTATEL or _cmd == RCMD.ROTATER:
-            if OLD_VAL != _val:
+            if _OLD_VAL != _val:
                 self.__redis.set(RK.MOTORS.value, _msg)
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.MOTORS.value)
 
         elif _cmd == RCMD.STOP:
-            if OLD_CMD != _cmd:
+            if _OLD_CMD != _cmd:
                 self.__redis.set(RK.MOTORS.value, _msg)
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.MOTORS.value)
 
         elif _cmd == RCMD.LEDEMIT or _cmd == RCMD.LEDINTERRUPT:
-            if OLD_CMD != _cmd:
+            if _OLD_CMD != _cmd:
                 if _cmd == RCMD.LEDEMIT:
                     self.__redis.set(RK.LED.value, RCMD.LEDEMIT.value)
                 elif _cmd == RCMD.LEDINTERRUPT:
@@ -167,17 +168,19 @@ class Controller:
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.LED.value)
 
         elif _cmd == RCMD.BZZEMIT or _cmd == RCMD.BZZINTERRUPT:
-            if OLD_CMD != _cmd:
+            if _OLD_CMD != _cmd:
                 if _cmd == RCMD.BZZEMIT:
                     self.__redis.set(RK.BUZZER.value, RCMD.BZZEMIT.value)
                 elif _cmd == RCMD.BZZINTERRUPT:
                     self.__redis.set(RK.BUZZER.value, RCMD.BZZINTERRUPT.value)
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.BUZZER.value)
         
-        OLD_CMD = _cmd
-        OLD_VAL = _val
+        _OLD_CMD = _cmd
+        _OLD_VAL = _val
 
-    # ************************************* END REDIS SECTION ************************************* #
+    #                                                                                           #
+    #                                                                                           #
+    # *********************************** END REDIS SECTION *********************************** #
 
 
 
@@ -194,45 +197,54 @@ class Controller:
 
     # Algorithm entry
     def algorithm(self) -> None:
-        global PREV_ACTION
-        global ITERATION
+        global _PREV_ACTION
+        global _ITERATION
 
-        self.__logger.log(f'New algorithm iteration -> #{ITERATION}', 'green')
-        ITERATION += 1
+        if self.__is_algorithm_unlocked():
 
-        self.__left_ultrasonic_stored_values.append(self.__left_ultrasonic_sensor)
-        self.__front_ultrasonic_stored_values.append(self.__front_ultrasonic_sensor)
-        self.__right_ultrasonic_stored_values.append(self.__right_ultrasonic_sensor)
+            self.__logger.log(f'New algorithm iteration -> #{_ITERATION}', Color.YELLOW, newline=True, underline=True)
+            _ITERATION += 1
 
-        # THINK
-        actions = self.__control_policy()
+            self.__left_ultrasonic_stored_values.append(self.__left_ultrasonic_sensor)
+            self.__front_ultrasonic_stored_values.append(self.__front_ultrasonic_sensor)
+            self.__right_ultrasonic_stored_values.append(self.__right_ultrasonic_sensor)
 
-        # Update tree adding the children if only if the actions are correct (namely the robot is in sensing mode)
-        self.__update_tree(actions)
+            # THINK
+            actions = self.__control_policy()
 
-        # THINK
-        action = decision_making_policy(self.__robot_preference_choice, actions)
+            # Update tree adding the children if only if the actions are correct (namely the robot is in sensing mode)
+            self.__update_tree(actions)
 
-        # Updating tree setting the current node
-        self.__update_tree(action)
+            # THINK
+            action = decision_making_policy(self.__robot_preference_choice, actions)
 
-        if action is None:
-            self.__logger.log('No action available, force quitting..', 'red')
-            self.virtual_destructor()
-            exit(-1)
+            # Updating tree setting the current node
+            self.__update_tree(action)
 
-        # ACT
-        performed = self.__do_action(action)
+            if action is None:
+                self.__logger.log('No action available, force quitting..', Color.DARKRED, newline=True)
+                self.virtual_destructor()
+                exit(-1)
 
-        if performed and PREV_ACTION != action:
-            self.__maze_performed_commands.append(action)
-            if action in self.__robot_preference_choice:
-                self.__maze_trajectory.append(action)
-            PREV_ACTION = action
+            # ACT
+            performed = self.__do_action(action)
+
+            if performed and _PREV_ACTION != action:
+                self.__maze_performed_commands.append(action)
+                if action in self.__robot_preference_choice:
+                    self.__maze_trajectory.append(action)
+                _PREV_ACTION = action
+
+        else:
+            _curr_time = time.time()
+            self.__logger.log('Algorithm locked, waiting for VirtualBody..' + Color.WHITE.value + \
+                             f' (time spent: {round(float(_curr_time-_INIT_TIME), 1)}s)' + STDOUTDecor.DEFAULT.value,
+                            Color.RED, italic=True)
+            time.sleep(2.5)
 
     # Tree updater
     def __update_tree(self, actions) -> None:
-        self.__logger.log('Updating tree..', 'green')
+        self.__logger.log('Updating tree..', Color.GREEN)
 
         if not self.__robot_state == State.SENSING:
             return
@@ -291,7 +303,7 @@ class Controller:
                     cur = self.__maze_tree.current.right
 
                 else:
-                    self.__logger.log('Updating tree generate error, force quitting..', 'red')
+                    self.__logger.log('Updating tree generate error, force quitting..', Color.DARKRED, newline=True)
                     exit(-1)
 
                 self.__maze_tree.set_current(cur)
@@ -311,13 +323,13 @@ class Controller:
                     self.__maze_tree.current.set_type(Type.DEAD_END)
 
                 else:
-                    self.__logger.log('Updating tree aborted, no dead-end child', 'green')
+                    self.__logger.log('Updating tree aborted, no dead-end child', Color.YELLOW)
                     # No DEAD END children, tree'll be updated on next loop
                     pass
 
     # Action maker
     def __control_policy(self) -> list:
-        self.__logger.log('Control policy invoked..', 'green')
+        self.__logger.log('Control policy invoked..', Color.GREEN)
         actions = list()
 
         left = self.__left_ultrasonic_sensor
@@ -396,7 +408,7 @@ class Controller:
                     actions.insert(0, action)
 
                 if not actions:
-                    self.__logger.log('No action available, force quitting..', 'red')
+                    self.__logger.log('No action available, force quitting..', Color.DARKRED, newline=True)
                     self.virtual_destructor()
                     exit(-1)
                 else:
@@ -420,6 +432,15 @@ class Controller:
                     actions.insert(0, Command.STOP)
 
         return actions
+
+
+    def __is_algorithm_unlocked(self) -> bool:
+        if self.__orientation_sensor and self.__left_infrared_sensor and \
+            self.__mid_infrared_sensor and self.__right_infrared_sensor:
+
+            return True
+
+        return False
 
     # Check there is a gate
     def __verify_gate(self, c: Compass) -> bool: # not used???
@@ -456,8 +477,9 @@ class Controller:
 
         return _gate
 
-
-    # ************************************* END PURE ALGORITHM SECTION ************************************* #
+    #                                                                                                    #
+    #                                                                                                    #
+    # ************************************ END PURE ALGORITHM SECTION ********************************** #
 
     
 
@@ -474,7 +496,7 @@ class Controller:
     def __rotate_to_final_g(self, final_g) -> None:
         """Rotate function that rotates the robot until it reaches final_g"""
 
-        self.__logger.log(f'Rotating to {final_g}', 'green')
+        self.__logger.log(f'Rotating to {final_g}', Color.GREEN)
 
         _init_g = self.__orientation_sensor
         _degrees, _cloclwise = best_angle_and_rotation_way(_init_g, final_g)
@@ -482,7 +504,7 @@ class Controller:
         _ok = self.__do_rotation(clk=_cloclwise, degrees=_degrees, final_g=final_g)
 
         if _ok:
-           self.__logger.log('Rotation complete', 'green') 
+           self.__logger.log('Rotation complete', Color.GREEN)
 
 
     def __do_rotation(self, clk: Clockwise, degrees, final_g) -> bool:
@@ -497,7 +519,7 @@ class Controller:
             _ok, _it = self.__adjust_orientation(final_g)
 
         if _it == OR_MAX_ATTEMPT:  # CRITICAL CASE
-            self.__logger.log('Max adjusting attempts reached, force quitting..', 'red')
+            self.__logger.log('Max adjusting attempts reached, force quitting..', Color.DARKRED, newline=True)
             self.virtual_destructor()
             exit(-1)
 
@@ -546,7 +568,7 @@ class Controller:
 
 
     def __check_orientation(self, final_g: int, delta: int = 2) -> tuple:
-        self.__logger.log('Checking orientation..', 'green')
+        self.__logger.log('Checking orientation..', Color.GREEN)
 
         _curr_g = self.__orientation_sensor
         _ok = False
@@ -573,7 +595,7 @@ class Controller:
 
 
     def __adjust_orientation(self, final_g) -> tuple:
-        self.__logger.log('Adjusting orientation..', 'green')
+        self.__logger.log('Adjusting orientation..', Color.GREEN)
 
         _ok = False
         _it = 0
@@ -593,12 +615,13 @@ class Controller:
 
         return _ok, _it
 
-
-    # ************************************* END ROTATION SECTION ************************************* #
+    #                                                                                              #
+    #                                                                                              #
+    # *********************************** END ROTATION SECTION *********************************** #
 
     # Send main commands
     def __do_action(self, action):
-        self.__logger.log('Sending action to VirtualBody..', 'green')
+        self.__logger.log('Sending action to VirtualBody..', Color.GREEN)
 
         if action == Command.START:
             self.__send_command(RCMD.STOP)
@@ -642,6 +665,6 @@ class Controller:
         # Rotate (DA GESTIRE MEGLIO)
         else:
             self.__send_command(RCMD.STOP)
-            self.__rotate_to_final_g(self.__robot_rotation_speed, action.value)
+            self.__rotate_to_final_g(action.value)
             self.__send_command(RCMD.STOP)
             self.__robot_state = State.ROTATING
