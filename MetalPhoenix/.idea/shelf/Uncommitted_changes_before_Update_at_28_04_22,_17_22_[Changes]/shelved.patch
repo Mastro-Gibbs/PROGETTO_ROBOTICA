@@ -1,0 +1,53 @@
+Index: Coppelia_/utility.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from io import StringIO\nfrom enum import Enum\n\n\nclass Compass(float, Enum):\n    NORD = 90.0\n    SUD = -90.0\n    EST = 0.0\n    OVEST = 180.0\n\n\nclass Clockwise(Enum):\n    RIGHT = 0\n    LEFT = 1\n\n\nROUND_DIGITS = 4\n\n\ndef round_v(value):\n    return round(value, ROUND_DIGITS)\n\n\ndef normalize_angle(ang: float, type_t: int):\n    \"\"\"\n    Normalizes any angle in degrees to be in the interval [0.,360.) or\n    [-180.,180.).\n    \"\"\"\n    bang = ang\n    if type_t == 0:\n        while bang < 0.0:\n            bang = bang + 360.0\n        while bang >= 360.0:\n            bang = bang - 360.0\n    else:\n        while bang < -180.0:\n            bang = bang + 360.0\n        while bang >= 180.0:\n            bang = bang - 360.0\n    return bang\n\n\ndef detect_target(begin: float) -> Compass | None:\n    \"\"\"\n    Detect nearest angle [0, 90, -90, 180] from 'begin' aka current angle.\n\n    #WARNING: May not locate the correct angle.\n\n    #PARAM: -> begin: float. Current angle.\n\n    #RETURN: float. Nearest angle.\n    \"\"\"\n    if begin is None:\n        return None\n\n    if -45.0 < begin <= 45.0:\n        target = Compass.EST\n    elif 45.0 < begin <= 135.0:\n        target = Compass.NORD\n    elif 135.0 < begin <= 180 or -180 <= begin <= -135.0:\n        target = Compass.OVEST\n    else:\n        target = Compass.SUD\n\n    return target\n\n\ndef normalize_compass(curr_ori: float, compass: Compass) -> Compass:\n    if detect_target(curr_ori) == 0:\n        if compass == Compass.EST:\n            return Compass.SUD\n        elif compass == Compass.OVEST:\n            return Compass.NORD\n    elif detect_target(curr_ori) == 90:\n        return compass\n    elif detect_target(curr_ori) == -90:\n        if compass == Compass.EST:\n            return Compass.OVEST\n        elif compass == Compass.OVEST:\n            return Compass.EST\n    elif detect_target(curr_ori) == 180:\n        if compass == Compass.EST:\n            return Compass.NORD\n        elif compass == Compass.OVEST:\n            return Compass.SUD\n\n\n# Front Right Left Back to compass\ndef f_r_l_b_to_compass(curr_ori: float) -> {}:\n    if detect_target(curr_ori) == 0:  # Muso robot ad EST\n        return {\"FRONT\": Compass.EST, \"RIGHT\": Compass.SUD, \"LEFT\": Compass.NORD, \"BACK\": Compass.OVEST}\n    elif detect_target(curr_ori) == 90:  # Muso robot a NORD\n        return {\"FRONT\": Compass.NORD, \"RIGHT\": Compass.EST, \"LEFT\": Compass.OVEST, \"BACK\": Compass.SUD}\n    elif detect_target(curr_ori) == 180:  # Muso robot ad OVEST\n        return {\"FRONT\": Compass.OVEST, \"RIGHT\": Compass.NORD, \"LEFT\": Compass.SUD, \"BACK\": Compass.EST}\n    else:  # -90\n        return {\"FRONT\": Compass.SUD, \"RIGHT\": Compass.OVEST, \"LEFT\": Compass.EST, \"BACK\": Compass.NORD}\n\n\ndef negate_compass(compass: float) -> Compass:\n    if compass == Compass.NORD:\n        return Compass.SUD\n    elif compass == Compass.SUD:\n        return Compass.NORD\n    elif compass == Compass.EST:\n        return Compass.OVEST\n    elif compass == Compass.OVEST:\n        return Compass.EST\n\n\nclass StringBuilder:\n    \"\"\"C++ style StringStream class.\"\"\"\n    _file_str = None\n\n    def __init__(self):\n        \"\"\"Constructor\"\"\"\n        self._file_str = StringIO()\n\n    def concat(self, string: str, end: str = ''):\n        \"\"\"Build string (append param: string)\n        #PARAMS: -> string: str. Entity to append.\n                 -> end: str. End char or string.\n\n        #WARNING: to set '\\n' must pass it with 'end' param.\n        \"\"\"\n        self._file_str.write(string)\n        self._file_str.write(end)\n\n    def erase(self):\n        \"\"\"#WARNING: Must be called to destroy previous built string\n\n        Erase current StringBuilder buffer.\n        \"\"\"\n        del self._file_str\n        self._file_str = StringIO()\n\n    def __str__(self):\n        return self._file_str.getvalue()\n\n\nclass StdoutLogger:\n    \"\"\"\n    Class to menage stdout log colors.\n    \"\"\"\n\n    def __init__(self, class_name: str, color: str):\n        \"\"\"Constructor\n\n        #PARAMS -> class_name: str. Name of the class.\n                -> color: str. Color to set to the class name.\n\n        [AVAILABLE COLORS] = {purple, cyan}\n        \"\"\"\n        if color == \"purple\":\n            self.__class = \"\\033[95m[{0}]\\033[00m\".format(class_name)\n        elif color == \"cyan\":\n            self.__class = \"\\033[96m[{0}]\\033[00m\".format(class_name)\n\n    def log(self, msg, severity: int = 0, italic: bool = False):\n        \"\"\"Print on stdout he message with selected color.\n\n        #PARAMS: -> msg: any. Message to print.\n                 -> severity: int. [-1 to 4] refer color.\n                 -> italic: bool. Italic font\n        \"\"\"\n        out: str = str()\n\n        if italic:\n            out = \"\\033[03m\"\n\n        if severity == 4:\n            out = out + \"\\033[31m{0}\\033[00m\".format(msg)  # dk red\n        elif severity == 3:\n            out = out + \"\\033[91m{0}\\033[00m\".format(msg)  # red\n        elif severity == 2:\n            out = out + \"\\033[93m{0}\\033[00m\".format(msg)  # yellow\n        elif severity == 1:\n            out = out + \"\\033[32m{0}\\033[00m\".format(msg)  # dk green\n        elif severity == 0:\n            out = out + \"\\033[92m{0}\\033[00m\".format(msg)  # green\n        else:\n            out = out + \"\\033[37m{0}\\033[00m\".format(msg)  # lite gray\n\n        print(self.__class, end=' \\033[97m---> \\033[00m')\n        print(out)\n\n\nclass LIFOStack:\n    \"\"\"Stack class based on list\"\"\"\n\n    def __init__(self):\n        self.stack = list()\n        self.index = -1\n\n    def push(self, elem: float):\n        self.stack.append(elem)\n        self.index += 1\n\n    def pop(self) -> float:\n        if not self.is_empty():\n            self.index -= 1\n            return self.stack.pop()\n        else:\n            raise IndexError(\"Stack is empty!\")\n\n    def peek(self) -> float:\n        elem = self.pop()\n        self.push(elem)\n        return elem\n\n    def is_empty(self) -> bool:\n        if self.index == -1:\n            return True\n        return False\n\n    def erase(self):\n        self.stack.clear()\n        self.index = -1\n\n\nclass FIFOStack:\n    \"\"\"Stack class based on list\"\"\"\n\n    def __init__(self):\n        self.queue = list()\n        self.index = -1\n\n    def push(self, elem: float):\n        self.queue.insert(0, elem)\n        self.index += 1\n\n    def pop(self) -> float:\n        if not self.is_empty():\n            self.index -= 1\n            return self.queue.pop()\n        else:\n            raise IndexError(\"FIFOStack is empty!\")\n\n    def is_empty(self) -> bool:\n        if self.index == -1:\n            return True\n        return False\n\n    def erase(self):\n        self.queue.clear()\n        self.index = -1\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Coppelia_/utility.py b/Coppelia_/utility.py
+--- a/Coppelia_/utility.py	(revision 347248008bd20f7ee1f8955a959a75e792a6e461)
++++ b/Coppelia_/utility.py	(date 1651158793995)
+@@ -57,7 +57,7 @@
+         target = Compass.EST
+     elif 45.0 < begin <= 135.0:
+         target = Compass.NORD
+-    elif 135.0 < begin <= 180 or -180 <= begin <= -135.0:
++    elif 135.0 < begin <= 180.0 or -180.0 <= begin <= -135.0:
+         target = Compass.OVEST
+     else:
+         target = Compass.SUD
+@@ -66,23 +66,29 @@
+ 
+ 
+ def normalize_compass(curr_ori: float, compass: Compass) -> Compass:
+-    if detect_target(curr_ori) == 0:
++    if detect_target(curr_ori) == 0.0:
+         if compass == Compass.EST:
+             return Compass.SUD
+         elif compass == Compass.OVEST:
+             return Compass.NORD
+-    elif detect_target(curr_ori) == 90:
++        elif compass == Compass.NORD:
++            return Compass.EST
++    elif detect_target(curr_ori) == 90.0:
+         return compass
+-    elif detect_target(curr_ori) == -90:
++    elif detect_target(curr_ori) == -90.0:
+         if compass == Compass.EST:
+             return Compass.OVEST
+         elif compass == Compass.OVEST:
+             return Compass.EST
+-    elif detect_target(curr_ori) == 180:
++        elif compass == Compass.NORD:
++            return Compass.SUD
++    elif detect_target(curr_ori) == 180.0:
+         if compass == Compass.EST:
+             return Compass.NORD
+         elif compass == Compass.OVEST:
+             return Compass.SUD
++        elif compass == Compass.NORD:
++            return Compass.OVEST
+ 
+ 
+ # Front Right Left Back to compass

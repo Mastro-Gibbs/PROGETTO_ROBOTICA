@@ -1,0 +1,859 @@
+<changelist name="Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]" date="1651159326726" recycled="false" toDelete="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 28/04/22, 17:22 [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Picture/icon.png" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Picture/icon.png" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/icon.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_ru.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_ru.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_ru.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/_decimal.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/_decimal.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_decimal.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Cestino/CoppeliaMultithreadSense/MazeScene.ttt" />
+    <option name="AFTER_PATH" value="Cestino/CoppeliaMultithreadSense/MazeScene.ttt" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/MazeScene.ttt" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-file-l1-2-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-file-l1-2-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-file-l1-2-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/fft/_pocketfft_internal.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/fft/_pocketfft_internal.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_pocketfft_internal.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_pcg64.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_pcg64.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_pcg64.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Doc/Grafo_paper.xcf" />
+    <option name="AFTER_PATH" value="Doc/Grafo_paper.xcf" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Grafo_paper.xcf" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Datasheet/PCA9685.pdf" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Datasheet/PCA9685.pdf" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/PCA9685.pdf" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PIL/_imagingtk.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PIL/_imagingtk.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_imagingtk.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qgif.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qgif.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qgif.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-sysinfo-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-sysinfo-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-sysinfo-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/lib2to3/Grammar3.7.4.final.0.pickle" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/lib2to3/Grammar3.7.4.final.0.pickle" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Grammar3.7.4.final.0.pickle" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/_win32sysloader.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/_win32sysloader.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_win32sysloader.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-string-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-string-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-crt-string-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-util-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-util-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-util-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/platforms/qwindows.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/platforms/qwindows.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qwindows.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Doc/AssiRotazione-g.png" />
+    <option name="AFTER_PATH" value="Doc/AssiRotazione-g.png" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/AssiRotazione-g.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_philox.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_philox.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_philox.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Models/Car Model/Freenove4wd_V1.ttm" />
+    <option name="AFTER_PATH" value="Models/Car Model/Freenove4wd_V1.ttm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Freenove4wd_V1.ttm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_it.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_it.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_it.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/unicodedata.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/unicodedata.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/unicodedata.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/VCRUNTIME140.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/VCRUNTIME140.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/VCRUNTIME140.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Coppelia_/models/MazeScene.ttt" />
+    <option name="AFTER_PATH" value="Coppelia_/models/MazeScene.ttt" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/MazeScene1.ttt" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_ar.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_ar.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_ar.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-locale-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-locale-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-crt-locale-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qwbmp.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qwbmp.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qwbmp.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/ucrtbase.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/ucrtbase.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/ucrtbase.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_lv.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_lv.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_lv.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_da.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_da.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_da.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-errorhandling-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-errorhandling-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-errorhandling-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/libopenblas.SVHFG5YE3RK3Z27NVFUDAPL2O3W6IMXW.gfortran-win32.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/libopenblas.SVHFG5YE3RK3Z27NVFUDAPL2O3W6IMXW.gfortran-win32.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/libopenblas.SVHFG5YE3RK3Z27NVFUDAPL2O3W6IMXW.gfortran-win32.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qicns.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qicns.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qicns.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Quick.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Quick.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Qt5Quick.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-datetime-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-datetime-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-datetime-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Datasheet/PCF8591.pdf" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Datasheet/PCF8591.pdf" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/PCF8591.pdf" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Models/maze.ttm" />
+    <option name="AFTER_PATH" value="Models/maze.ttm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/maze.ttm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_fi.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_fi.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_fi.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/libcrypto-1_1.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/libcrypto-1_1.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/libcrypto-1_1.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_sk.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_sk.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_sk.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-processenvironment-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-processenvironment-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-processenvironment-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_hu.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_hu.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_hu.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/icudt59.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/icudt59.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/icudt59.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_generator.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_generator.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_generator.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Svg.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Svg.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Qt5Svg.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/iconengines/qsvgicon.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/iconengines/qsvgicon.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qsvgicon.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-processthreads-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-processthreads-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-processthreads-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-synch-l1-2-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-synch-l1-2-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-synch-l1-2-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-stdio-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-stdio-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-crt-stdio-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qtiff.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qtiff.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtiff.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_en.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_en.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_en.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-synch-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-synch-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-synch-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-runtime-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-runtime-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-crt-runtime-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-heap-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-heap-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-heap-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PIL/_webp.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PIL/_webp.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_webp.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/Client.exe" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/Client.exe" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Client.exe" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_bg.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_bg.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_bg.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/_ssl.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/_ssl.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_ssl.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/pywintypes37.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/pywintypes37.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/pywintypes37.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qjpeg.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qjpeg.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qjpeg.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-file-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-file-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-file-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Doc/AssiRotazione-g.xcf" />
+    <option name="AFTER_PATH" value="Doc/AssiRotazione-g.xcf" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/AssiRotazione-g.xcf" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_ko.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_ko.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_ko.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/pyexpat.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/pyexpat.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/pyexpat.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/platforms/qoffscreen.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/platforms/qoffscreen.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qoffscreen.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-convert-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-convert-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-crt-convert-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_he.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_he.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_he.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_cs.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_cs.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_cs.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/base_library.zip" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/base_library.zip" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/base_library.zip" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/platforms/qwebgl.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/platforms/qwebgl.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qwebgl.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-time-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-time-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-crt-time-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/linalg/_umath_linalg.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/linalg/_umath_linalg.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_umath_linalg.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/QtWidgets.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/QtWidgets.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/QtWidgets.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/python37.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/python37.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/python37.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/win32com/shell/shell.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/win32com/shell/shell.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/shell.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/QtCore.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/QtCore.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/QtCore.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_gd.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_gd.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_gd.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Network.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Network.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Qt5Network.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/opengl32sw.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/opengl32sw.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/opengl32sw.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-debug-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-debug-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-debug-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Qml.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Qml.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Qt5Qml.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_bounded_integers.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_bounded_integers.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_bounded_integers.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_mt19937.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_mt19937.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_mt19937.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-processthreads-l1-1-1.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-processthreads-l1-1-1.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-processthreads-l1-1-1.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/icuin59.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/icuin59.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/icuin59.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/About_Battery.pdf" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/About_Battery.pdf" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/About_Battery.pdf" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Datasheet/ADS7830.pdf" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Datasheet/ADS7830.pdf" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/ADS7830.pdf" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/lib2to3/PatternGrammar3.7.4.final.0.pickle" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/lib2to3/PatternGrammar3.7.4.final.0.pickle" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/PatternGrammar3.7.4.final.0.pickle" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Models/Car Model/Freenove4wd.ttm" />
+    <option name="AFTER_PATH" value="Models/Car Model/Freenove4wd.ttm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Freenove4wd.ttm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/_queue.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/_queue.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_queue.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_bit_generator.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_bit_generator.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_bit_generator.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Models/maze_2.ttm" />
+    <option name="AFTER_PATH" value="Models/maze_2.ttm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/maze_2.ttm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/icuuc59.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/icuuc59.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/icuuc59.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/win32wnet.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/win32wnet.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/win32wnet.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qtga.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qtga.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtga.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_fr.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_fr.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_fr.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/win32trace.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/win32trace.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/win32trace.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_uk.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_uk.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_uk.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/_bz2.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/_bz2.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_bz2.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qwebp.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qwebp.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qwebp.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Coppelia_/other/tree.png" />
+    <option name="AFTER_PATH" value="Coppelia_/other/tree.png" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/tree.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Doc/Labirinto_vincoli.odt" />
+    <option name="AFTER_PATH" value="Doc/Labirinto_vincoli.odt" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Labirinto_vincoli.odt" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-rtlsupport-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-rtlsupport-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-rtlsupport-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-heap-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-heap-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-crt-heap-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Core.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Core.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Qt5Core.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qico.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qico.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qico.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_zh_TW.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_zh_TW.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_zh_TW.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-math-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-math-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-crt-math-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Tutorial.pdf" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Tutorial.pdf" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Tutorial.pdf" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/_ctypes.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/_ctypes.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_ctypes.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/core/_multiarray_umath.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/core/_multiarray_umath.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_multiarray_umath.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_ca.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_ca.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_ca.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5DBus.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5DBus.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Qt5DBus.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/cv2/cv2.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/cv2/cv2.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/cv2.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/python3.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/python3.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/python3.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-environment-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-environment-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-crt-environment-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-multibyte-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-multibyte-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-crt-multibyte-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Models/maze_1.ttm" />
+    <option name="AFTER_PATH" value="Models/maze_1.ttm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/maze_1.ttm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/libssl-1_1.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/libssl-1_1.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/libssl-1_1.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/win32pdh.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/win32pdh.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/win32pdh.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/sip.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/sip.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/sip.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-file-l2-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-file-l2-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-file-l2-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/styles/qwindowsvistastyle.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/styles/qwindowsvistastyle.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qwindowsvistastyle.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/pythoncom37.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/pythoncom37.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/pythoncom37.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_de.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_de.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_de.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/_multiprocessing.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/_multiprocessing.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_multiprocessing.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/platforms/qminimal.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/platforms/qminimal.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qminimal.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-profile-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-profile-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-profile-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-timezone-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-timezone-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-timezone-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_pl.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_pl.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_pl.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/_lzma.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/_lzma.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_lzma.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/select.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/select.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/select.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-localization-l1-2-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-localization-l1-2-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-localization-l1-2-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-utility-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-utility-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-crt-utility-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/platformthemes/qxdgdesktopportal.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/platformthemes/qxdgdesktopportal.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qxdgdesktopportal.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-interlocked-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-interlocked-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-interlocked-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/mtrand.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/mtrand.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/mtrand.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-namedpipe-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-namedpipe-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-namedpipe-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-filesystem-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-crt-filesystem-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-crt-filesystem-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_ja.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_ja.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_ja.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/win32api.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/win32api.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/win32api.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-memory-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-memory-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-memory-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/QtGui.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/QtGui.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/QtGui.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/_socket.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/_socket.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_socket.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5WebSockets.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5WebSockets.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Qt5WebSockets.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Models/MazeScene.ttt" />
+    <option name="AFTER_PATH" value="Models/MazeScene.ttt" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/MazeScene2.ttt" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Models/Car Model/Freenove4wd_V2.ttm" />
+    <option name="AFTER_PATH" value="Models/Car Model/Freenove4wd_V2.ttm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Freenove4wd_V2.ttm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-libraryloader-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-libraryloader-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-libraryloader-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_sfc64.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_sfc64.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_sfc64.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/d3dcompiler_47.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/d3dcompiler_47.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/d3dcompiler_47.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qsvg.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/plugins/imageformats/qsvg.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qsvg.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/mfc140u.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/mfc140u.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/mfc140u.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/_hashlib.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/_hashlib.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_hashlib.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/libEGL.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/libEGL.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/libEGL.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Gui.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Gui.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Qt5Gui.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_common.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/random/_common.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_common.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PIL/_imaging.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PIL/_imaging.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_imaging.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Doc/Grafo_paper.png" />
+    <option name="AFTER_PATH" value="Doc/Grafo_paper.png" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Grafo_paper.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/linalg/lapack_lite.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/linalg/lapack_lite.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/lapack_lite.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-console-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-console-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-console-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Widgets.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/Qt5Widgets.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/Qt5Widgets.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Code/Patch/libmmal.so" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Code/Patch/libmmal.so" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/libmmal.so" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/libGLESv2.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/libGLESv2.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/libGLESv2.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Doc/AssiRotazione-g (adjust_orient).xcf" />
+    <option name="AFTER_PATH" value="Doc/AssiRotazione-g (adjust_orient).xcf" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/AssiRotazione-g (adjust_orient).xcf" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/MSVCP140.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/MSVCP140.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/MSVCP140.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/core/_multiarray_tests.cp37-win32.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/numpy/core/_multiarray_tests.cp37-win32.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/_multiarray_tests.cp37-win32.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../Documentation/documentazione.pdf" />
+    <option name="AFTER_PATH" value="../Documentation/documentazione.pdf" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/documentazione.pdf" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-handle-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-handle-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-handle-l1-1-0.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_es.qm" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/PyQt5/Qt/translations/qtbase_es.qm" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/qtbase_es.qm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/win32ui.pyd" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/win32ui.pyd" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/win32ui.pyd" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-string-l1-1-0.dll" />
+    <option name="AFTER_PATH" value="../OriginalFreenoveCode/Application/windows/api-ms-win-core-string-l1-1-0.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_28_04_22,_17_22_[Changes]/api-ms-win-core-string-l1-1-0.dll" />
+  </binary>
+</changelist>
