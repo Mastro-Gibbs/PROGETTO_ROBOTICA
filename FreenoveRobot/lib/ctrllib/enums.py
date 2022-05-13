@@ -74,6 +74,17 @@ class Compass(float, Enum):
     EST = 0.0
     OVEST = 180.0
 
+    def test_and_set(cmp: str):
+        base = 'Compass.'
+        if base + 'NORD' == cmp or 'NORD' == cmp:
+            return Compass.NORD
+        elif base + 'SUD' == cmp or 'SUD' == cmp:
+            return Compass.SUD
+        elif base + 'EST' == cmp or 'EST' == cmp:
+            return Compass.EST
+        elif base + 'OVEST' == cmp or 'OVEST' == cmp:
+            return Compass.OVEST
+
 
 class Clockwise(Enum):
     RIGHT = 0

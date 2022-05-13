@@ -236,11 +236,21 @@ class CFG:
     def controller_data() -> dict:
         psr = configparser.ConfigParser()
         psr.read('data/config.conf')
+
+        pref = psr["ROBOT"]["robot_preference_choice"]
+        pref = pref.split(', ')
+
+        i = 0
+        for elem in pref:
+            pref[i] = Compass.test_and_set(elem)
+            i += 1
+
         return {
-                "SPEED": float(psr["ROBOT"]["speed"]),
-                "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
-                "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
-                "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"])
+                "SPEED": int(psr["ROBOT"]["speed"]),
+                "ROT_SPEED": int(psr["ROBOT"]["rot_speed"]),
+                "SAFE_DIST": int(psr["ROBOT"]["safe_dist"]),
+                "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
+                "PREFERENCE": pref
                 }
 
     @staticmethod

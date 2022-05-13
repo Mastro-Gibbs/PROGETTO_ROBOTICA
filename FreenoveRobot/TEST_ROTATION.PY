@@ -1,9 +1,11 @@
 import builtins
 from hashlib import md5
+from time import time, sleep
 
 from controller import Controller
 from lib.ctrllib.utility import Logger, CFG
 from lib.ctrllib.enums import Color
+from lib.ctrllib.enums import RedisCOMMAND as RCMD
 
 
 CONFIG_FILE_HASHCODE: str = None
@@ -29,23 +31,24 @@ class Agent:
         self.__controller.begin()
 
     def loop(self) -> None:
-        global CONFIG_FILE_HASHCODE
-        global CONFIG_FILE_OLDHASHCODE
-        
-        while not self.__controller.goal_reached():
-            self.__controller.algorithm()
+        sleep(5)
+        self.__controller.rotate_to_final_g(90)
+        sleep(10)
+        self.__controller.rotate_to_final_g(0)
+        sleep(10)
+        self.__controller.rotate_to_final_g(90)
+        sleep(10)
+        self.__controller.rotate_to_final_g(0)
+        sleep(10)
+        self.__controller.rotate_to_final_g(90)
+        sleep(10)
+        self.__controller.rotate_to_final_g(0)
 
-            with builtins.open('data/config.conf', 'rb') as configfile:
-                CONFIG_FILE_HASHCODE = md5(configfile.read()).hexdigest()
-
-            if CONFIG_FILE_OLDHASHCODE != CONFIG_FILE_HASHCODE:
-                self.__logger.log('Config file changed', Color.YELLOW, italic=True, blink=True)
-                CONFIG_FILE_OLDHASHCODE = CONFIG_FILE_HASHCODE
-                self.__controller.update_config()
         self.stop()
 
 
     def stop(self) -> None:
+        self.__controller.send_command(RCMD.STOP)
         self.__logger.log('Agent stopped', Color.GREEN, newline=True, italic=True, underline=True)
 
         if self.__controller.goal_reached():

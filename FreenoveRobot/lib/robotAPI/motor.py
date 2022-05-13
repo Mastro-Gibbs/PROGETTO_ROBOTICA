@@ -79,15 +79,15 @@ class Motor:
             self.right_upper_wheel(-speed)
             self.right_lower_wheel(-speed)
         elif cmd == Command.ROTATEL:
-            self.left_upper_wheel(speed)
-            self.left_lower_wheel(speed)
-            self.right_upper_wheel(-speed)
-            self.right_lower_wheel(-speed)
-        elif cmd == Command.ROTATER:
             self.left_upper_wheel(-speed)
             self.left_lower_wheel(-speed)
             self.right_upper_wheel(speed)
             self.right_lower_wheel(speed)
+        elif cmd == Command.ROTATER:
+            self.left_upper_wheel(speed)
+            self.left_lower_wheel(speed)
+            self.right_upper_wheel(-speed)
+            self.right_lower_wheel(-speed)
 
         
             
