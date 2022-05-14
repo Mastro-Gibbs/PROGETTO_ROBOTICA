@@ -1,7 +1,7 @@
 from lib.robotAPI.PCA9685 import PCA9685
 from enum import Enum
 
-class Command(str, Enum):
+class MOTORSCommand(str, Enum):
     RUN = 'MOTORS_RUN',
     STOP = 'MOTORS_STOP',
     ROTATEL = 'MOTORS_ROTATEL',
@@ -65,25 +65,25 @@ class Motor:
             self.pwm.setMotorPwm(5, 4095)
             
  
-    def set_model(self, cmd: Command, speed: int = 0):
+    def set_model(self, cmd: MOTORSCommand, speed: int = 0):
         speed = self.justify(speed)
 
-        if cmd == Command.STOP:
+        if cmd == MOTORSCommand.STOP:
             self.left_upper_wheel(0)
             self.left_lower_wheel(0)
             self.right_upper_wheel(0)
             self.right_lower_wheel(0)
-        elif cmd == Command.RUN:
+        elif cmd == MOTORSCommand.RUN:
             self.left_upper_wheel(-speed)
             self.left_lower_wheel(-speed)
             self.right_upper_wheel(-speed)
             self.right_lower_wheel(-speed)
-        elif cmd == Command.ROTATEL:
+        elif cmd == MOTORSCommand.ROTATEL:
             self.left_upper_wheel(-speed)
             self.left_lower_wheel(-speed)
             self.right_upper_wheel(speed)
             self.right_lower_wheel(speed)
-        elif cmd == Command.ROTATER:
+        elif cmd == MOTORSCommand.ROTATER:
             self.left_upper_wheel(speed)
             self.left_lower_wheel(speed)
             self.right_upper_wheel(-speed)

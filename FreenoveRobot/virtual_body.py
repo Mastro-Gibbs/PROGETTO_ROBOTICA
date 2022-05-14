@@ -5,11 +5,12 @@ from redis.client import PubSubWorkerThread
 
 from physiscal_body import PhysicalBody as Body
 
-from lib.ctrllib.enums import RedisKEYS as RK
+from lib.ctrllib.enums import Command, RedisKEYS as RK
 from lib.ctrllib.enums import RedisTOPICS as RT
 from lib.ctrllib.enums import RedisCONNECTION as RC
 from lib.ctrllib.enums import RedisCOMMAND as RCMD
 from lib.robotAPI.utils import thread_ripper
+from lib.robotAPI.motor import MOTORSCommand
 
 from threading import Thread
 
@@ -24,6 +25,8 @@ class VirtualBody:
         self.__redis = Redis(host=RC.HOST.value, port=int(RC.PORT.value), decode_responses=True)
         self.__pubsub = self.__redis.pubsub()
         self.__pubsub.psubscribe(**{RT.CTRL_TOPIC.value: self.__on_message})
+
+        self.__rotation_thread: Thread = Thread(target=self.__rotation, name='rotation_thread')
 
 
     def begin(self) -> bool:
@@ -89,15 +92,33 @@ class VirtualBody:
             _cmd = _values[0]
             _val = int(_values[1])
 
+            if _cmd == MOTORSCommand.ROTATEL.value or _cmd == MOTORSCommand.ROTATER.value:
+                _until = int(_values[2])
+                self.__rotation_thread: Thread = Thread(target=self.__rotation, name='rotation_thread', args=(_until,))
+                self.__rotation_thread.start()
+                
             self.__body.set_motor_model(_cmd, _val)
+            
 
+    def __rotation(self, until: int):
+        EXIT = False
+        delta = 4
+        until = abs(until)
+
+        while not EXIT:
+            _yaw = abs(self.__body.oritentation()[2])
+            # print(_yaw)
+            if  until - delta < _yaw < until + delta:
+                self.__body.set_motor_model(MOTORSCommand.STOP.value)
+                EXIT = True
+
+        print(f'Trhead {self.__rotation_thread.name} from VirtualBody instance buried')
 
     def __yaw_discover(self):
         _OLD_YAW: str = str()
 
         while True:
-            _orientation = self.__body.oritentation()
-            _yaw = str(_orientation[2])
+            _yaw = str(self.__body.oritentation()[2])
 
             if _OLD_YAW != _yaw:
                 self.__redis.set(RK.MPU.value, _yaw)
@@ -124,7 +145,7 @@ class VirtualBody:
             
             sleep(0.005)
 
-        print(f'Trhead {self.__infrared_thread.name} buried')
+        print(f'Trhead {self.__infrared_thread.name} from VirtualBody instance buried')
 
     def __ultrasonic_discover(self):
         _OLD_DISTANCES: str = str()

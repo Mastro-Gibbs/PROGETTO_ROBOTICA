@@ -6,7 +6,7 @@
 """
 
 from threading import Thread
-from lib.robotAPI.motor import Motor, Command
+from lib.robotAPI.motor import Motor, MOTORSCommand
 from lib.robotAPI.ultrasonic import Ultrasonic
 from lib.robotAPI.infrared import Infrared
 from lib.robotAPI.led import Led, Color
@@ -28,7 +28,7 @@ class PhysicalBody:
         try:
             self.__mpu6050 = MPU(RC.MPU_SMBUS_ID, RC.MPU_DEBUG_MODE)
         except MPUSensorException as exc:
-            print(exc.args, ' Exiting..')
+            print(exc.args[0], ' Exiting..')
             exit(-1)
 
         # motor instance
@@ -97,14 +97,14 @@ class PhysicalBody:
         
         _vel = (rate * 4095) // 100
 
-        if cmd == Command.RUN.value:
-            _cmd = Command.RUN
-        elif cmd == Command.STOP.value:
-            _cmd = Command.STOP
-        elif cmd == Command.ROTATEL.value:
-            _cmd = Command.ROTATEL
-        elif cmd == Command.ROTATER.value:
-            _cmd = Command.ROTATER
+        if cmd == MOTORSCommand.RUN.value:
+            _cmd = MOTORSCommand.RUN
+        elif cmd == MOTORSCommand.STOP.value:
+            _cmd = MOTORSCommand.STOP
+        elif cmd == MOTORSCommand.ROTATEL.value:
+            _cmd = MOTORSCommand.ROTATEL
+        elif cmd == MOTORSCommand.ROTATER.value:
+            _cmd = MOTORSCommand.ROTATER
         else:
             _cmd = None
 
