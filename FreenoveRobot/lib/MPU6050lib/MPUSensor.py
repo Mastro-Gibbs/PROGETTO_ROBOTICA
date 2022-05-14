@@ -8,7 +8,7 @@ import inspect
 import ctypes as ct
 import smbus
 
-FIFO_buffer: list = [0] * 64
+FIFO_buffer: list = [0] * 128
 packet_size: int = 0
 
 
@@ -21,6 +21,7 @@ class MPUSensor:
         global packet_size
 
         self.__mpu = MPU6050(bus, a_debug=debug)
+        self.__mpu.set_FIFO_enabled(True)
         result, code_error = self.__mpu.dmp_initialize()
 
         if not result:
@@ -50,7 +51,8 @@ class MPUSensor:
         global FIFO_buffer
         global packet_size
 
-        _delta = 10
+        stack: list    = list()
+        stack_ptr: int = 0
 
         while True:
             FIFO_count = self.__mpu.get_FIFO_count()
@@ -66,6 +68,7 @@ class MPUSensor:
 
                 FIFO_buffer = self.__mpu.get_FIFO_bytes(packet_size)
 
+                accel = self.__mpu.DMP_get_acceleration_int16(FIFO_buffer)
                 quat = self.__mpu.DMP_get_quaternion_int16(FIFO_buffer)
                 grav = self.__mpu.DMP_get_gravity(quat)
 
@@ -73,9 +76,33 @@ class MPUSensor:
 
                 self.__roll  = int(roll_pitch_yaw.x)
                 self.__pitch = int(roll_pitch_yaw.y)
-                self.__yaw   = int(roll_pitch_yaw.z * 2 + 2)
+                yaw   = int(roll_pitch_yaw.z * 2 + 4)
 
-            sleep(0.15)
+                if stack_ptr == 10:
+                    sum = 0
+                    for i in range(0, 8, 1):
+                        sum += stack[i]
+                        sum = sum / 9
+                    
+                    if sum + 2 > yaw:
+                        pass
+                    elif yaw > stack[9] + 15:
+                        pass
+                    elif yaw + 15 < stack[9]:
+                        pass
+                    else:
+                        stack = stack[1:]
+                        stack.append(yaw)
+                        self.__yaw = yaw
+
+                else:
+                    stack.append(yaw)
+                    stack_ptr += 1
+                
+                
+
+                print(self.__yaw)
+        
 
     @property
     def roll_pitch_yaw(self) -> tuple:

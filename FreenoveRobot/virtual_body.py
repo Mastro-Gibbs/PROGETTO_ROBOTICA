@@ -107,7 +107,7 @@ class VirtualBody:
 
         while not EXIT:
             _yaw = abs(self.__body.oritentation()[2])
-            # print(_yaw)
+            print(_yaw)
             if  until - delta < _yaw < until + delta:
                 self.__body.set_motor_model(MOTORSCommand.STOP.value)
                 EXIT = True
@@ -119,7 +119,7 @@ class VirtualBody:
 
         while True:
             _yaw = str(self.__body.oritentation()[2])
-
+            
             if _OLD_YAW != _yaw:
                 self.__redis.set(RK.MPU.value, _yaw)
                 self.__redis.publish(RT.BODY_TOPIC.value, RK.MPU.value)
@@ -171,6 +171,7 @@ if __name__ == "__main__":
     v = VirtualBody()
     try:
         while not v.begin():
+            print('Missing redis connection, delay 5 seconds')
             sleep(5)
 
         print('VirtualBody ready')
