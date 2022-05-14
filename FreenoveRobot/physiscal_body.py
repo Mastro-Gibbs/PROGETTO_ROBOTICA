@@ -14,6 +14,7 @@ from lib.robotAPI.buzzer import Buzzer
 from lib.robotAPI.utils import thread_ripper
 from lib.robotAPI.utils import ROBOTAPIConstants as RC
 from lib.MPU6050lib.MPUSensor import MPUSensor as MPU 
+from lib.MPU6050lib.MPUSensor import MPUSensorException
 
 
 class PhysicalBody:
@@ -21,6 +22,14 @@ class PhysicalBody:
         """
             Initialize sensors and actuators instances.
         """
+        print('Initializing sensors...')
+
+        # orientation sensor instance (MPU6050)
+        try:
+            self.__mpu6050 = MPU(RC.MPU_SMBUS_ID, RC.MPU_DEBUG_MODE)
+        except MPUSensorException as exc:
+            print(exc.args, ' Exiting..')
+            exit(-1)
 
         # motor instance
         self.__motors = Motor()
@@ -40,8 +49,7 @@ class PhysicalBody:
         self.__strip = Led()
         self.__wizard = Thread(target=self.__strip.rainbowCycle, name='led_wizard', args=(RC.LED_ANIM_DELAY, RC.LED_ANIM_LOOPS,))
 
-        # orientation sensor instance (MPU6050)
-        self.__mpu6050 = MPU(RC.MPU_SMBUS_ID, RC.MPU_DEBUG_MODE)
+        print('Sensors successfully initialized')
 
 
     def virtual_destructor(self) -> None:
@@ -55,7 +63,7 @@ class PhysicalBody:
         """
         try:
             if thread_ripper(self.__wizard):
-                print(f"Thread {self.__wizard} buried")
+                print(f"Thread {self.__wizard.name} from PhysiscalBody instance buried")
         except ValueError or SystemError as error:
             print(f"Issues while trying to kill the thread {self.__wizard}")
 
@@ -174,7 +182,7 @@ class PhysicalBody:
         """
         try:
             if thread_ripper(self.__wizard):
-                print(f"Thread {self.__wizard.name} buried")
+                print(f"Thread {self.__wizard.name} from PhysiscalBody buried")
         except ValueError or SystemError as error:
             print(f"Issues while trying to kill the thread {self.__wizard.name}")
 

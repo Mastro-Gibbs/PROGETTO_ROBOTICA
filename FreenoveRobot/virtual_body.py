@@ -57,9 +57,15 @@ class VirtualBody:
     def stop(self) -> None:
         self.__body.virtual_destructor()
         self.__redis_runner.stop()
-        thread_ripper(self.__yaw_thread)
-        thread_ripper(self.__infrared_thread)
-        thread_ripper(self.__ultrasonic_thread)
+
+        if thread_ripper(self.__yaw_thread):
+            print(f"Thread {self.__yaw_thread.name} from VirtualBody instance buried")
+
+        if thread_ripper(self.__infrared_thread):
+            print(f"Thread {self.__infrared_thread.name} from VirtualBody instance buried")
+
+        if thread_ripper(self.__ultrasonic_thread):
+            print(f"Thread {self.__ultrasonic_thread.name} from VirtualBody instance buried")
 
     
     def __on_message(self, msg):
@@ -118,6 +124,8 @@ class VirtualBody:
             
             sleep(0.005)
 
+        print(f'Trhead {self.__infrared_thread.name} buried')
+
     def __ultrasonic_discover(self):
         _OLD_DISTANCES: str = str()
 
@@ -144,6 +152,7 @@ if __name__ == "__main__":
         while not v.begin():
             sleep(5)
 
+        print('VirtualBody ready')
         v.loop()
     except KeyboardInterrupt:
         v.stop()

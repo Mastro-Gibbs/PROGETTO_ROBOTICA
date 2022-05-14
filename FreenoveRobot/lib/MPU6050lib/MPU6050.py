@@ -390,7 +390,7 @@ class MPU6050:
         self.write_bit(C.MPU6050_RA_USER_CTRL,
                        C.MPU6050_USERCTRL_DMP_RESET_BIT, True)
 
-    def dmp_initialize(self):
+    def dmp_initialize(self) -> tuple:
         # Reset the MPU
         self.reset()
         # time.Sleep a bit while resetting
@@ -692,16 +692,16 @@ class MPU6050:
             else:
                 if self.__debug:
                     print('Configuration block loading failed')
-                return 2
+                return False, 2
 
         else:
             if self.__debug:
                 print('Main binary block loading failed')
-            return 1
+            return False, 1
 
         if self.__debug:
             print('DMP initialization was successful')
-        return 0
+        return True, 0
 
     # Acceleration and gyro offset setters and getters
     def set_x_accel_offset(self, a_offset):

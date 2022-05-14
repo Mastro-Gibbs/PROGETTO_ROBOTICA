@@ -44,11 +44,11 @@ class ROBOTAPIConstants(IntEnum):
     FRONT_ECHO_PIN = 22,
     FRONT_TRIGGER_PIN = 27,
 
-    LEFT_ECHO_PIN = 5,
-    LEFT_TRIGGER_PIN = 6,
+    LEFT_ECHO_PIN = 13,
+    LEFT_TRIGGER_PIN = 26,
 
-    RIGHT_ECHO_PIN = 13,
-    RIGHT_TRIGGER_PIN = 26,
+    RIGHT_ECHO_PIN = 5,
+    RIGHT_TRIGGER_PIN = 6,
 
     BUZZER_PIN = 12
     DEFAULT_BUZZER_FREQ = 440,
@@ -68,4 +68,4 @@ class ROBOTAPIConstants(IntEnum):
     LED_ANIM_LOOPS = 5,
 
     MPU_SMBUS_ID = 1,
-    MPU_DEBUG_MODE = 1
+    MPU_DEBUG_MODE = 0

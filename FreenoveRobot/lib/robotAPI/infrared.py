@@ -22,7 +22,7 @@ class Infrared:
     def virtual_destructor(self):
         try:
             if thread_ripper(self.__discover):
-                print(f"Thread {self.__discover.name} buried")
+                print(f"Thread {self.__discover.name} from Infrared instance buried")
         except ValueError or SystemError as error:
             print(f"Issues while trying to kill the thread {self.__discover.name}")
 

@@ -12,12 +12,20 @@ FIFO_buffer: list = [0] * 64
 packet_size: int = 0
 
 
+class MPUSensorException(Exception):
+    pass
+
+
 class MPUSensor:
     def __init__(self, bus: int = 1, debug: bool = True):
         global packet_size
 
         self.__mpu = MPU6050(bus, a_debug=debug)
-        self.__mpu.dmp_initialize()
+        result, code_error = self.__mpu.dmp_initialize()
+
+        if not result:
+            raise MPUSensorException('MPU6050 init failed')
+
         self.__mpu.set_DMP_enabled(True)
 
         packet_size = self.__mpu.DMP_get_FIFO_packet_size()
@@ -34,7 +42,7 @@ class MPUSensor:
     def virtual_destructor(self):
         try:
             if thread_ripper(self.__discover):
-                print(f"Thread {self.__discover.name} buried")
+                print(f"\nThread {self.__discover.name} from MPUSensor instance buried")
         except ValueError or SystemError as error:
             print(f"Issues while trying to kill the thread {self.__discover.name}")
 
