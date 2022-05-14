@@ -73,7 +73,7 @@ class MPUSensor:
 
                 self.__roll  = int(roll_pitch_yaw.x)
                 self.__pitch = int(roll_pitch_yaw.y)
-                self.__yaw   = int(roll_pitch_yaw.z + 2) * 2
+                self.__yaw   = int(roll_pitch_yaw.z * 2 + 2)
 
             sleep(0.15)
 
