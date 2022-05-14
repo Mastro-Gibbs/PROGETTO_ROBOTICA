@@ -1,15 +1,17 @@
 from lib.MPU6050lib.MPU6050 import MPU6050
 from lib.robotAPI.utils import thread_ripper
-from os import getpid
+from os import getpid, stat
 from sys import argv
 from time import sleep
 from threading import Thread
 import inspect
 import ctypes as ct
 import smbus
+import scipy.stats as stats
 
 FIFO_buffer: list = [0] * 128
 packet_size: int = 0
+
 
 
 class MPUSensorException(Exception):
@@ -35,6 +37,8 @@ class MPUSensor:
         self.__pitch: int = 0.0
         self.__yaw: int = 0.0
 
+        self.__stacked_values: list = [3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1]
+
         self.__discover = Thread(target=self.__update_vals, name='mpu_discover')
         
     def begin(self):
@@ -51,8 +55,7 @@ class MPUSensor:
         global FIFO_buffer
         global packet_size
 
-        stack: list    = list()
-        stack_ptr: int = 0
+        checker: bool = False
 
         while True:
             FIFO_count = self.__mpu.get_FIFO_count()
@@ -77,32 +80,30 @@ class MPUSensor:
                 self.__roll  = int(roll_pitch_yaw.x)
                 self.__pitch = int(roll_pitch_yaw.y)
                 yaw   = int(roll_pitch_yaw.z * 2 + 4)
+                
+                for i in range(0, 15, 1):
+                    if self.__stacked_values[0] != self.__stacked_values[i]:
+                        checker = True
+                        break     
+                
+                if checker and self.__yaw != yaw:
+                    #print("ARRAY POST APPENDING: ", self.__stacked_values)
+                    self.__stacked_values.append(yaw)
+                    zscore = stats.zscore(self.__stacked_values)
+                    #print("ZSCORE: ", zscore)
 
-                if stack_ptr == 10:
-                    sum = 0
-                    for i in range(0, 8, 1):
-                        sum += stack[i]
-                        sum = sum / 9
-                    
-                    if sum + 2 > yaw:
-                        pass
-                    elif yaw > stack[9] + 15:
-                        pass
-                    elif yaw + 15 < stack[9]:
-                        pass
-                    else:
-                        stack = stack[1:]
-                        stack.append(yaw)
+                    if -3 < zscore[15] < 3:
                         self.__yaw = yaw
+                        self.__stacked_values = self.__stacked_values[1:]
+                    else:
+                        self.__stacked_values.pop()
+                    #print("ARRAY AFTER PROCESSING: ", self.__stacked_values)
 
-                else:
-                    stack.append(yaw)
-                    stack_ptr += 1
+                #print("RAW YAW: ", yaw)
+                print("SETTED YAW: ", self.__yaw)
+                #print('\n')
+                checker = False
                 
-                
-
-                print(self.__yaw)
-        
 
     @property
     def roll_pitch_yaw(self) -> tuple:
