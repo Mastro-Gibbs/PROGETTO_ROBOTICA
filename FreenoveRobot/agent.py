@@ -1,7 +1,7 @@
 import builtins
 from hashlib import md5
 
-from controller import Controller
+from controller import Controller, ControllerException
 from lib.ctrllib.utility import Logger, CFG
 from lib.ctrllib.enums import Color
 
@@ -55,9 +55,15 @@ class Agent:
 
 
 if __name__ == '__main__':
-    agent = Agent()
+    agent = None
     try:
+        agent = Agent()
         agent.begin()
         agent.loop()
     except KeyboardInterrupt:
-        agent.stop()
+        pass
+    except ControllerException as ce:
+        print(ce.args[0])
+    finally:
+        if agent:
+            agent.stop()

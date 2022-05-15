@@ -1,13 +1,14 @@
 from lib.MPU6050lib.MPU6050 import MPU6050
 from lib.robotAPI.utils import thread_ripper
 from os import getpid, stat
-from sys import argv
+from sys import argv, stdout
 from time import sleep
 from threading import Thread
 import inspect
 import ctypes as ct
 import smbus
 import scipy.stats as stats
+from array import array
 
 FIFO_buffer: list = [0] * 128
 packet_size: int = 0
@@ -37,7 +38,7 @@ class MPUSensor:
         self.__pitch: int = 0.0
         self.__yaw: int = 0.0
 
-        self.__stacked_values: list = [3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1]
+        self.__stacked_values: array = array('i', [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2])
 
         self.__discover = Thread(target=self.__update_vals, name='mpu_discover')
         
@@ -55,7 +56,7 @@ class MPUSensor:
         global FIFO_buffer
         global packet_size
 
-        checker: bool = False
+        checker: bool = True
 
         while True:
             FIFO_count = self.__mpu.get_FIFO_count()
@@ -71,38 +72,37 @@ class MPUSensor:
 
                 FIFO_buffer = self.__mpu.get_FIFO_bytes(packet_size)
 
-                accel = self.__mpu.DMP_get_acceleration_int16(FIFO_buffer)
                 quat = self.__mpu.DMP_get_quaternion_int16(FIFO_buffer)
                 grav = self.__mpu.DMP_get_gravity(quat)
 
                 roll_pitch_yaw = self.__mpu.DMP_get_euler_roll_pitch_yaw(quat, grav)
 
-                self.__roll  = int(roll_pitch_yaw.x)
-                self.__pitch = int(roll_pitch_yaw.y)
                 yaw   = int(roll_pitch_yaw.z * 2 + 4)
                 
                 for i in range(0, 15, 1):
-                    if self.__stacked_values[0] != self.__stacked_values[i]:
-                        checker = True
-                        break     
+                    if yaw == self.__stacked_values[i]:
+                        checker = False
+                        break
                 
                 if checker and self.__yaw != yaw:
                     #print("ARRAY POST APPENDING: ", self.__stacked_values)
-                    self.__stacked_values.append(yaw)
+                    self.__stacked_values = array('i', self.__stacked_values + array('i', [yaw]))
+
                     zscore = stats.zscore(self.__stacked_values)
                     #print("ZSCORE: ", zscore)
 
-                    if -3 < zscore[15] < 3:
+                    if -2.9 < zscore[15] < 2.9:
                         self.__yaw = yaw
                         self.__stacked_values = self.__stacked_values[1:]
                     else:
-                        self.__stacked_values.pop()
+                        self.__stacked_values = self.__stacked_values[:-1]
                     #print("ARRAY AFTER PROCESSING: ", self.__stacked_values)
 
                 #print("RAW YAW: ", yaw)
-                print("SETTED YAW: ", self.__yaw)
+                #stdout.write("\rSETTED YAW: %d   " %self.__yaw)
+                #stdout.flush()
                 #print('\n')
-                checker = False
+                checker = True
                 
 
     @property

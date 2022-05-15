@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, time
 
 from redis import Redis
 from redis.client import PubSubWorkerThread
@@ -27,6 +27,7 @@ class VirtualBody:
         self.__pubsub.psubscribe(**{RT.CTRL_TOPIC.value: self.__on_message})
 
         self.__rotation_thread: Thread = Thread(target=self.__rotation, name='rotation_thread')
+        self.__rotation_ack: int = 0
 
 
     def begin(self) -> bool:
@@ -92,25 +93,39 @@ class VirtualBody:
             _cmd = _values[0]
             _val = int(_values[1])
 
+            self.__body.set_motor_model(_cmd, _val)
             if _cmd == MOTORSCommand.ROTATEL.value or _cmd == MOTORSCommand.ROTATER.value:
                 _until = int(_values[2])
                 self.__rotation_thread: Thread = Thread(target=self.__rotation, name='rotation_thread', args=(_until,))
                 self.__rotation_thread.start()
                 
-            self.__body.set_motor_model(_cmd, _val)
             
 
     def __rotation(self, until: int):
         EXIT = False
-        delta = 4
+        SUCCESS = False
+        self.__rotation_ack += 1
+
+        delta = 5
         until = abs(until)
+ 
+        start_time = time()
+        timeout = 15
 
         while not EXIT:
             _yaw = abs(self.__body.oritentation()[2])
             print(_yaw)
             if  until - delta < _yaw < until + delta:
                 self.__body.set_motor_model(MOTORSCommand.STOP.value)
+                EXIT = True  
+                SUCCESS = True
+
+            if time() - start_time > timeout:
                 EXIT = True
+
+        _msg = ';'.join([str(self.__rotation_ack), str(int(SUCCESS))])
+        self.__redis.set(RK.ROTATION.value, _msg)
+        self.__redis.publish(RT.BODY_TOPIC.value, RK.ROTATION.value)
 
         print(f'Trhead {self.__rotation_thread.name} from VirtualBody instance buried')
 

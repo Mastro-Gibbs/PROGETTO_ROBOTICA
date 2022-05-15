@@ -14,7 +14,8 @@ def lacal_CFG_parser() -> dict:
         "INFRARED": psr["REDIS"]["infrared_key"],
         "ULTRASONIC": psr["REDIS"]["ultrasonic_key"],
         "MPU": psr["REDIS"]["mpu_key"],
-        "MOTORS": psr["REDIS"]["motors_key"]
+        "MOTORS": psr["REDIS"]["motors_key"],
+        "ROTATION": psr["REDIS"]["rotation_key"]
     }
 
 
@@ -124,7 +125,8 @@ class RedisKEYS(str, Enum):
     INFRARED = REDISDICT["INFRARED"],
     ULTRASONIC = REDISDICT["ULTRASONIC"],
     MPU = REDISDICT["MPU"],
-    MOTORS = REDISDICT["MOTORS"]
+    MOTORS = REDISDICT["MOTORS"],
+    ROTATION = REDISDICT["ROTATION"]
 
 
 class RedisTOPICS(str, Enum):

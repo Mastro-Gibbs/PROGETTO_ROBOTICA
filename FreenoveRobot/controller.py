@@ -1,10 +1,9 @@
 import time
-
 from math import pi
 
 from lib.ctrllib.utility import generate_node_id, f_r_l_b_to_compass
 from lib.ctrllib.utility import negate_compass, detect_target, decision_making_policy
-from lib.ctrllib.utility import compute_performed_degrees, best_angle_and_rotation_way
+from lib.ctrllib.utility import best_angle_and_rotation_way
 from lib.ctrllib.utility import Logger, CFG
 
 from lib.ctrllib.tree import Tree, Node
@@ -16,9 +15,15 @@ from lib.ctrllib.enums import RedisCONNECTION as RC
 from lib.ctrllib.enums import RedisCOMMAND as RCMD
 from lib.ctrllib.enums import Color, STDOUTDecor
 
+from lib.exit_codes import NOACTIONS, REDIS_ERROR, TREEUPDATEERROR
+
 from redis import Redis
 from redis.client import PubSubWorkerThread
+from redis.exceptions import ConnectionError as RedisConnError
 
+
+class ControllerException(Exception):
+    pass
 
 _OLD_CMD = None
 _OLD_VAL = None
@@ -33,12 +38,15 @@ class Controller:
     def __init__(self):
         __CONTROLLER_DATA = CFG.controller_data()
 
-        self.__redis = Redis(host=RC.HOST.value, port=int(RC.PORT.value), decode_responses=True)
-        self.__pubsub = self.__redis.pubsub()
-        self.__pubsub.psubscribe(**{RT.BODY_TOPIC.value: self.__on_message})
-
         self.__logger = Logger('Controller', Color.CYAN)
         self.__logger.set_logfile(CFG.logger_data()["LOGPATH"])
+
+        try:
+            self.__redis = Redis(host=RC.HOST.value, port=int(RC.PORT.value), decode_responses=True)
+            self.__pubsub = self.__redis.pubsub()
+            self.__pubsub.psubscribe(**{RT.BODY_TOPIC.value: self.__on_message})
+        except RedisConnError or OSError or ConnectionRefusedError:
+            raise ControllerException(f'Unable to connect to redis server at: {RC.HOST.value}:{RC.PORT.value}')
 
         self.__robot_mode: Mode = Mode.EXPLORING
         self.__robot_state: State = State.STARTING
@@ -64,6 +72,9 @@ class Controller:
         self.__mid_infrared_sensor: int = None
         self.__right_infrared_sensor: int = None
         self.__goal_reached: bool = False
+
+        self.__rotation_status: bool = False
+        self.__rotation_ack: int = 0
 
         self.__maze_tree = Tree()
         self.__maze_trajectory = list()
@@ -149,20 +160,34 @@ class Controller:
             self.__mid_infrared_sensor = int(_values[1])
             self.__right_infrared_sensor = int(_values[2])
 
+        elif _key == RK.ROTATION.value:
+            _values = _value.split(';')
+            self.__rotation_ack = int(_values[0])
+            self.__rotation_status = bool(int(_values[1]))
+            
+
     # sender method
-    def send_command(self, _cmd: RCMD, _val = 0) -> None: # RESET
+    def send_command(self, _cmd: RCMD, _val = None) -> None: # RESET
         global _OLD_CMD
         global _OLD_VAL
         
-        _msg = ';'.join([_cmd.value, str(_val)])
+        _msg : str = str() 
 
-        if _cmd == RCMD.RUN or _cmd == RCMD.ROTATEL or _cmd == RCMD.ROTATER:
+        if _cmd == RCMD.RUN: 
+            _msg = ';'.join([_cmd.value, str(_val)])
             if _OLD_VAL != _val:
                 self.__redis.set(RK.MOTORS.value, _msg)
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.MOTORS.value)
 
         elif _cmd == RCMD.STOP:
+            _msg = ';'.join([_cmd.value, '0'])
             if _OLD_CMD != _cmd:
+                self.__redis.set(RK.MOTORS.value, _msg)
+                self.__redis.publish(RT.CTRL_TOPIC.value, RK.MOTORS.value)
+
+        elif _cmd == RCMD.ROTATEL or _cmd == RCMD.ROTATER:
+            _msg = ';'.join([_cmd.value, str(_val[0]), str(_val[1])])
+            if _OLD_VAL != _val:
                 self.__redis.set(RK.MOTORS.value, _msg)
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.MOTORS.value)
 
@@ -231,7 +256,7 @@ class Controller:
             if action is None:
                 self.__logger.log('No action available, force quitting..', Color.DARKRED, newline=True)
                 self.virtual_destructor()
-                exit(-1)
+                exit(NOACTIONS)
 
             # ACT
             performed = self.__do_action(action)
@@ -311,7 +336,7 @@ class Controller:
 
                 else:
                     self.__logger.log('Updating tree generate error, force quitting..', Color.DARKRED, newline=True)
-                    exit(-1)
+                    exit(TREEUPDATEERROR)
 
                 self.__maze_tree.set_current(cur)
 
@@ -417,7 +442,7 @@ class Controller:
                 if not actions:
                     self.__logger.log('No action available, force quitting..', Color.DARKRED, newline=True)
                     self.virtual_destructor()
-                    exit(-1)
+                    exit(NOACTIONS)
                 else:
                     pass
 
@@ -459,140 +484,53 @@ class Controller:
     #                                                                                              #
     # Main method: '__rotate_to_final_g'                                                           #
     # It will invoke following methods like:                                                       #
-    # 1) '__do_rotation' -> wrapper who invoke '__rotate', '__check_orirentation'                  #
-    #                       and '__adjust_orientation'.                                            #
+    # 1) '__do_rotation'                                                                           #
     #                                                                                              #
     # ******************************************************************************************** #
 
 
-    def rotate_to_final_g(self, final_g) -> None: # RESET
+    def rotate_to_final_g(self, final_g, attempts: int = 1) -> None: # RESET
         """Rotate function that rotates the robot until it reaches final_g"""
+        if attempts == 5:
+            return 
 
-        self.__logger.log(f'Rotating to {final_g}', Color.GREEN)
+        _attempts = attempts
+
+        self.__logger.log(f'Rotating to {final_g}, attempt: {_attempts}°', Color.GREEN)
 
         _init_g = self.__orientation_sensor
-        _degrees, _cloclwise = best_angle_and_rotation_way(_init_g, final_g)
+        _, _cloclwise = best_angle_and_rotation_way(_init_g, final_g)
 
-        _ok = self.__do_rotation(clk=_cloclwise, degrees=_degrees, final_g=final_g)
+        self.__do_rotation(_cloclwise, final_g)
 
-        if _ok:
+        if self.__rotation_status:
            self.__logger.log('Rotation complete', Color.GREEN)
-
-
-    def __do_rotation(self, clk: Clockwise, degrees, final_g) -> bool:
-        _degrees = abs(degrees)
-        _it = 0
-
-        self.__rotate(clk, _degrees)
-
-        _ok, _, _ = self.__check_orientation(final_g)
-
-        if not _ok:
-            _ok, _it = self.__adjust_orientation(final_g)
-
-        if _it == _OR_MAX_ATTEMPT:  # CRITICAL CASE
-            self.__logger.log('Max adjusting attempts reached, force quitting..', Color.DARKRED, newline=True)
-            self.virtual_destructor()
-            exit(-1)
-
-        return _ok
-
-
-    def __rotate(self, c: Clockwise, degrees, opt_vel: int = None) -> tuple:
-        """
-        Function that given vel, Clockwise and rotation degrees computes
-        the rotation of the Robot around the z axis
-        """
-        degrees = abs(degrees)
-
-        init_g = self.__orientation_sensor
-
-        stop = False
-        archived = False
-        performed_deg = 0.0
-
-        while not stop:
-            curr_g = self.__orientation_sensor
-
-            if opt_vel != None:
-                if c == Clockwise.RIGHT:
-                    self.send_command(RCMD.ROTATER, opt_vel) 
-                elif c == Clockwise.LEFT:
-                    self.send_command(RCMD.ROTATEL, opt_vel)
-            else:
-                if c == Clockwise.RIGHT:
-                    self.send_command(RCMD.ROTATER, self.__robot_rotation_speed)
-                elif c == Clockwise.LEFT:
-                    self.send_command(RCMD.ROTATEL, self.__robot_rotation_speed)
-
-            performed_deg_temp = compute_performed_degrees(c, init_g, curr_g)
-
-            if performed_deg_temp > 300:
-                continue
-
-            performed_deg = performed_deg_temp
-            print(performed_deg)
-
-            if degrees - 3 < performed_deg < degrees + 3:
-                self.send_command(RCMD.STOP)
-                archived = True
-                stop = True
-
-            elif performed_deg > degrees + 3:
-                self.send_command(RCMD.STOP)
-                archived = False
-                stop = True
-
-        return archived, init_g, performed_deg, degrees
-
-
-    def __check_orientation(self, final_g: int, delta: int = 3) -> tuple:
-        self.__logger.log('Checking orientation..', Color.GREEN)
-
-        _curr_g = self.__orientation_sensor
-        _ok = False
-
-        if abs(final_g) + delta > 180:
-            limit_g_dx = 180 - delta
-            limit_g_sx = - 180 + delta
-            if _curr_g < limit_g_sx or _curr_g > limit_g_dx:
-                _ok = True
-            else:
-                # bad ori
-                pass
         else:
-            limit_g_dx = final_g - delta
-            limit_g_sx = final_g + delta
-            if limit_g_dx <= _curr_g <= limit_g_sx:
-                _ok = True
-            else:
-                # bad ori
-                pass
-
-        limit_range = [limit_g_sx, limit_g_dx]
-        return _ok, _curr_g, limit_range
+            self.__logger.log('Rotation interrupted, something went wrong, retrying..', Color.RED)
+            self.rotate_to_final_g(final_g, _attempts+1)
 
 
-    def __adjust_orientation(self, final_g) -> tuple:
-        self.__logger.log('Adjusting orientation..', Color.GREEN)
 
-        _ok = False
-        _it = 0
+    def __do_rotation(self, clk: Clockwise, target: int, opt_vel: int = None) -> None:
+        _LOCAL_ACK = self.__rotation_ack
+        _response: int = _LOCAL_ACK
+ 
+        self.__rotation_status = False
+        
+        if opt_vel != None:
+            if clk == Clockwise.RIGHT:
+                self.send_command(RCMD.ROTATER, [opt_vel, target]) 
+            elif clk == Clockwise.LEFT:
+                self.send_command(RCMD.ROTATEL, [opt_vel, target])
+        else:
+            if clk == Clockwise.RIGHT:
+                self.send_command(RCMD.ROTATER, [self.__robot_rotation_speed, target])
+            elif clk == Clockwise.LEFT:
+                self.send_command(RCMD.ROTATEL, [self.__robot_rotation_speed, target])
 
-        while not _ok and _it < _OR_MAX_ATTEMPT:
-            _curr_g = self.__orientation_sensor
-
-            degrees, c = best_angle_and_rotation_way(_curr_g, final_g)
-
-            if abs(degrees) < 6:
-                self.__rotate(c, abs(degrees), 20)
-            else:
-                self.__rotate(c, abs(degrees))
-
-            _ok, _curr_g, _ = self.__check_orientation(final_g)
-            _it += 1
-
-        return _ok, _it
+        while _response == _LOCAL_ACK:
+            time.sleep(0.1)
+            _response = self.__rotation_ack
 
     #                                                                                              #
     #                                                                                              #
