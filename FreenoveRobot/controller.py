@@ -25,19 +25,19 @@ from redis.exceptions import ConnectionError as RedisConnError
 class ControllerException(Exception):
     pass
 
-_OLD_CMD = None
-_OLD_VAL = None
-_PREV_ACTION = None
-_ITERATION: int = 0
-_INIT_TIME: float = time.time()
-
-_OR_MAX_ATTEMPT = CFG.controller_data()['MAX_ATTEMPTS']
-_SAFE_DISTANCE = CFG.controller_data()['SAFE_DIST']
 
 class Controller:
-    def __init__(self):
-        __CONTROLLER_DATA = CFG.controller_data()
+    _OLD_CMD = None
+    _OLD_VAL = None
+    _PREV_ACTION = None
+    _ITERATION: int = 0
+    _INIT_TIME: float = time.time()
 
+    _CONTROLLER_DATA = CFG.controller_data()
+    _OR_MAX_ATTEMPT = _CONTROLLER_DATA['MAX_ATTEMPTS']
+    _SAFE_DISTANCE = _CONTROLLER_DATA['SAFE_DIST']
+
+    def __init__(self):
         self.__logger = Logger('Controller', Color.CYAN)
         self.__logger.set_logfile(CFG.logger_data()["LOGPATH"])
 
@@ -51,10 +51,10 @@ class Controller:
         self.__robot_mode: Mode = Mode.EXPLORING
         self.__robot_state: State = State.STARTING
         self.__robot_position: Position = Position.INITIAL
-        self.__robot_preference_choice = __CONTROLLER_DATA['PREFERENCE']
+        self.__robot_preference_choice = self._CONTROLLER_DATA['PREFERENCE']
 
-        self.__robot_speed = __CONTROLLER_DATA["SPEED"]
-        self.__robot_rotation_speed = __CONTROLLER_DATA["ROT_SPEED"]
+        self.__robot_speed = self._CONTROLLER_DATA["SPEED"]
+        self.__robot_rotation_speed = self._CONTROLLER_DATA["ROT_SPEED"]
 
         self.__speed_msec = self.__robot_speed * 0.25 / (self.__robot_speed // 5)
         self.__junction_sim_time = 0.25 / self.__speed_msec
@@ -114,16 +114,13 @@ class Controller:
 
     # Updater controller configuration
     def update_config(self) -> None:
-        global _OR_MAX_ATTEMPT
-        global _SAFE_DISTANCE
+        self._CONTROLLER_DATA = CFG.controller_data()
 
-        __CONTROLLER_DATA = CFG.controller_data()
-
-        self.__robot_speed = __CONTROLLER_DATA["SPEED"]
-        self.__robot_rotation_speed = __CONTROLLER_DATA["ROT_SPEED"]
-        self.__robot_preference_choice = __CONTROLLER_DATA['PREFERENCE']
-        _OR_MAX_ATTEMPT = __CONTROLLER_DATA["MAX_ATTEMPTS"]
-        _SAFE_DISTANCE = __CONTROLLER_DATA["SAFE_DIST"]
+        self.__robot_speed = self._CONTROLLER_DATA["SPEED"]
+        self.__robot_rotation_speed = self._CONTROLLER_DATA["ROT_SPEED"]
+        self.__robot_preference_choice = self._CONTROLLER_DATA['PREFERENCE']
+        self._OR_MAX_ATTEMPT = self._CONTROLLER_DATA["MAX_ATTEMPTS"]
+        self._SAFE_DISTANCE = self._CONTROLLER_DATA["SAFE_DIST"]
 
 
 
@@ -167,32 +164,29 @@ class Controller:
             
 
     # sender method
-    def send_command(self, _cmd: RCMD, _val = None) -> None: # RESET
-        global _OLD_CMD
-        global _OLD_VAL
-        
+    def send_command(self, _cmd: RCMD, _val = None) -> None: # RESET  
         _msg : str = str() 
 
         if _cmd == RCMD.RUN: 
             _msg = ';'.join([_cmd.value, str(_val)])
-            if _OLD_VAL != _val:
+            if self._OLD_VAL != _val:
                 self.__redis.set(RK.MOTORS.value, _msg)
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.MOTORS.value)
 
         elif _cmd == RCMD.STOP:
             _msg = ';'.join([_cmd.value, '0'])
-            if _OLD_CMD != _cmd:
+            if self._OLD_CMD != _cmd:
                 self.__redis.set(RK.MOTORS.value, _msg)
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.MOTORS.value)
 
         elif _cmd == RCMD.ROTATEL or _cmd == RCMD.ROTATER:
             _msg = ';'.join([_cmd.value, str(_val[0]), str(_val[1])])
-            if _OLD_VAL != _val:
+            if self._OLD_VAL != _val:
                 self.__redis.set(RK.MOTORS.value, _msg)
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.MOTORS.value)
 
         elif _cmd == RCMD.LEDEMIT or _cmd == RCMD.LEDINTERRUPT:
-            if _OLD_CMD != _cmd:
+            if self._OLD_CMD != _cmd:
                 if _cmd == RCMD.LEDEMIT:
                     self.__redis.set(RK.LED.value, RCMD.LEDEMIT.value)
                 elif _cmd == RCMD.LEDINTERRUPT:
@@ -200,15 +194,15 @@ class Controller:
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.LED.value)
 
         elif _cmd == RCMD.BZZEMIT or _cmd == RCMD.BZZINTERRUPT:
-            if _OLD_CMD != _cmd:
+            if self._OLD_CMD != _cmd:
                 if _cmd == RCMD.BZZEMIT:
                     self.__redis.set(RK.BUZZER.value, RCMD.BZZEMIT.value)
                 elif _cmd == RCMD.BZZINTERRUPT:
                     self.__redis.set(RK.BUZZER.value, RCMD.BZZINTERRUPT.value)
                 self.__redis.publish(RT.CTRL_TOPIC.value, RK.BUZZER.value)
         
-        _OLD_CMD = _cmd
-        _OLD_VAL = _val
+        self._OLD_CMD = _cmd
+        self._OLD_VAL = _val
 
     #                                                                                           #
     #                                                                                           #
@@ -229,13 +223,10 @@ class Controller:
 
     # Algorithm entry
     def algorithm(self) -> None:
-        global _PREV_ACTION
-        global _ITERATION
-
         if self.__is_algorithm_unlocked():
 
-            self.__logger.log(f'New algorithm iteration -> #{_ITERATION}', Color.YELLOW, newline=True, underline=True)
-            _ITERATION += 1
+            self.__logger.log(f'New algorithm iteration -> #{self._ITERATION}', Color.YELLOW, newline=True, underline=True)
+            self._ITERATION += 1
 
             self.__left_ultrasonic_stored_values.append(self.__left_ultrasonic_sensor)
             self.__front_ultrasonic_stored_values.append(self.__front_ultrasonic_sensor)
@@ -261,16 +252,16 @@ class Controller:
             # ACT
             performed = self.__do_action(action)
 
-            if performed and _PREV_ACTION != action:
+            if performed and self._PREV_ACTION != action:
                 self.__maze_performed_commands.append(action)
                 if action in self.__robot_preference_choice:
                     self.__maze_trajectory.append(action)
-                _PREV_ACTION = action
+                self._PREV_ACTION = action
 
         else:
             _curr_time = time.time()
             self.__logger.log('Algorithm locked, waiting for VirtualBody..' + Color.WHITE.value + \
-                             f' (time spent: {round(float(_curr_time-_INIT_TIME), 1)}s)' + STDOUTDecor.DEFAULT.value,
+                             f' (time spent: {round(float(_curr_time-self._INIT_TIME), 1)}s)' + STDOUTDecor.DEFAULT.value,
                             Color.RED, italic=True)
             time.sleep(2.5)
 
@@ -450,17 +441,17 @@ class Controller:
             if self.__robot_position == Position.CORRIDOR:
                 if left is None or right is None:
                     actions.insert(0, Command.GO_TO_JUNCTION)
-                elif front is None or front > _SAFE_DISTANCE:
+                elif front is None or front > self._SAFE_DISTANCE:
                     actions.insert(0, Command.RUN)
-                elif front <= _SAFE_DISTANCE:
+                elif front <= self._SAFE_DISTANCE:
                     actions.insert(0, Command.STOP)
 
             elif self.__robot_position == Position.JUNCTION:
                 if left is not None and right is not None:
                     self.__robot_position = Position.CORRIDOR
-                if front is None or front > _SAFE_DISTANCE:
+                if front is None or front > self._SAFE_DISTANCE:
                     actions.insert(0, Command.RUN)
-                elif front <= _SAFE_DISTANCE:
+                elif front <= self._SAFE_DISTANCE:
                     actions.insert(0, Command.STOP)
 
         return actions
@@ -489,14 +480,18 @@ class Controller:
     # ******************************************************************************************** #
 
 
-    def rotate_to_final_g(self, final_g, attempts: int = 1) -> None: # RESET
+    def rotate(self, target: int, attempts: int = 4) -> None:
+        while attempts:
+            if not self.__rotation_status:
+                self.__rotate_to_final_g(target, attempts) 
+                attempts -= 1
+            else:
+                break
+
+
+    def __rotate_to_final_g(self, final_g, attempts) -> None:
         """Rotate function that rotates the robot until it reaches final_g"""
-        if attempts == 5:
-            return 
-
-        _attempts = attempts
-
-        self.__logger.log(f'Rotating to {final_g}, attempt: {_attempts}°', Color.GREEN)
+        self.__logger.log(f'Rotating to {final_g}, attempt: {attempts}°', Color.GREEN)
 
         _init_g = self.__orientation_sensor
         _, _cloclwise = best_angle_and_rotation_way(_init_g, final_g)
@@ -507,7 +502,6 @@ class Controller:
            self.__logger.log('Rotation complete', Color.GREEN)
         else:
             self.__logger.log('Rotation interrupted, something went wrong, retrying..', Color.RED)
-            self.rotate_to_final_g(final_g, _attempts+1)
 
 
 
@@ -568,7 +562,7 @@ class Controller:
             time_expired = False
 
             while not time_expired and (self.__front_ultrasonic_sensor is None
-                                        or self.__front_ultrasonic_sensor > _SAFE_DISTANCE):
+                                        or self.__front_ultrasonic_sensor > self._SAFE_DISTANCE):
                 self.send_command(RCMD.RUN, self.__robot_speed)
                 if time.time() - start_time >= self.__junction_sim_time:
                     time_expired = True
@@ -582,6 +576,6 @@ class Controller:
         # Rotate (DA GESTIRE MEGLIO)
         else:
             self.send_command(RCMD.STOP)
-            self.rotate_to_final_g(action.value)
+            self.__rotate_to_final_g(action.value)
             self.send_command(RCMD.STOP)
             self.__robot_state = State.ROTATING
