@@ -15,7 +15,7 @@ from lib.ctrllib.enums import RedisCONNECTION as RC
 from lib.ctrllib.enums import RedisCOMMAND as RCMD
 from lib.ctrllib.enums import Color, STDOUTDecor
 
-from lib.exit_codes import NOACTIONS, REDIS_ERROR, TREEUPDATEERROR
+from lib.exit_codes import NOACTIONS, TREEUPDATEERROR
 
 from redis import Redis
 from redis.client import PubSubWorkerThread
@@ -43,6 +43,7 @@ class Controller:
 
         try:
             self.__redis = Redis(host=RC.HOST.value, port=int(RC.PORT.value), decode_responses=True)
+            self.__redis.flushall()
             self.__pubsub = self.__redis.pubsub()
             self.__pubsub.psubscribe(**{RT.BODY_TOPIC.value: self.__on_message})
         except RedisConnError or OSError or ConnectionRefusedError:
@@ -84,6 +85,7 @@ class Controller:
     def virtual_destructor(self) -> None:
         self.__logger.log('Controller Stopped!', Color.GREEN, newline=True, italic=True, underline=True)
         self.__runner.stop()
+        self.__redis.close()
 
 
     def begin(self) -> None:
@@ -181,9 +183,9 @@ class Controller:
 
         elif _cmd == RCMD.ROTATEL or _cmd == RCMD.ROTATER:
             _msg = ';'.join([_cmd.value, str(_val[0]), str(_val[1])])
-            if self._OLD_VAL != _val:
-                self.__redis.set(RK.MOTORS.value, _msg)
-                self.__redis.publish(RT.CTRL_TOPIC.value, RK.MOTORS.value)
+    
+            self.__redis.set(RK.MOTORS.value, _msg)
+            self.__redis.publish(RT.CTRL_TOPIC.value, RK.MOTORS.value)
 
         elif _cmd == RCMD.LEDEMIT or _cmd == RCMD.LEDINTERRUPT:
             if self._OLD_CMD != _cmd:
@@ -481,6 +483,10 @@ class Controller:
 
 
     def rotate(self, target: int, attempts: int = 4) -> None:
+        while not self.__orientation_sensor:
+            print('waiting')
+            time.sleep(1)
+
         while attempts:
             if not self.__rotation_status:
                 self.__rotate_to_final_g(target, attempts) 

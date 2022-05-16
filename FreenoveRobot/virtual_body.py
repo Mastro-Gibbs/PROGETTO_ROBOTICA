@@ -1,18 +1,25 @@
 from time import sleep, time
+from sys import stdout
 
 from redis import Redis
 from redis.client import PubSubWorkerThread
+from redis.exceptions import ConnectionError as RedisConnError
 
 from physiscal_body import PhysicalBody as Body
 
-from lib.ctrllib.enums import Command, RedisKEYS as RK
+from lib.ctrllib.enums import RedisKEYS as RK
 from lib.ctrllib.enums import RedisTOPICS as RT
 from lib.ctrllib.enums import RedisCONNECTION as RC
 from lib.ctrllib.enums import RedisCOMMAND as RCMD
 from lib.robotAPI.utils import thread_ripper
 from lib.robotAPI.motor import MOTORSCommand
+from lib.exit_codes import CALIB_ERROR
 
 from threading import Thread
+
+
+class BodyException(Exception):
+    pass
 
 
 class VirtualBody:
@@ -21,13 +28,69 @@ class VirtualBody:
         # physical_body instance
         self.__body = Body()
 
-        # redis instance
-        self.__redis = Redis(host=RC.HOST.value, port=int(RC.PORT.value), decode_responses=True)
-        self.__pubsub = self.__redis.pubsub()
-        self.__pubsub.psubscribe(**{RT.CTRL_TOPIC.value: self.__on_message})
+        try:
+            self.__redis = Redis(host=RC.HOST.value, port=int(RC.PORT.value), decode_responses=True)
+            self.__pubsub = self.__redis.pubsub()
+            self.__pubsub.psubscribe(**{RT.CTRL_TOPIC.value: self.__on_message})
+        except RedisConnError or OSError or ConnectionRefusedError:
+            raise BodyException(f'Unable to connect to redis server at: {RC.HOST.value}:{RC.PORT.value}')
 
         self.__rotation_thread: Thread = Thread(target=self.__rotation, name='rotation_thread')
         self.__rotation_ack: int = 0
+
+    def calibrate_mpu(self) -> bool:
+        print('\nWelcome to robot calibration!\n')
+        print('Move the robot very slowly, making small swings left and right')
+        
+        success = True
+
+        self.__body.begin()
+
+        _yaw = self.__body.oritentation()[2]
+
+        while _yaw == 0.0 or -8 < _yaw < 8:
+            sleep(0.1)
+            _yaw = self.__body.oritentation()[2]
+            
+            stdout.write('\rCURRENT MPU VALUE: %d   ' %_yaw)
+            stdout.flush()
+        
+        print('\nMove the robot slowly to the right af around 90 degrees')
+
+        begin_time = time()
+        while not (85 < _yaw < 95):
+            sleep(0.05)
+            _yaw = self.__body.oritentation()[2]
+            stdout.write('\rCURRENT MPU VALUE: %d   ' %_yaw)
+            stdout.write('TARGET: %d   ' %90)
+            stdout.flush()
+
+            if time() - begin_time > 20:
+                success = False
+                break
+        
+        if success:
+            print('\nMove the robot slowly to the left af around -90 degrees')
+
+            begin_time = time()
+            while not (-85 > _yaw > -95):
+                sleep(0.05)
+                _yaw = self.__body.oritentation()[2]
+                stdout.write('\rCURRENT MPU VALUE: %d   ' %_yaw)
+                stdout.write('TARGET: %d   ' %-90)
+                stdout.flush()
+
+                if time() - begin_time > 20:
+                    success = False
+                    break
+
+        if success:
+            print('\nCalibration compleated!')
+            print('Place the robot on the ground at approximately angle 0°')
+        else:
+            print('\nCalibration failed!, exiting..')
+            self.stop()
+            exit(CALIB_ERROR)
 
 
     def begin(self) -> bool:
@@ -102,6 +165,8 @@ class VirtualBody:
             
 
     def __rotation(self, until: int):
+        print('Rotating routine')
+
         EXIT = False
         SUCCESS = False
         self.__rotation_ack += 1
@@ -114,20 +179,33 @@ class VirtualBody:
 
         while not EXIT:
             _yaw = abs(self.__body.oritentation()[2])
-            print(_yaw)
+            
+            stdout.write('\rCURRENT ANGLE: %d   ' %_yaw)
+            stdout.flush()
+
             if  until - delta < _yaw < until + delta:
                 self.__body.set_motor_model(MOTORSCommand.STOP.value)
                 EXIT = True  
                 SUCCESS = True
 
             if time() - start_time > timeout:
+                self.__body.set_motor_model(MOTORSCommand.STOP.value)
                 EXIT = True
+
+        if SUCCESS:
+            checking_loops = 5
+            while checking_loops:
+                if not (until - delta < abs(self.__body.oritentation()[2]) < until + delta):
+                    SUCCESS = False
+
+                checking_loops -= 1
+                sleep(0.05)
 
         _msg = ';'.join([str(self.__rotation_ack), str(int(SUCCESS))])
         self.__redis.set(RK.ROTATION.value, _msg)
         self.__redis.publish(RT.BODY_TOPIC.value, RK.ROTATION.value)
 
-        print(f'Trhead {self.__rotation_thread.name} from VirtualBody instance buried')
+        print(f'\nTrhead {self.__rotation_thread.name} from VirtualBody instance buried')
 
     def __yaw_discover(self):
         _OLD_YAW: str = str()
@@ -135,7 +213,7 @@ class VirtualBody:
         while True:
             _yaw = str(self.__body.oritentation()[2])
             
-            if _OLD_YAW != _yaw:
+            if _OLD_YAW != _yaw and _yaw != '0.0':
                 self.__redis.set(RK.MPU.value, _yaw)
                 self.__redis.publish(RT.BODY_TOPIC.value, RK.MPU.value)
                 _OLD_YAW = _yaw
@@ -183,13 +261,21 @@ class VirtualBody:
 
 
 if __name__ == "__main__":
-    v = VirtualBody()
+    virtual_body = None
     try:
-        while not v.begin():
-            print('Missing redis connection, delay 5 seconds')
+        virtual_body = VirtualBody()
+        virtual_body.calibrate_mpu()
+        sleep(5)
+        while not virtual_body.begin():
+            print('Missing component, retrying, delay 5 seconds')
             sleep(5)
 
-        print('VirtualBody ready')
-        v.loop()
+        print('\nVirtualBody ready\nIgnore possible buried threads messages')
+        virtual_body.loop()
     except KeyboardInterrupt:
-        v.stop()
+        pass
+    except BodyException as be:
+        print(be.args[0])
+    finally:
+        if virtual_body:
+            virtual_body.stop()

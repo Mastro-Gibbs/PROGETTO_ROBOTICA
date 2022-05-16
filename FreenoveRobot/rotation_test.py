@@ -6,7 +6,9 @@ try:
     c = Controller()
     c.begin()
 
-    c.rotate(90, 2)
+    c.rotate(90, 4)
+
+    c.virtual_destructor()
 
 except KeyboardInterrupt:
     if c:

@@ -43,7 +43,8 @@ class MPUSensor:
         self.__discover = Thread(target=self.__update_vals, name='mpu_discover')
         
     def begin(self):
-        self.__discover.start()
+        if not self.__discover.is_alive():
+            self.__discover.start()
 
     def virtual_destructor(self):
         try:

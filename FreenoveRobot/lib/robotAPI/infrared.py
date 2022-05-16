@@ -27,7 +27,8 @@ class Infrared:
             print(f"Issues while trying to kill the thread {self.__discover.name}")
 
     def begin(self):
-        self.__discover.start()
+        if not self.__discover.is_alive():
+            self.__discover.start()
 
     @property
     def __left(self) -> bool:
@@ -46,6 +47,10 @@ class Infrared:
         return int(self.__left_status), int(self.__mid_status), int(self.__right_status)
 
     def __detect(self):
+        self.__left_status = False
+        self.__mid_status = False
+        self.__right_status = False
+
         while True:
             self.__left_status = True if self.__left_status else self.__left
             self.__mid_status = True if self.__mid_status else self.__mid
