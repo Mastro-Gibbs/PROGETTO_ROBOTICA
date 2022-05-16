@@ -172,7 +172,7 @@ class Logger:
         self.__file = path + "_" + self.__class_name + sign + "." + CFG.logger_data()["EXT"]
 
     def log(self, msg, color: Color = Color.GREEN, newline: bool = False, italic: bool = False,
-            underline: bool = False, blink: bool = False, noheader: bool = False):
+            underline: bool = False, blink: bool = False, noheader: bool = False, _stdout: bool = True):
 
         """
             Log on file, if it was set; Log on stdout everytime! 
@@ -202,29 +202,30 @@ class Logger:
                 if newline:
                     file.write("\n")
                 file.write(data_to_write)
+        
+        if _stdout:
+            out: str = str()
 
-        out: str = str()
+            if newline:
+                print()
 
-        if newline:
-            print()
+            if italic:
+                out += STDOUTDecor.ITALIC.value
 
-        if italic:
-            out += STDOUTDecor.ITALIC.value
+            if blink:
+                out += STDOUTDecor.SLOWBLINK.value
 
-        if blink:
-            out += STDOUTDecor.SLOWBLINK.value
+            if underline:
+                out += STDOUTDecor.UNDERLINE.value
 
-        if underline:
-            out += STDOUTDecor.UNDERLINE.value
+            out += color.value + f"{msg}" + STDOUTDecor.DEFAULT.value
 
-        out += color.value + f"{msg}" + STDOUTDecor.DEFAULT.value
+            if noheader:
+                print(out)
 
-        if noheader:
-            print(out)
-
-        else:
-            print(self.__class, end=Color.WHITE.value + ' ---> ' + STDOUTDecor.DEFAULT.value)
-            print(out)
+            else:
+                print(self.__class, end=Color.WHITE.value + ' ---> ' + STDOUTDecor.DEFAULT.value)
+                print(out)
 
 
 class CFG:

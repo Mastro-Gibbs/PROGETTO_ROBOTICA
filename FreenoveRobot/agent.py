@@ -25,7 +25,7 @@ class Agent:
 
 
     def begin(self) -> None:
-        self.__logger.log('Agent fully initialized', Color.GREEN, newline=True, italic=True, blink=True)
+        self.__logger.log('Agent fully initialized', Color.GREEN, newline=True, italic=True)
         self.__controller.begin()
 
     def loop(self) -> None:

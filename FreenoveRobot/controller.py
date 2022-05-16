@@ -1,5 +1,6 @@
 import time
 from math import pi
+from sys import stdout
 
 from lib.ctrllib.utility import generate_node_id, f_r_l_b_to_compass
 from lib.ctrllib.utility import negate_compass, detect_target, decision_making_policy
@@ -34,7 +35,7 @@ class Controller:
     _INIT_TIME: float = time.time()
 
     _CONTROLLER_DATA = CFG.controller_data()
-    _OR_MAX_ATTEMPT = _CONTROLLER_DATA['MAX_ATTEMPTS']
+    _ROTATION_MAX_ATTEMPTS = _CONTROLLER_DATA['MAX_ATTEMPTS']
     _SAFE_DISTANCE = _CONTROLLER_DATA['SAFE_DIST']
 
     def __init__(self):
@@ -89,8 +90,8 @@ class Controller:
 
 
     def begin(self) -> None:
-        self.__logger.log('Controller fully initialized', Color.GREEN, newline=True, italic=True, blink=True)
-        self.send_command(RCMD.STOP)
+        self.__logger.log('Controller fully initialized', Color.GREEN, newline=True, italic=True)
+        self.__send_command(RCMD.STOP)
         self.__runner: PubSubWorkerThread = self.__pubsub.run_in_thread(sleep_time=0.01)
 
     # Check if maze was solved. 
@@ -104,15 +105,15 @@ class Controller:
     def ending_animation(self) -> None:
         if self.__goal_reached:
             self.__logger.log('Maze finished', Color.GREEN, newline=True, italic=True, blink=True)
-            self.send_command(RCMD.LEDEMIT)
+            self.__send_command(RCMD.LEDEMIT)
 
             for i in range(0, 5, 1):
-                self.send_command(RCMD.BZZEMIT)
+                self.__send_command(RCMD.BZZEMIT)
                 time.sleep(0.25)
-                self.send_command(RCMD.BZZINTERRUPT)
+                self.__send_command(RCMD.BZZINTERRUPT)
                 time.sleep(0.25)
             
-            self.send_command(RCMD.LEDINTERRUPT)
+            self.__send_command(RCMD.LEDINTERRUPT)
 
     # Updater controller configuration
     def update_config(self) -> None:
@@ -121,7 +122,7 @@ class Controller:
         self.__robot_speed = self._CONTROLLER_DATA["SPEED"]
         self.__robot_rotation_speed = self._CONTROLLER_DATA["ROT_SPEED"]
         self.__robot_preference_choice = self._CONTROLLER_DATA['PREFERENCE']
-        self._OR_MAX_ATTEMPT = self._CONTROLLER_DATA["MAX_ATTEMPTS"]
+        self._ROTATION_MAX_ATTEMPTS = self._CONTROLLER_DATA["MAX_ATTEMPTS"]
         self._SAFE_DISTANCE = self._CONTROLLER_DATA["SAFE_DIST"]
 
 
@@ -133,7 +134,7 @@ class Controller:
     # '__on_message' -> redis builtin thread body/scope                                         #
     #                 read value from redis, set up instance vars.                              #
     #                                                                                           #
-    # 'send_command' -> write on redis db.                                                      #
+    # '__send_command' -> write on redis db.                                                    #
     #                 @param _cmd instance of RCMD: depending on param type send key and publish#
     #                 @param _val -> value to send                                              #
     #                                                                                           #
@@ -166,7 +167,7 @@ class Controller:
             
 
     # sender method
-    def send_command(self, _cmd: RCMD, _val = None) -> None: # RESET  
+    def __send_command(self, _cmd: RCMD, _val = None) -> None: # RESET  
         _msg : str = str() 
 
         if _cmd == RCMD.RUN: 
@@ -227,6 +228,9 @@ class Controller:
     def algorithm(self) -> None:
         if self.__is_algorithm_unlocked():
 
+            if self._ITERATION == 0:
+                print()
+
             self.__logger.log(f'New algorithm iteration -> #{self._ITERATION}', Color.YELLOW, newline=True, underline=True)
             self._ITERATION += 1
 
@@ -264,8 +268,12 @@ class Controller:
             _curr_time = time.time()
             self.__logger.log('Algorithm locked, waiting for VirtualBody..' + Color.WHITE.value + \
                              f' (time spent: {round(float(_curr_time-self._INIT_TIME), 1)}s)' + STDOUTDecor.DEFAULT.value,
-                            Color.RED, italic=True)
-            time.sleep(2.5)
+                            Color.RED, italic=True, _stdout=False)
+
+            stdout.write('\r' + Color.RED.value + 'Algorithm locked, waiting for VirtualBody..' + Color.WHITE.value + \
+                        f' (time spent: {round(float(_curr_time-self._INIT_TIME), 1)}s)' + STDOUTDecor.DEFAULT.value + '        ')
+            stdout.flush()
+            time.sleep(0.1)
 
     # Tree updater
     def __update_tree(self, actions) -> None:
@@ -482,10 +490,16 @@ class Controller:
     # ******************************************************************************************** #
 
 
-    def rotate(self, target: int, attempts: int = 4) -> None:
-        while not self.__orientation_sensor:
-            print('waiting')
-            time.sleep(1)
+    def rotate(self, target: int) -> None:
+        while not self.__is_algorithm_unlocked():
+            time.sleep(0.25)
+            stdout.write('\rWaiting for VirtualBody...')
+            stdout.flush()
+            time.sleep(0.25)
+            stdout.write('\r                          ')
+            stdout.flush()
+
+        attempts = self._ROTATION_MAX_ATTEMPTS
 
         while attempts:
             if not self.__rotation_status:
@@ -497,7 +511,7 @@ class Controller:
 
     def __rotate_to_final_g(self, final_g, attempts) -> None:
         """Rotate function that rotates the robot until it reaches final_g"""
-        self.__logger.log(f'Rotating to {final_g}, attempt: {attempts}°', Color.GREEN)
+        self.__logger.log(f'Rotating to {final_g}, attempt: {self._ROTATION_MAX_ATTEMPTS - attempts + 1}°', Color.GREEN)
 
         _init_g = self.__orientation_sensor
         _, _cloclwise = best_angle_and_rotation_way(_init_g, final_g)
@@ -519,14 +533,14 @@ class Controller:
         
         if opt_vel != None:
             if clk == Clockwise.RIGHT:
-                self.send_command(RCMD.ROTATER, [opt_vel, target]) 
+                self.__send_command(RCMD.ROTATER, [opt_vel, target]) 
             elif clk == Clockwise.LEFT:
-                self.send_command(RCMD.ROTATEL, [opt_vel, target])
+                self.__send_command(RCMD.ROTATEL, [opt_vel, target])
         else:
             if clk == Clockwise.RIGHT:
-                self.send_command(RCMD.ROTATER, [self.__robot_rotation_speed, target])
+                self.__send_command(RCMD.ROTATER, [self.__robot_rotation_speed, target])
             elif clk == Clockwise.LEFT:
-                self.send_command(RCMD.ROTATEL, [self.__robot_rotation_speed, target])
+                self.__send_command(RCMD.ROTATEL, [self.__robot_rotation_speed, target])
 
         while _response == _LOCAL_ACK:
             time.sleep(0.1)
@@ -541,23 +555,23 @@ class Controller:
         self.__logger.log('Sending action to VirtualBody..', Color.GREEN)
 
         if action == Command.START:
-            self.send_command(RCMD.STOP)
+            self.__send_command(RCMD.STOP)
 
-            self.send_command(RCMD.BZZEMIT)
-            self.send_command(RCMD.LEDEMIT)
+            self.__send_command(RCMD.BZZEMIT)
+            self.__send_command(RCMD.LEDEMIT)
             time.sleep(1)
-            self.send_command(RCMD.BZZINTERRUPT)
-            self.send_command(RCMD.LEDINTERRUPT)
+            self.__send_command(RCMD.BZZINTERRUPT)
+            self.__send_command(RCMD.LEDINTERRUPT)
 
         # Stop
         elif action == Command.STOP:
-            self.send_command(RCMD.STOP)
+            self.__send_command(RCMD.STOP)
 
             self.__robot_state = State.STOPPED
 
         # Go on
         elif action == detect_target(self.__orientation_sensor) or action == Command.RUN:
-            self.send_command(RCMD.RUN, self.__robot_speed)
+            self.__send_command(RCMD.RUN, self.__robot_speed)
 
             self.__robot_state = State.RUNNING
 
@@ -569,11 +583,11 @@ class Controller:
 
             while not time_expired and (self.__front_ultrasonic_sensor is None
                                         or self.__front_ultrasonic_sensor > self._SAFE_DISTANCE):
-                self.send_command(RCMD.RUN, self.__robot_speed)
+                self.__send_command(RCMD.RUN, self.__robot_speed)
                 if time.time() - start_time >= self.__junction_sim_time:
                     time_expired = True
 
-            self.send_command(RCMD.STOP)
+            self.__send_command(RCMD.STOP)
             self.__robot_state = State.SENSING
             self.__robot_position = Position.JUNCTION
 
@@ -581,7 +595,7 @@ class Controller:
 
         # Rotate (DA GESTIRE MEGLIO)
         else:
-            self.send_command(RCMD.STOP)
-            self.__rotate_to_final_g(action.value)
-            self.send_command(RCMD.STOP)
+            self.__send_command(RCMD.STOP)
+            self.rotate(action.value)
+            self.__send_command(RCMD.STOP)
             self.__robot_state = State.ROTATING

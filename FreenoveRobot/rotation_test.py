@@ -6,7 +6,7 @@ try:
     c = Controller()
     c.begin()
 
-    c.rotate(90, 4)
+    c.rotate(90)
 
     c.virtual_destructor()
 
