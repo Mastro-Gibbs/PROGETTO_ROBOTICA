@@ -492,7 +492,7 @@ class Controller:
                 self.__rotate_to_final_g(target, attempts) 
                 attempts -= 1
             else:
-                break
+                attempts = 0
 
 
     def __rotate_to_final_g(self, final_g, attempts) -> None:
