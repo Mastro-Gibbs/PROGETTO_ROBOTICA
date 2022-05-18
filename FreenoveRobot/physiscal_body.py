@@ -5,13 +5,12 @@
     @last update: 9/5/22
 """
 
-from threading import Thread
 from lib.robotAPI.motor import Motor, MOTORSCommand
 from lib.robotAPI.ultrasonic import Ultrasonic
 from lib.robotAPI.infrared import Infrared
 from lib.robotAPI.led import Led, Color
 from lib.robotAPI.buzzer import Buzzer
-from lib.robotAPI.utils import thread_ripper
+from lib.workerthread import RobotThread
 from lib.robotAPI.utils import ROBOTAPIConstants as RC
 from lib.MPU6050lib.MPUSensor import MPUSensor as MPU 
 from lib.MPU6050lib.MPUSensor import MPUSensorException
@@ -47,7 +46,7 @@ class PhysicalBody:
 
         # led strip instance
         self.__strip = Led()
-        self.__wizard = Thread(target=self.__strip.rainbowCycle, name='led_wizard', args=(RC.LED_ANIM_DELAY, RC.LED_ANIM_LOOPS,))
+        self.__wizard = RobotThread(target=self.__strip.rainbowCycle, name='led_wizard', args=(RC.LED_ANIM_DELAY, RC.LED_ANIM_LOOPS,))
 
         print('Sensors successfully initialized')
 
@@ -61,11 +60,7 @@ class PhysicalBody:
 
             IT MUST BE INVOKED.
         """
-        try:
-            if thread_ripper(self.__wizard):
-                print(f"Thread {self.__wizard.name} from PhysiscalBody instance buried")
-        except ValueError or SystemError as error:
-            print(f"Issues while trying to kill the thread {self.__wizard}")
+        self.__wizard.bury()
 
         self.__mpu6050.virtual_destructor()
         self.__infrared.virtual_destructor()
@@ -170,7 +165,7 @@ class PhysicalBody:
             virtual destructor will be called.
         """
         if mode:
-            self.__wizard = Thread(target=self.__strip.rainbowCycle, name='led_wizard', args=(RC.LED_ANIM_DELAY, RC.LED_ANIM_LOOPS,))
+            self.__wizard = RobotThread(target=self.__strip.rainbowCycle, name='led_wizard', args=(RC.LED_ANIM_DELAY, RC.LED_ANIM_LOOPS,))
             self.__wizard.start()
         else:
             self.__strip.rainbowCycle()
@@ -180,11 +175,7 @@ class PhysicalBody:
             Interrupt wizard thread if it is alive.
             Turn off leds.
         """
-        try:
-            if thread_ripper(self.__wizard):
-                print(f"Thread {self.__wizard.name} from PhysiscalBody buried")
-        except ValueError or SystemError as error:
-            print(f"Issues while trying to kill the thread {self.__wizard.name}")
+        self.__wizard.bury()
 
         self.__strip.colorWipe(Color(0,0,0), 10)
     

@@ -1,11 +1,9 @@
 from lib.MPU6050lib.MPU6050 import MPU6050
-from lib.robotAPI.utils import thread_ripper
+from lib.workerthread import RobotThread
 from os import getpid, stat
 from sys import argv, stdout
 from time import sleep
-from threading import Thread
-import inspect
-import ctypes as ct
+
 import smbus
 import scipy.stats as stats
 from array import array
@@ -40,18 +38,14 @@ class MPUSensor:
 
         self.__stacked_values: array = array('i', [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2])
 
-        self.__discover = Thread(target=self.__update_vals, name='mpu_discover')
+        self.__discover = RobotThread(target=self.__update_vals, name='mpu_discover')
         
     def begin(self):
         if not self.__discover.is_alive():
             self.__discover.start()
 
     def virtual_destructor(self):
-        try:
-            if thread_ripper(self.__discover):
-                print(f"\nThread {self.__discover.name} from MPUSensor instance buried")
-        except ValueError or SystemError as error:
-            print(f"Issues while trying to kill the thread {self.__discover.name}")
+        self.__discover.bury()
 
     def __update_vals(self):
         global FIFO_buffer

@@ -11,11 +11,10 @@ from lib.ctrllib.enums import RedisKEYS as RK
 from lib.ctrllib.enums import RedisTOPICS as RT
 from lib.ctrllib.enums import RedisCONNECTION as RC
 from lib.ctrllib.enums import RedisCOMMAND as RCMD
-from lib.robotAPI.utils import thread_ripper
+from lib.workerthread import RobotThread
 from lib.robotAPI.motor import MOTORSCommand
 from lib.exit_codes import CALIB_ERROR
 
-from threading import Thread
 
 
 class BodyException(Exception):
@@ -35,7 +34,7 @@ class VirtualBody:
         except RedisConnError or OSError or ConnectionRefusedError:
             raise BodyException(f'Unable to connect to redis server at: {RC.HOST.value}:{RC.PORT.value}')
 
-        self.__rotation_thread: Thread = Thread(target=self.__rotation, name='rotation_thread')
+        self.__rotation_thread: RobotThread = RobotThread(target=self.__rotation, name='rotation_thread')
         self.__rotation_ack: int = 0
 
     def calibrate_mpu(self) -> bool:
@@ -95,9 +94,9 @@ class VirtualBody:
 
     def begin(self) -> bool:
         self.__redis_runner: PubSubWorkerThread = self.__pubsub.run_in_thread(sleep_time=0.01)
-        self.__yaw_thread: Thread = Thread(target=self.__yaw_discover, name='yaw_thread')
-        self.__infrared_thread: Thread = Thread(target=self.__infrared_discover, name='infrared_thread')
-        self.__ultrasonic_thread: Thread = Thread(target=self.__ultrasonic_discover, name='ultrasonic_thread')
+        self.__yaw_thread: RobotThread = RobotThread(target=self.__yaw_discover, name='yaw_thread')
+        self.__infrared_thread: RobotThread = RobotThread(target=self.__infrared_discover, name='infrared_thread')
+        self.__ultrasonic_thread: RobotThread = RobotThread(target=self.__ultrasonic_discover, name='ultrasonic_thread')
 
         self.__body.begin()
         self.__yaw_thread.start()
@@ -109,9 +108,9 @@ class VirtualBody:
             return True
         else:
             self.__redis_runner.stop()
-            thread_ripper(self.__yaw_thread)
-            thread_ripper(self.__infrared_thread)
-            thread_ripper(self.__ultrasonic_thread)
+            self.__yaw_thread.bury()
+            self.__infrared_thread.bury()
+            self.__ultrasonic_thread.bury()
 
         return False
 
@@ -125,14 +124,9 @@ class VirtualBody:
         self.__body.virtual_destructor()
         self.__redis_runner.stop()
 
-        if thread_ripper(self.__yaw_thread):
-            print(f"Thread {self.__yaw_thread.name} from VirtualBody instance buried")
-
-        if thread_ripper(self.__infrared_thread):
-            print(f"Thread {self.__infrared_thread.name} from VirtualBody instance buried")
-
-        if thread_ripper(self.__ultrasonic_thread):
-            print(f"Thread {self.__ultrasonic_thread.name} from VirtualBody instance buried")
+        self.__yaw_thread.bury()
+        self.__infrared_thread.bury()
+        self.__ultrasonic_thread.bury()
 
     
     def __on_message(self, msg):
@@ -159,7 +153,7 @@ class VirtualBody:
             self.__body.set_motor_model(_cmd, _val)
             if _cmd == MOTORSCommand.ROTATEL.value or _cmd == MOTORSCommand.ROTATER.value:
                 _until = int(_values[2])
-                self.__rotation_thread: Thread = Thread(target=self.__rotation, name='rotation_thread', args=(_until,))
+                self.__rotation_thread: RobotThread = RobotThread(target=self.__rotation, name='rotation_thread', args=(_until,))
                 self.__rotation_thread.start()
                 
             

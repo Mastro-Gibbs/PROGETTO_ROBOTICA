@@ -24,22 +24,6 @@ def deprecated(func):
     return new_func
 
 
-def thread_ripper(th: Thread) -> bool:
-    if th.is_alive():
-        exctype = SystemExit
-        tid = ct.c_long(th.ident)
-        if not inspect.isclass(exctype):
-            exctype = type(exctype)
-        res = ct.pythonapi.PyThreadState_SetAsyncExc(tid, ct.py_object(exctype))
-        if res == 0:
-            raise ValueError("invalid thread id")
-        elif res != 1:
-            ct.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-            raise SystemError("PyThreadState_SetAsyncExc failed")
-        
-        return True
-    return False
-
 class ROBOTAPIConstants(IntEnum):
     FRONT_ECHO_PIN = 22,
     FRONT_TRIGGER_PIN = 27,
