@@ -50,15 +50,6 @@ class Mode(Enum):
     EXPLORING = 0
     ESCAPING = 1
 
-
-"""
-TO DO:
-1) Gestire meglio comandi per la ROTAZIONE
-2) Gestire meglio switch da ESCAPING a EXPLORING e viceversa
-3) Togliere ambiguità update tree
-
-"""
-
 """
 ESCAPING
 Tornare indietro quando c'è un dead end. Navigo a ritroso e verifico se i figli del nodo corrente sono nodi OBSERVED 
@@ -80,7 +71,6 @@ class Controller:
         self._state = State.STARTING
         self._position = Position.INITIAL
         self.mode = Mode.EXPLORING
-        # self._state_position = list()
 
         self._body.stop()
 
@@ -195,7 +185,7 @@ class Controller:
             return
 
         if self.mode == Mode.EXPLORING:
-            # Only one action, l'azione è stata decisa dalla DMP ed è di tipo Compass
+            """Only one action that has been decided by DMP"""
             if isinstance(actions, Compass):
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
                     self.__class_logger.log("*** 2) UPDATING TREE (MODE EXPLORING) ***", "gray", newline=True)
@@ -209,12 +199,9 @@ class Controller:
                 elif dict_["RIGHT"] == action:
                     self.tree.set_current(self.tree.current.right)
 
-                # print(self.tree.current)
-
             else:
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
                     self.__class_logger.log("*** 1) UPDATING TREE (MODE EXPLORING) ***", "gray", newline=True)
-                # print(self.tree.current)
 
                 for action in actions:
                     dict_ = f_r_l_b_to_compass(self.orientation)
@@ -238,8 +225,6 @@ class Controller:
                             self.__class_logger.log("ADDED RIGHT", "dkgreen")
 
                 self.tree.current.set_type(Type.EXPLORED)
-
-                # print(self.tree.current)
 
         elif self.mode == Mode.ESCAPING:
             if isinstance(actions, Compass):
@@ -442,7 +427,6 @@ class Controller:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND START ** ", "gray")
 
-            # segnalare con un suono che si è avviato
             return True
 
         # Stop
@@ -488,7 +472,6 @@ class Controller:
             time.sleep(0.5)
             return True
 
-        # Rotate (DA GESTIRE MEGLIO)
         else:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND ROTATE ** ", "gray")
@@ -496,9 +479,8 @@ class Controller:
             self._body.stop()
             self.rotate_to_final_g(self._rot_speed, action.value)
             self._body.stop()
-            # self._state = State.STOPPED
             self._state = State.ROTATING
-            # self._position = Position.JUNCTION
+
             return True
 
     def read_sensors(self):

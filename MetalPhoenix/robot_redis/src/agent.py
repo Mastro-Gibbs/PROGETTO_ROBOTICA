@@ -8,7 +8,7 @@ c = Controller()
 hash_ = None
 hash_old = hash_
 
-EXIT = False
+GOAL_REACHED = False
 
 logger = Logger(class_name="Agent", color="yellow")
 logger.set_logfile(CFG.logger_data()["ALOGFILE"])
@@ -17,11 +17,11 @@ logger.set_logfile(CFG.logger_data()["ALOGFILE"])
 def run():
     global hash_
     global hash_old
-    global EXIT
+    global GOAL_REACHED
 
     logger.log("AGENT LAUNCHED", "green", italic=True)
 
-    while not c.goal_reached() and not EXIT:
+    while not c.goal_reached() and not GOAL_REACHED:
         c.algorithm()
 
         with builtins.open("../resources/data/config.conf", "rb") as f:
@@ -34,7 +34,7 @@ def run():
 
 
 def stop():
-    global EXIT
+    global GOAL_REACHED
     EXIT = True
 
     c.virtual_destructor()
