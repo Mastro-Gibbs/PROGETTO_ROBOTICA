@@ -202,22 +202,14 @@ class Tree:
     def __DFSRec_T(self, node, level=0):
         if node is None:
             return
-        # print(node, level)
 
         if node.name not in self.__T:
             self.__T[node.name] = {}
         if node.left is not None:
-            self.__T[node.name][node.left.name] = 1
-            self.__T[node.name][node.left.name] = "L"
             self.__T[node.name][node.left.name] = f" (L , {node.left.action_str} , {node.left.type_str})"
         if node.mid is not None:
-            self.__T[node.name][node.mid.name] = 1
-            self.__T[node.name][node.mid.name] = "M"
             self.__T[node.name][node.mid.name] = f" (M , {node.mid.action_str} , {node.mid.type_str} )"
         if node.right is not None:
-            self.__T[node.name][node.right.name] = 1
-            self.__T[node.name][node.right.name] = "R"
-            self.__T[node.name][node.right.name] = f" (R , {node.right.action_str} )"
             self.__T[node.name][node.right.name] = f" (R , {node.right.action_str} , {node.right.type_str})"
 
         self.__DFSRec_T(node.left, level + 1)

@@ -563,40 +563,6 @@ class Controller:
         self.__redis.set(MOTORS_KEY, msg)
         self.__redis.publish(C_TOPIC, MOTORS_KEY)
 
-    def verify_gate(self, c: Compass) -> bool:
-        global OR_MAX_ATTEMPT
-
-        self.read_sensors()
-
-        it = 0
-        _gate: bool = False
-
-        _sens = 0.0
-        _not_none_counter = 0
-
-        if c == Compass.OVEST:
-            _sens = self.left_value
-        elif c == Compass.EST:
-            _sens = self.right_value
-
-        self.read_sensors()
-
-        while it < OR_MAX_ATTEMPT:
-            it += 1
-            if _sens is None:
-                _gate = True
-                if c == Compass.OVEST:
-                    _sens = self.left_value
-                elif c == Compass.EST:
-                    _sens = self.right_value
-            else:
-                _gate = False
-                _not_none_counter += 1
-                if _not_none_counter == 2:
-                    break
-
-        return _gate
-
     def rotate_to_final_g(self, vel, final_g):
         """Rotate function that rotates the robot until it reaches final_g"""
         self.send_command(0, 0, 0, 0)

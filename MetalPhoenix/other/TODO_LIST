@@ -2,24 +2,15 @@
 
 ########################################################################################################################
 
-1°) algorithm
-
+1°) Qualcosa di intelligente:
+    - Metodo che sceglie casualmente l'ordine della lista di priorità
+    - Metodo che in base allo storico dei risultati prodotti nell'esplorazione di diversi labirinti
+      sceglie la lista di priorità migliore che permette di esplorare il labirinto nel minor tempo possibile
 2°) reformat code
-
-3°) redis
-
-4°) cfg file ( module configparser ) !! FATTO !!
-
-5°) log (?) { runtime log > file ( module logging ) } !! FATTO !!
-
-6°) balancing
-
-7°) reformat worktree   !! FATTO !!
 
 8°) documentation
 
-9°) slide (?)
+9°) slide
 
-10°) Stratificare i controllori
 
 ########################################################################################################################

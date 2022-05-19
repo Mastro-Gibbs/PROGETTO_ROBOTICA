@@ -8,8 +8,6 @@ from tools.utility import Logger, Compass, f_r_l_b_to_compass, negate_compass, \
 
 from tools.tree import Tree, Node, WAY, Type
 
-from redis import Redis
-
 OR_MAX_ATTEMPT = CFG.controller_data()["MAX_ATTEMPTS"]
 SAFE_DISTANCE = CFG.controller_data()["SAFE_DIST"]
 
@@ -71,6 +69,7 @@ Se non ci sono né OBSERVED né EXPLORED allora il nodo successivo è il parent 
 
 class Controller:
     def __init__(self):
+
         self.__class_logger = Logger(class_name="Controller", color="cyan")
         self.__class_logger.set_logfile(CFG.logger_data()["CLOGFILE"])
         self.__class_logger.log(f"LOG SEVERYTY: {str.upper(LOGSEVERITY)}\n", color="dkgreen")
@@ -97,6 +96,7 @@ class Controller:
         self.front_value = None
         self.right_value = None
         self.back_value = None
+        self.gate = False
 
         self.front_values = list()
         self.left_values = list()
@@ -126,6 +126,9 @@ class Controller:
 
         self.__class_logger.log(" >>>>>> NEW ALGORITHM CYCLE <<<<<< ", "green", newline=True)
 
+        if self.goal_reached():
+            return True
+
         # SENSE
         self.read_sensors()
         self.left_values.append(self.left_value)
@@ -140,7 +143,7 @@ class Controller:
             self.__class_logger.log(f"--ACTIONS: {actions}")
             self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}")
 
-        # Update tree adding the children if only if the actions are correct (namely the robot is in sensing mode)
+        # Update tree adding the children if only if the robot is in sensing mode
         self.update_tree(actions)
 
         # THINK
@@ -176,6 +179,8 @@ class Controller:
             if action in self.priority_list:
                 self.trajectory.append(action)
             PREV_ACTION = action
+
+        return False
 
     def update_tree(self, actions):
         """ if not actions:
@@ -336,15 +341,13 @@ class Controller:
             if self.mode == Mode.EXPLORING:
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
                     self.__class_logger.log("Control policy EXPLORING", "gray")
+
                 if front is None:
-                    # verificare se il nodo è OSSERVATO e quindi non ESPLORATO
                     action = f_r_l_b_to_compass(ori)["FRONT"]
                     actions.insert(0, action)
-
                 if left is None:
                     action = f_r_l_b_to_compass(ori)["LEFT"]
                     actions.insert(0, action)
-
                 if right is None:
                     action = f_r_l_b_to_compass(ori)["RIGHT"]
                     actions.insert(0, action)
@@ -369,7 +372,7 @@ class Controller:
                     action = self.tree.current.right.action
                     actions.insert(0, action)
 
-                # Se non ci sono OBSERVED scegliere EXPLORED
+                # If there are no OBSERVED nodes
                 if not actions:
                     if self.tree.current.left is not None and self.tree.current.left.type == Type.EXPLORED:
                         action = self.tree.current.left.action
@@ -504,36 +507,6 @@ class Controller:
         self.right_value = self._body.get_proxR()
         self.back_value = self._body.get_proxB()
         self.orientation = self._body.get_orientation_deg()
-
-    def verify_gate(self, c: Compass) -> bool:
-        global OR_MAX_ATTEMPT
-
-        it = 0
-        _gate: bool = False
-
-        _sens = 0.0
-        _not_none_counter = 0
-
-        if c == Compass.OVEST:
-            _sens = self._body.get_proxL()
-        elif c == Compass.EST:
-            _sens = self._body.get_proxR()
-
-        while it < OR_MAX_ATTEMPT:
-            it += 1
-            if _sens is None:
-                _gate = True
-                if c == Compass.OVEST:
-                    _sens = self._body.get_proxL()
-                elif c == Compass.EST:
-                    _sens = self._body.get_proxR()
-            else:
-                _gate = False
-                _not_none_counter += 1
-                if _not_none_counter == 2:
-                    break
-
-        return _gate
 
     def rotate_to_final_g(self, vel, final_g):
         """Rotate function that rotates the robot until it reaches final_g"""
@@ -745,18 +718,23 @@ class Controller:
     def goal_reached(self) -> bool:
         global LOGSEVERITY
 
-        res = self._body.get_gate()
+        if self._body.get_gate():
 
-        if res:
-            if Logger.is_loggable(LOGSEVERITY, "low"):
-                self.__class_logger.log(" :D SO HAPPY :D ", "green", True, True)
-                self.__class_logger.log(" >> MAZE SOLVED << ", "green", italic=True)
-                self.__class_logger.log(" ~~ WATCHING THE LIGHTS ~~ ", "green", True, True)
-                self.__class_logger.log(" ~~ SAYING GOODBYE TO DEAD END CHILDREN :( ~~ ", "green", True)
-                self.__class_logger.log(" ~~ THANKS TO DEVELOPERS THAT HAVE DONE THIS  ~~ ", "green", True)
-                self.__class_logger.log(" ^^ FLYING TO THE HEAVEN ^^ ", "green", True, True)
+            self.tree.current.set_type(Type.FINAL)
+            self.__class_logger.log(" :D SO HAPPY :D ", "green", True, True)
+            self.__class_logger.log(" >> MAZE SOLVED << ", "green", italic=True)
+            self.__class_logger.log(" ~~ WATCHING THE LIGHTS ~~ ", "green", True, True)
+            self.__class_logger.log(" ~~ SAYING GOODBYE TO DEAD END CHILDREN :( ~~ ", "green", True)
+            self.__class_logger.log(" ~~ THANKS TO DEVELOPERS THAT HAVE DONE THIS  ~~ ", "green", True)
+            self.__class_logger.log(" ^^ FLYING TO THE HEAVEN ^^ ", "green", True, True)
+            print("\n")
+            print("Tree: ", self.tree.build_tree_dict(), "\n")
+            print("Performed commands: ", self.performed_commands, "\n")
+            print("Trajectory: ", self.trajectory, "\n")
 
-        return res
+            return True
+
+        return False
 
     def update_cfg(self):
         global OR_MAX_ATTEMPT

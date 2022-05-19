@@ -21,8 +21,8 @@ def run():
 
     logger.log("AGENT LAUNCHED", "green", italic=True)
 
-    while not c.goal_reached() and not EXIT:
-        c.algorithm()
+    while not EXIT:
+        EXIT = c.algorithm()
 
         with builtins.open("../resources/data/config.conf", "rb") as f:
             hash_ = hashlib.md5(f.read()).hexdigest()
