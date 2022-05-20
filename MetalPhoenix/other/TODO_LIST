@@ -2,10 +2,8 @@
 
 ########################################################################################################################
 
-1°) Qualcosa di intelligente:
-    - Metodo che sceglie casualmente l'ordine della lista di priorità
-    - Metodo che in base allo storico dei risultati prodotti nell'esplorazione di diversi labirinti
-      sceglie la lista di priorità migliore che permette di esplorare il labirinto nel minor tempo possibile
+1°) Intelligenza
+
 2°) reformat code
 
 8°) documentation
@@ -18,3 +16,28 @@ TO DO:
 
 
 ########################################################################################################################
+
+
+Intelligenza:
+
+intelligence = low/mid/high
+
+low: prende direttamente la lista di priorità nel file di conf
+mid: in modo casuale sceglie l'ordine della lista di priorità sia all'inizio sia durante l'esplorazione
+high: Metodo che in base allo storico dei risultati prodotti nell'esplorazione di diversi labirinti
+      sceglie la lista di priorità migliore che permette di esplorare il labirinto:
+      i) con minor tempo possibile
+      ii) con un numero di nodi più piccolo possibile
+      iii) con un numero di nodi dead end più piccolo possibile
+
+Maze Dataset:
+Maze name
+Priority list chosen
+Solving Time
+Number of nodes
+Number of dead end nodes
+
+
+
+
+
