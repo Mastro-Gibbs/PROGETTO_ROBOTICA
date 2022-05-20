@@ -30,14 +30,10 @@ high: Metodo che in base allo storico dei risultati prodotti nell'esplorazione d
       ii) con un numero di nodi più piccolo possibile
       iii) con un numero di nodi dead end più piccolo possibile
 
-Maze Dataset:
-Maze name
+Maze Dataset (information of the mazes are saved in a single file):
+Maze name = Maze+number+prioritylist (section of the file)
 Priority list chosen
 Solving Time
 Number of nodes
 Number of dead end nodes
-
-
-
-
 
