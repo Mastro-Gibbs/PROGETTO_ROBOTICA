@@ -251,7 +251,8 @@ class CFG:
                 "SPEED": float(psr["ROBOT"]["speed"]),
                 "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
                 "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
-                "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"])
+                "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
+                "PRIORITY_LIST": [int(elem) for elem in psr["ROBOT"]["priority_list"].split(", ")]
                 }
 
     @staticmethod
@@ -274,3 +275,4 @@ class CFG:
                 "EXT": psr["UTILITY"]["ext"],
                 "SEVERITY": psr["UTILITY"]["severity"]
                 }
+

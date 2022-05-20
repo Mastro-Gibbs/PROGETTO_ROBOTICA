@@ -23,7 +23,7 @@ Intelligenza:
 intelligence = low/mid/high
 
 low: prende direttamente la lista di priorità nel file di conf
-mid: in modo casuale sceglie l'ordine della lista di priorità sia all'inizio sia durante l'esplorazione
+mid: in modo casuale (distribuzione uniforme?) sceglie l'ordine della lista di priorità sia all'inizio sia durante l'esplorazione
 high: Metodo che in base allo storico dei risultati prodotti nell'esplorazione di diversi labirinti
       sceglie la lista di priorità migliore che permette di esplorare il labirinto:
       i) con minor tempo possibile
@@ -37,3 +37,10 @@ Solving Time
 Number of nodes
 Number of dead end nodes
 
+ # self.priority_list = [Compass.NORD, Compass.OVEST, Compass.EST, Compass.SUD]
+# self.priority_list = [Compass.SUD, Compass.OVEST, Compass.EST, Compass.NORD]
+# self.priority_list = [Compass.NORD, Compass.OVEST, Compass.SUD, Compass.EST]
+# self.priority_list = [Compass.NORD, Compass.SUD, Compass.OVEST, Compass.EST]
+# self.priority_list = [Compass.NORD, Compass.SUD, Compass.EST, Compass.OVEST]
+# self.priority_list = [Compass.NORD, Compass.EST, Compass.SUD, Compass.OVEST]
+# self.priority_list = [Compass.NORD, Compass.EST, Compass.OVEST, Compass.SUD]

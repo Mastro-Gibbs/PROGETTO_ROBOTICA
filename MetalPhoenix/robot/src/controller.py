@@ -63,7 +63,7 @@ class Controller:
 
         self.__class_logger = Logger(class_name="Controller", color="cyan")
         self.__class_logger.set_logfile(CFG.logger_data()["CLOGFILE"])
-        self.__class_logger.log(f"LOG SEVERYTY: {str.upper(LOGSEVERITY)}\n", color="dkgreen")
+        self.__class_logger.log(f"LOG SEVERITY: {str.upper(LOGSEVERITY)}\n", color="dkgreen")
         self.__class_logger.log("CONTROLLER LAUNCHED", color="green", italic=True)
 
         self._body = PhysicalBody()
@@ -78,14 +78,13 @@ class Controller:
         self._rot_speed = CFG.controller_data()["ROT_SPEED"]
 
         self._speed_m_on_sec = self._speed * 0.25 / (self._speed // 5)
-        # Tempo che serve per posizionarsi al centro di una giunzione
+        # Time it takes to position in the center of a junction
         self.junction_sim_time = 0.25 / self._speed_m_on_sec
 
         self.orientation = None
         self.left_value = None
         self.front_value = None
         self.right_value = None
-        self.back_value = None
         self.gate = False
 
         self.front_values = list()
@@ -93,14 +92,7 @@ class Controller:
         self.right_values = list()
 
         self.target = 0
-
-        self.priority_list = [Compass.NORD, Compass.OVEST, Compass.EST, Compass.SUD]
-        # self.priority_list = [Compass.SUD, Compass.OVEST, Compass.EST, Compass.NORD]
-        # self.priority_list = [Compass.NORD, Compass.OVEST, Compass.SUD, Compass.EST]
-        # self.priority_list = [Compass.NORD, Compass.SUD, Compass.OVEST, Compass.EST]
-        # self.priority_list = [Compass.NORD, Compass.SUD, Compass.EST, Compass.OVEST]
-        # self.priority_list = [Compass.NORD, Compass.EST, Compass.SUD, Compass.OVEST]
-        # self.priority_list = [Compass.NORD, Compass.EST, Compass.OVEST, Compass.SUD]
+        self.priority_list = CFG.controller_data()["PRIORITY_LIST"]
 
         self.trajectory = list()
         self.performed_commands = list()
@@ -487,11 +479,10 @@ class Controller:
         self.left_value = self._body.get_proxL()
         self.front_value = self._body.get_proxF()
         self.right_value = self._body.get_proxR()
-        self.back_value = self._body.get_proxB()
         self.orientation = self._body.get_orientation_deg()
 
     def rotate_to_final_g(self, vel, final_g):
-        """Rotate function that rotates the robot until it reaches final_g"""
+        """ Rotate function that rotates the robot until it reaches final_g """
         self._body.stop()
 
         init_g = self._body.get_orientation_deg()
@@ -502,6 +493,16 @@ class Controller:
         self._body.stop()
 
     def __do_rotation(self, vel, c: Clockwise, degrees, final_g):
+        """
+        This method calls __rotate to perform the rotation.
+        It also checks the outcome of check_orientation:
+        i) If the orientation is correct nothing happens
+        ii) If the orientation is not correct it calls adjust_orientation to
+            rotate the robot to the correct orientation
+        It stops the program when it is not possible to orient correctly the robot when it exceeds the number
+        of attempts (Critical case)
+        """
+
         global LOGSEVERITY
 
         degrees = abs(degrees)
@@ -515,7 +516,8 @@ class Controller:
         if not ok:
             ok, it = self.adjust_orientation(final_g)
 
-        if it == OR_MAX_ATTEMPT:  # CRITICAL CASE
+        # CRITICAL CASE
+        if it == OR_MAX_ATTEMPT:
             if Logger.is_loggable(LOGSEVERITY, "low"):
                 self.__class_logger.log(" ** MAX ATTEMPTS REACHED ** ", "dkred", True, True)
                 self.__class_logger.log(" >>>>  EXITING  <<<< ", "dkred", italic=True)
@@ -525,6 +527,7 @@ class Controller:
         """
         Function that given vel, Clockwise and rotation degrees computes
         the rotation of the Robot around the z axis
+        The orientation of the robot must reach the interval [degrees - delta, degrees + delta]
         """
         degrees = abs(degrees)
         init_g = self._body.get_orientation_deg()
@@ -543,17 +546,17 @@ class Controller:
                 self._body.turn(-vel, vel)
 
             performed_deg_temp = self.compute_performed_degrees(c, init_g, curr_g)
-            # DA SPIEGARE MEGLIO
-            # necessario perché se c'è uno spostamento non voluto nel verso opposto va a calcolare una
-            # rotazione sicuramente > di 300° che in realtà non è stata fatta!
-            # IN QUESTO MODO NON CONSIDERO "ROTAZIONI" SPURIE
-            # es init =  90.043° se ruotando verso LEFT si sposta a destra a va a 90.00°
-            # la diff dell' orientazione dà un valore > 300 che non è valido!
+
+            """ 
+            Check if there was an unintended move in the opposite direction. 
+            The degrees performed in this case would be > 300
+            The value is not considered (continue)
+            """
+
             if performed_deg_temp > 300:
-                # self.__class_logger.log("performed_deg > 300")
                 continue
+
             performed_deg = performed_deg_temp
-            # self.__class_logger.log(f"Performed: {performed_deg}")
 
             if degrees - delta < performed_deg < degrees + delta:
                 self._body.stop()
@@ -568,6 +571,12 @@ class Controller:
         return archived, init_g, performed_deg, degrees
 
     def check_orientation(self, final_g, delta=2):
+        """
+        This method is used to check if the orientation of the robot is correct
+        The orientation of the robot must reach a specific interval according to two cases:
+        1) The final_g is 180 or -180 (first if)
+        2) Otherwise other intervals (second if)
+        """
         global LOGSEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
@@ -607,6 +616,12 @@ class Controller:
         return ok, curr_g, limit_range
 
     def adjust_orientation(self, final_g):
+        """
+        This method is used to adjust the orientation of the robot
+        There are a max number of attempts:
+        i) If the robot is able to orient himself correctly than the outcome is positive
+        ii) If the robot fails, there is an error in adjusting the orientation and attempts stop
+        """
         global LOGSEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
@@ -640,7 +655,10 @@ class Controller:
 
     @staticmethod
     def compute_performed_degrees(c, init_g, curr_g):
-        """Calculates the angle between init_g and curr_g that the robot performed based on the direction of rotation"""
+        """
+        Computes the angle between init_g and curr_g that the robot performed
+        based on the direction of rotation
+        """
 
         if init_g == curr_g:
             return 0
@@ -664,7 +682,7 @@ class Controller:
         return performed_degrees
 
     def best_angle_and_rotation_way(self, init_g, final_g):
-        """Calculate the best (minimum) angle between init_g and final_g and how you need to rotate"""
+        """ Computes the best (minimum) angle between init_g and final_g and how you need to rotate """
         global LOGSEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
@@ -698,6 +716,11 @@ class Controller:
         return smallest, c
 
     def goal_reached(self) -> bool:
+        """
+        It is used to check if the robot has found the exit of the maze
+        The exit of the maze is identified using the gate
+        It updates the last node of the tree as FINAL node
+        """
         global LOGSEVERITY
 
         if self._body.get_gate():
@@ -719,6 +742,7 @@ class Controller:
         return False
 
     def update_cfg(self):
+        """ Updates the values of the config file since it can be modified also during the execution of the algorithm """
         global OR_MAX_ATTEMPT
         global SAFE_DISTANCE
         global LOGSEVERITY
