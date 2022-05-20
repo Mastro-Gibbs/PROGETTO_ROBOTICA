@@ -45,11 +45,11 @@ class VirtualBody:
 
         self.__body.begin()
 
-        _yaw = self.__body.oritentation()[2]
+        _yaw = self.__body.orientation()[2]
 
         while _yaw == 0.0 or -8 < _yaw < 8:
             sleep(0.1)
-            _yaw = self.__body.oritentation()[2]
+            _yaw = self.__body.orientation()[2]
             
             stdout.write('\rCURRENT MPU VALUE: %d   ' %_yaw)
             stdout.flush()
@@ -59,7 +59,7 @@ class VirtualBody:
         begin_time = time()
         while not (85 < _yaw < 95):
             sleep(0.05)
-            _yaw = self.__body.oritentation()[2]
+            _yaw = self.__body.orientation()[2]
             stdout.write('\rCURRENT MPU VALUE: %d   ' %_yaw)
             stdout.write('TARGET: %d   ' %90)
             stdout.flush()
@@ -74,7 +74,7 @@ class VirtualBody:
             begin_time = time()
             while not (-85 > _yaw > -95):
                 sleep(0.05)
-                _yaw = self.__body.oritentation()[2]
+                _yaw = self.__body.orientation()[2]
                 stdout.write('\rCURRENT MPU VALUE: %d   ' %_yaw)
                 stdout.write('TARGET: %d   ' %-90)
                 stdout.flush()
@@ -172,7 +172,7 @@ class VirtualBody:
         timeout = 15
 
         while not EXIT:
-            _yaw = abs(self.__body.oritentation()[2])
+            _yaw = abs(self.__body.orientation()[2])
             
             stdout.write('\rCURRENT ANGLE: %d   ' %_yaw)
             stdout.flush()
@@ -189,7 +189,7 @@ class VirtualBody:
         if SUCCESS:
             checking_loops = 5
             while checking_loops:
-                if not (until - delta < abs(self.__body.oritentation()[2]) < until + delta):
+                if not (until - delta < abs(self.__body.orientation()[2]) < until + delta):
                     SUCCESS = False
 
                 checking_loops -= 1
@@ -205,7 +205,7 @@ class VirtualBody:
         _OLD_YAW: str = str()
 
         while True:
-            _yaw = str(self.__body.oritentation()[2])
+            _yaw = str(self.__body.orientation()[2])
             
             if _OLD_YAW != _yaw and _yaw != '0.0':
                 self.__redis.set(RK.MPU.value, _yaw)

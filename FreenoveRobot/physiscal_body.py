@@ -179,7 +179,7 @@ class PhysicalBody:
 
         self.__strip.colorWipe(Color(0,0,0), 10)
     
-    def oritentation(self) -> tuple:
+    def orientation(self) -> tuple:
         """
         It informs about the position of the robot on the 
         x, y, z axes also known as roll, pitch and yaw.
