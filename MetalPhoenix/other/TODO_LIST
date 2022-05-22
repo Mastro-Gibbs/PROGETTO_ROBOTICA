@@ -37,7 +37,7 @@ Solving Time
 Number of nodes
 Number of dead end nodes
 
- # self.priority_list = [Compass.NORD, Compass.OVEST, Compass.EST, Compass.SUD]
+# self.priority_list = [Compass.NORD, Compass.OVEST, Compass.EST, Compass.SUD]
 # self.priority_list = [Compass.SUD, Compass.OVEST, Compass.EST, Compass.NORD]
 # self.priority_list = [Compass.NORD, Compass.OVEST, Compass.SUD, Compass.EST]
 # self.priority_list = [Compass.NORD, Compass.SUD, Compass.OVEST, Compass.EST]

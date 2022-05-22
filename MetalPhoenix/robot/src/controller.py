@@ -1,27 +1,14 @@
 import time
 from math import pi
 from enum import Enum
-
 from physical_body import PhysicalBody
 from tools.utility import Logger, Compass, f_r_l_b_to_compass, negate_compass, \
     normalize_angle, round_v, Clockwise, detect_target, CFG
-
-from tools.tree import Tree, Node, WAY, Type
+from tools.tree import Tree, Node, DIRECTION, Type
 
 OR_MAX_ATTEMPT = CFG.controller_data()["MAX_ATTEMPTS"]
 SAFE_DISTANCE = CFG.controller_data()["SAFE_DIST"]
-
-NODE_ID = "n"
-NODE_COUNT = 0
-
-PREV_ACTION = None
 LOGSEVERITY = CFG.logger_data()["SEVERITY"]
-
-
-def generate_node_id() -> str:
-    global NODE_COUNT
-    NODE_COUNT += 1
-    return NODE_ID + str(NODE_COUNT)
 
 
 class State(Enum):
@@ -96,14 +83,21 @@ class Controller:
 
         self.trajectory = list()
         self.performed_commands = list()
+        self.prev_action = None
         self.tree = Tree()
 
     def virtual_destructor(self):
         self._body.virtual_destructor()
         self.__class_logger.log("CONTROLLER STOPPED", "green", italic=True)
 
+    def read_sensors(self):
+        self.left_value = self._body.get_proxL()
+        self.front_value = self._body.get_proxF()
+        self.right_value = self._body.get_proxR()
+        self.orientation = self._body.get_orientation_deg()
+
     def algorithm(self):
-        global PREV_ACTION
+
         global LOGSEVERITY
 
         self.__class_logger.log(" >>>>>> NEW ALGORITHM CYCLE <<<<<< ", "green", newline=True)
@@ -156,11 +150,11 @@ class Controller:
         if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})", "gray")
 
-        if performed and PREV_ACTION != action:
+        if performed and self.prev_action != action:
             self.performed_commands.append(action)
             if action in self.priority_list:
                 self.trajectory.append(action)
-            PREV_ACTION = action
+            self.prev_action = action
 
         return False
 
@@ -198,20 +192,20 @@ class Controller:
                 for action in actions:
                     dict_ = f_r_l_b_to_compass(self.orientation)
                     if dict_["FRONT"] == action:
-                        node = Node("M_" + generate_node_id(), action)
-                        self.tree.append(node, WAY.MID)
+                        node = Node("M_" + self.tree.generate_node_id(), action)
+                        self.tree.append(node, DIRECTION.MID)
                         self.tree.regress()
                         if Logger.is_loggable(LOGSEVERITY, "mid"):
                             self.__class_logger.log("ADDED MID", "dkgreen")
                     if dict_["LEFT"] == action:
-                        node = Node("L_" + generate_node_id(), action)
-                        self.tree.append(node, WAY.LEFT)
+                        node = Node("L_" + self.tree.generate_node_id(), action)
+                        self.tree.append(node, DIRECTION.LEFT)
                         self.tree.regress()
                         if Logger.is_loggable(LOGSEVERITY, "mid"):
                             self.__class_logger.log("ADDED LEFT", "dkgreen")
                     if dict_["RIGHT"] == action:
-                        node = Node("R_" + generate_node_id(), action)
-                        self.tree.append(node, WAY.RIGHT)
+                        node = Node("R_" + self.tree.generate_node_id(), action)
+                        self.tree.append(node, DIRECTION.RIGHT)
                         self.tree.regress()
                         if Logger.is_loggable(LOGSEVERITY, "mid"):
                             self.__class_logger.log("ADDED RIGHT", "dkgreen")
@@ -474,12 +468,6 @@ class Controller:
             self._state = State.ROTATING
 
             return True
-
-    def read_sensors(self):
-        self.left_value = self._body.get_proxL()
-        self.front_value = self._body.get_proxF()
-        self.right_value = self._body.get_proxR()
-        self.orientation = self._body.get_orientation_deg()
 
     def rotate_to_final_g(self, vel, final_g):
         """ Rotate function that rotates the robot until it reaches final_g """

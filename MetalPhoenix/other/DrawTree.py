@@ -1,7 +1,7 @@
 """
 This program is used to draw graphically the Maze tree using networkx and graphviz.
 The tree is saved as a dict type where the key is the node and the value is another dict composed by
-node's children. Each child of the node has, as value, a set of three values:
+node's children. Each child of the node has, as value, a string of three values:
     1) Left/Mid/Right
     2) NORD/EST/OVEST/SUD
     3) EXPLORED/OBSERVED/DEAD_END/FINAL

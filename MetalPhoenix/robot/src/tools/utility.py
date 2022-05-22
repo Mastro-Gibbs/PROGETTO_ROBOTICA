@@ -3,10 +3,9 @@ from enum import Enum
 import configparser
 import datetime
 
-
 date = datetime.datetime.now()
 sign = "[" + str(date.year) + "-" + str(date.month) + "-" + str(date.day) + "_" + str(date.hour) \
-        + "_" + str(date.minute) + "_" + str(date.second) + "]"
+       + "_" + str(date.minute) + "_" + str(date.second) + "]"
 
 
 class Compass(float, Enum):
@@ -69,19 +68,25 @@ def detect_target(begin: float) -> Compass | None:
     return target
 
 
-# Front Right Left Back to compass
 def f_r_l_b_to_compass(curr_ori: float) -> {}:
-    if detect_target(curr_ori) == 0:  # Muso robot ad EST
+    """
+    Front Right Left Back to compass.
+    It returns a dict according to the robot orientation where:
+    key: Front or Right or Left or Back
+    value: Est or Sud or Nord or West
+    """
+    if detect_target(curr_ori) == 0:  # EAST front
         return {"FRONT": Compass.EST, "RIGHT": Compass.SUD, "LEFT": Compass.NORD, "BACK": Compass.OVEST}
-    elif detect_target(curr_ori) == 90:  # Muso robot a NORD
+    elif detect_target(curr_ori) == 90:  # NORD front
         return {"FRONT": Compass.NORD, "RIGHT": Compass.EST, "LEFT": Compass.OVEST, "BACK": Compass.SUD}
-    elif detect_target(curr_ori) == 180:  # Muso robot ad OVEST
+    elif detect_target(curr_ori) == 180:  # WEST front
         return {"FRONT": Compass.OVEST, "RIGHT": Compass.NORD, "LEFT": Compass.SUD, "BACK": Compass.EST}
-    else:  # -90
+    else:  # SUD front
         return {"FRONT": Compass.SUD, "RIGHT": Compass.OVEST, "LEFT": Compass.EST, "BACK": Compass.NORD}
 
 
 def negate_compass(compass: float) -> Compass:
+    """ Given a compass value it returns the negate value """
     if compass == Compass.NORD:
         return Compass.SUD
     elif compass == Compass.SUD:
@@ -93,7 +98,7 @@ def negate_compass(compass: float) -> Compass:
 
 
 class StringBuilder:
-    """C++ style StringStream class."""
+    """ C++ style StringStream class. """
     _file_str = None
 
     def __init__(self):
@@ -248,31 +253,30 @@ class CFG:
         psr = configparser.ConfigParser()
         psr.read('../resources/data/config.conf')
         return {
-                "SPEED": float(psr["ROBOT"]["speed"]),
-                "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
-                "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
-                "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
-                "PRIORITY_LIST": [int(elem) for elem in psr["ROBOT"]["priority_list"].split(", ")]
-                }
+            "SPEED": float(psr["ROBOT"]["speed"]),
+            "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
+            "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
+            "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
+            "PRIORITY_LIST": [int(elem) for elem in psr["ROBOT"]["priority_list"].split(", ")]
+        }
 
     @staticmethod
     def physical_data() -> dict:
         psr = configparser.ConfigParser()
         psr.read('../resources/data/config.conf')
         return {
-                "IP": psr["COPPELIA"]["ip"],
-                "PORT": int(psr["COPPELIA"]["port"])
-                }
+            "IP": psr["COPPELIA"]["ip"],
+            "PORT": int(psr["COPPELIA"]["port"])
+        }
 
     @staticmethod
     def logger_data() -> dict:
         psr = configparser.ConfigParser()
         psr.read('../resources/data/config.conf')
         return {
-                "CLOGFILE": psr["UTILITY"]["controllerlog"],
-                "BLOGFILE": psr["UTILITY"]["bodylog"],
-                "ALOGFILE": psr["UTILITY"]["agentlog"],
-                "EXT": psr["UTILITY"]["ext"],
-                "SEVERITY": psr["UTILITY"]["severity"]
-                }
-
+            "CLOGFILE": psr["UTILITY"]["controllerlog"],
+            "BLOGFILE": psr["UTILITY"]["bodylog"],
+            "ALOGFILE": psr["UTILITY"]["agentlog"],
+            "EXT": psr["UTILITY"]["ext"],
+            "SEVERITY": psr["UTILITY"]["severity"]
+        }

@@ -1,12 +1,16 @@
 from tools.utility import Compass
 from enum import Enum
 
+NODE_ID = "n"
+NODE_COUNT = 0
+
 
 class TreeException(Exception):
     pass
 
 
-class WAY(Enum):
+class DIRECTION(Enum):
+    """ Direction of the node according to the robot orientation """
     LEFT = 1
     MID = 2
     RIGHT = 3
@@ -15,17 +19,15 @@ class WAY(Enum):
 """
 
 OBSERVED:
-1) Un nodo è OBSERVED quando viene aggiunto la prima volta e non viene esplorato.
+1) A node is OBSERVED when it is first added and not explored yet.
 EXPLORED:
-1) Un nodo è EXPLORED quando viene visitato la prima volta.
-2) Può avere figli DEAD END ma almeno uno deve essere EXPLORED o VISITED.
+1) A node is EXPLORED when it is first visited.
+2) It can have DEAD END children but at least one must be EXPLORED or VISITED.
 DEAD END:
-1) Un nodo è dead end se non ha figli => è un nodo foglia.
-2) Se TUTTI i suoi figli sono dead end.
-DEAD END (CASO PARTICOLARE)  ?????????????
-1) Root ha un/due figlio/i dead end e l'altro no.
+1) A node is dead end if it has not children => it is a leaf.
+2) If all his children are dead end.
 FINAL:
-1) Ultimo nodo che si trova alla fine del labirinto.
+1) Last node at the end of the maze.
 
 """
 
@@ -56,16 +58,6 @@ class Node:
                     self.left.name if self.left is not None else None,
                     self.mid.name if self.mid is not None else None,
                     self.right.name if self.right is not None else None)
-
-    def set_properties(self, _n: str = None, _a: Compass = None, _t: Type = None):
-        if _n is not None:
-            self.__name = _n
-
-        if _a is not None:
-            self.__action = _a
-
-        if _t is not None:
-            self.__type = _t
 
     def set_name(self, _val):
         self.__name = _val
@@ -144,8 +136,8 @@ class Tree:
         self.__current: Node = self.__root
         self.__T = {self.__root.name: {}}
 
-    def append(self, _n: Node, _way: WAY):
-        if _way == WAY.LEFT:
+    def append(self, _n: Node, _dir: DIRECTION):
+        if _dir == DIRECTION.LEFT:
             # print("current", self.__current)
             if not self.__current.has_left:
                 _n.parent = self.__current
@@ -155,7 +147,7 @@ class Tree:
                 pass
                 # raise TreeException("No way to append node")
 
-        elif _way == WAY.MID:
+        elif _dir == DIRECTION.MID:
             if not self.__current.has_mid:
                 _n.parent = self.__current
                 self.__current.mid = _n
@@ -164,7 +156,7 @@ class Tree:
                 pass
                 # raise TreeException("No way to append node")
 
-        elif _way == WAY.RIGHT:
+        elif _dir == DIRECTION.RIGHT:
             if not self.__current.has_right:
                 _n.parent = self.__current
                 self.__current.right = _n
@@ -179,15 +171,17 @@ class Tree:
     def set_current(self, node: Node):
         self.__current = node
 
+    def generate_node_id(self) -> str:
+        global NODE_COUNT
+        NODE_COUNT += 1
+        return NODE_ID + str(NODE_COUNT)
+
+    @property
+    def current(self) -> Node:
+        return self.__current
+
     def DFSRec(self):
         self.__DFSRec(self.__root, 0)
-
-    def build_tree_dict(self):
-        if self.__root is None:
-            return None
-        self.__T = {self.__root.name: {}}
-        self.__DFSRec_T(self.__root)
-        return self.__T
 
     def __DFSRec(self, node, level):
         if node is None:
@@ -199,6 +193,21 @@ class Tree:
         self.__DFSRec(node.mid, level + 1)
         self.__DFSRec(node.right, level + 1)
 
+    def build_tree_dict(self):
+        """
+        According to the root node of the tree object this method returns a dictionary of the tree where:
+        key: is the parent node
+        value: a dict of his children where each child has, as value, a string of three values:
+            1) Left/Mid/Right
+            2) NORD/EST/OVEST/SUD
+            3) EXPLORED/OBSERVED/DEAD_END/FINAL
+        """
+        if self.__root is None:
+            return None
+        self.__T = {self.__root.name: {}}
+        self.__DFSRec_T(self.__root)
+        return self.__T
+
     def __DFSRec_T(self, node, level=0):
         if node is None:
             return
@@ -208,22 +217,14 @@ class Tree:
             self.__T[node.name] = {}
         if node.left is not None:
             self.__T[node.name][node.left.name] = 1
-            self.__T[node.name][node.left.name] = "L"
-            self.__T[node.name][node.left.name] = f" (L , {node.left.action_str} , {node.left.type_str})"
+            self.__T[node.name][node.left.name] = f"(L , {node.left.action_str} , {node.left.type_str})"
         if node.mid is not None:
             self.__T[node.name][node.mid.name] = 1
-            self.__T[node.name][node.mid.name] = "M"
-            self.__T[node.name][node.mid.name] = f" (M , {node.mid.action_str} , {node.mid.type_str} )"
+            self.__T[node.name][node.mid.name] = f"(M , {node.mid.action_str} , {node.mid.type_str})"
         if node.right is not None:
             self.__T[node.name][node.right.name] = 1
-            self.__T[node.name][node.right.name] = "R"
-            self.__T[node.name][node.right.name] = f" (R , {node.right.action_str} )"
-            self.__T[node.name][node.right.name] = f" (R , {node.right.action_str} , {node.right.type_str})"
+            self.__T[node.name][node.right.name] = f"(R , {node.right.action_str} , {node.right.type_str})"
 
         self.__DFSRec_T(node.left, level + 1)
         self.__DFSRec_T(node.mid, level + 1)
         self.__DFSRec_T(node.right, level + 1)
-
-    @property
-    def current(self) -> Node:
-        return self.__current
