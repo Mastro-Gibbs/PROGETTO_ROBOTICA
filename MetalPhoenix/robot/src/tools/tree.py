@@ -1,6 +1,13 @@
 from tools.utility import Compass
 from enum import Enum
 
+"""
+This python file contains two class:
+    1) Node: it models the tree nodes
+    2) Tree: the tree of the maze
+To better understand how a node is generated it is advisable to read the documentation and how the algorithm works
+"""
+
 NODE_ID = "n"
 NODE_COUNT = 0
 
@@ -17,7 +24,7 @@ class DIRECTION(Enum):
 
 
 """
-
+The class Type is used to specify a property of a Node
 OBSERVED:
 1) A node is OBSERVED when it is first added and not explored yet.
 EXPLORED:
@@ -196,7 +203,7 @@ class Tree:
     def build_tree_dict(self):
         """
         According to the root node of the tree object this method returns a dictionary of the tree where:
-        key: is the parent node
+        key: is a node
         value: a dict of his children where each child has, as value, a string of three values:
             1) Left/Mid/Right
             2) NORD/EST/OVEST/SUD

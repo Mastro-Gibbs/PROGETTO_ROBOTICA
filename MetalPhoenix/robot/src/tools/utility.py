@@ -3,6 +3,8 @@ from enum import Enum
 import configparser
 import datetime
 
+""" This python file contains all the static methods and classes that are useful for the maze algorithm """
+
 date = datetime.datetime.now()
 sign = "[" + str(date.year) + "-" + str(date.month) + "-" + str(date.day) + "_" + str(date.hour) \
        + "_" + str(date.minute) + "_" + str(date.second) + "]"
@@ -16,6 +18,8 @@ class Compass(float, Enum):
 
 
 class Clockwise(Enum):
+    """ Used to understand how the robot has to rotate: to the right or to the left of the robot """
+
     RIGHT = 0
     LEFT = 1
 

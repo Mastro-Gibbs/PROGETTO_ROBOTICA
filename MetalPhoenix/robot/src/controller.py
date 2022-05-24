@@ -159,6 +159,16 @@ class Controller:
         return False
 
     def update_tree(self, actions):
+        """
+         This method is used to update the tree of the maze accordingly to the actions and the current state
+         of the robot.
+         It is called two times in the algorithm cycle, for each call the behaviour of this method changes.
+         First time is called (after the call of the control policy):
+            -the update can be done accordingly to the actions returned by the control policy
+         Second time (after the call of the decision making policy):
+            -the update can be done accordingly to the only action returned by the decision making policy
+         """
+
         """ if not actions:
             print("UPDATE_TREE NO ACTIONS")
             exit(-1)
@@ -171,11 +181,11 @@ class Controller:
             return
 
         if self.mode == Mode.EXPLORING:
-            """Only one action that has been decided by DMP"""
+            """ Only one action that has been decided by DMP """
             if isinstance(actions, Compass):
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
                     self.__class_logger.log("*** 2) UPDATING TREE (MODE EXPLORING) ***", "gray", newline=True)
-
+                """ In this section it is updated the current node of the tree based on the action chosen """
                 action = actions
                 dict_ = f_r_l_b_to_compass(self.orientation)
                 if dict_["FRONT"] == action:
@@ -188,7 +198,11 @@ class Controller:
             else:
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
                     self.__class_logger.log("*** 1) UPDATING TREE (MODE EXPLORING) ***", "gray", newline=True)
-
+                """ 
+                Different actions returned by Control Policy.
+                In this section are added the nodes of the tree based on the available actions, 
+                updating also the current node as EXPLORED 
+                """
                 for action in actions:
                     dict_ = f_r_l_b_to_compass(self.orientation)
                     if dict_["FRONT"] == action:
@@ -214,6 +228,7 @@ class Controller:
 
         elif self.mode == Mode.ESCAPING:
             if isinstance(actions, Compass):
+                """ Only one action that has been decided by DMP """
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
                     self.__class_logger.log("*** 2) UPDATING TREE (MODE ESCAPING) ***", "gray", newline=True)
 
@@ -279,6 +294,10 @@ class Controller:
                     # if the children are all dead end the maze cannot be solved"""
 
     def control_policy(self) -> list:
+        """
+         Accordingly to the values of the sensors, the state of the robot and the tree of the maze
+         it returns a set of actions that the robot can perform but only one of these can be executed effectively
+        """
         global LOGSEVERITY
 
         actions = list()
@@ -389,7 +408,7 @@ class Controller:
         return actions
 
     def decision_making_policy(self, actions: list) -> Compass | None:
-
+        """ Given a set of actions it decides what action the robot has to perform """
         if not actions:
             return None
 
@@ -730,7 +749,9 @@ class Controller:
         return False
 
     def update_cfg(self):
-        """ Updates the values of the config file since it can be modified also during the execution of the algorithm """
+        """
+        Updates the values of the config file since it can be modified also during the execution of the algorithm
+        """
         global OR_MAX_ATTEMPT
         global SAFE_DISTANCE
         global LOGSEVERITY
