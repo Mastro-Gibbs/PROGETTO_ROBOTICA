@@ -1,5 +1,6 @@
 import time
 from math import pi
+import random
 from enum import Enum
 from physical_body import PhysicalBody
 from tools.utility import Logger, Compass, f_r_l_b_to_compass, negate_compass, \
@@ -9,6 +10,7 @@ from tools.tree import Tree, Node, DIRECTION, Type
 OR_MAX_ATTEMPT = CFG.controller_data()["MAX_ATTEMPTS"]
 SAFE_DISTANCE = CFG.controller_data()["SAFE_DIST"]
 LOGSEVERITY = CFG.logger_data()["SEVERITY"]
+INTELLIGENCE = CFG.controller_data()["INTELLIGENCE"]
 
 
 class State(Enum):
@@ -78,6 +80,7 @@ class Controller:
         self.right_values = list()
 
         self.target = 0
+
         self.priority_list = CFG.controller_data()["PRIORITY_LIST"]
 
         self.trajectory = list()
@@ -414,6 +417,13 @@ class Controller:
 
     def decision_making_policy(self, actions: list) -> Compass | None:
         """ Given a set of actions it decides what action the robot has to perform """
+
+        if INTELLIGENCE == "mid" and self._state == State.SENSING:
+            self.priority_list = random.sample(self.priority_list, 4)
+            print(self.priority_list)
+        elif INTELLIGENCE == "high":
+            ...
+
         if not actions:
             return None
 
@@ -496,6 +506,12 @@ class Controller:
             self._state = State.ROTATING
 
             return True
+
+    """ INTELLIGENCE """
+
+    def intelligent_priority_list(self):
+        ...
+        print(self.priority_list)
 
     def rotate_to_final_g(self, vel, final_g):
         """ Rotate function that rotates the robot until it reaches final_g """

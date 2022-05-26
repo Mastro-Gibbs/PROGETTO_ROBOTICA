@@ -16,6 +16,17 @@ class Compass(float, Enum):
     EST = 0.0
     OVEST = 180.0
 
+    def test_and_set(cmp: str):
+
+        if 'NORD' == cmp:
+            return Compass.NORD
+        elif 'SUD' == cmp:
+            return Compass.SUD
+        elif 'EST' == cmp:
+            return Compass.EST
+        elif 'OVEST' == cmp:
+            return Compass.OVEST
+
 
 class Clockwise(Enum):
     """ Used to understand how the robot has to rotate: to the right or to the left of the robot """
@@ -256,13 +267,24 @@ class CFG:
     def controller_data() -> dict:
         psr = configparser.ConfigParser()
         psr.read('../resources/data/config.conf')
+
+        pref = psr["ROBOT"]["priority_list"]
+        pref = pref.split(', ')
+
+        i = 0
+        for elem in pref:
+            pref[i] = Compass.test_and_set(elem)
+            i += 1
+
         return {
             "SPEED": float(psr["ROBOT"]["speed"]),
             "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
             "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
             "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
-            "PRIORITY_LIST": [int(elem) for elem in psr["ROBOT"]["priority_list"].split(", ")]
+            "PRIORITY_LIST": pref,
+            "INTELLIGENCE": psr["ROBOT"]["intelligence"]
         }
+
 
     @staticmethod
     def physical_data() -> dict:
