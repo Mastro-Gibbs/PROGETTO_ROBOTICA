@@ -54,16 +54,15 @@ class Controller:
         self.__class_logger.log("CONTROLLER LAUNCHED", color="green", italic=True)
 
         self._body = PhysicalBody()
+        self._body.stop()
 
         self._state = State.STARTING
         self._position = Position.INITIAL
         self.mode = Mode.EXPLORING
 
-        self._body.stop()
-
         self._speed = CFG.controller_data()["SPEED"]
         self._rot_speed = CFG.controller_data()["ROT_SPEED"]
-
+        
         self._speed_m_on_sec = self._speed * 0.25 / (self._speed // 5)
         # Time it takes to position in the center of a junction
         self.junction_sim_time = 0.25 / self._speed_m_on_sec
@@ -97,7 +96,7 @@ class Controller:
         self.orientation = self._body.get_orientation_deg()
 
     def algorithm(self):
-
+        """ Algorithm used to explore and solve the maze """
         global LOGSEVERITY
 
         self.__class_logger.log(" >>>>>> NEW ALGORITHM CYCLE <<<<<< ", "green", newline=True)
@@ -119,13 +118,13 @@ class Controller:
             self.__class_logger.log(f"--ACTIONS: {actions}")
             self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}")
 
-        # Update tree adding the children if only if the robot is in sensing mode
+        # First Update of the tree
         self.update_tree(actions)
 
         # THINK
         action = self.decision_making_policy(actions)
 
-        # Updating tree setting the current node
+        # Second update of the tree
         self.update_tree(action)
 
         if Logger.is_loggable(LOGSEVERITY, "low"):
@@ -162,12 +161,14 @@ class Controller:
         """
          This method is used to update the tree of the maze accordingly to the actions and the current state
          of the robot.
+         The update is done if only if the robot is in SENSING mode and the actions type must be a Compass
+         or a list of Compass elements.
          It is called two times in the algorithm cycle, for each call the behaviour of this method changes.
          First time is called (after the call of the control policy):
             -the update can be done accordingly to the actions returned by the control policy
          Second time (after the call of the decision making policy):
             -the update can be done accordingly to the only action returned by the decision making policy
-         """
+        """
 
         """ if not actions:
             print("UPDATE_TREE NO ACTIONS")
@@ -233,7 +234,11 @@ class Controller:
                     self.__class_logger.log("*** 2) UPDATING TREE (MODE ESCAPING) ***", "gray", newline=True)
 
                 action = actions
-
+                """ 
+                If the action chosen by DMP is the opposite of the direction of the robot,
+                namely is the opposite of the action that has generated the current node, it means that the robot
+                is in a dead end so the tree must regrees of a node.
+                """
                 if negate_compass(self.tree.current.action) == action:
                     if Logger.is_loggable(LOGSEVERITY, "low"):
                         self.__class_logger.log(" >>>> REGRESSION <<<< ", "yellow", newline=True)
@@ -242,7 +247,10 @@ class Controller:
                     self.tree.regress()
                     return
 
-                # Caso in cui scelgo un OBSERVED e lo metto come corrente
+                """ 
+                This is the case when the action chosen by DMP is an action that brings the robot
+                to an OBSERVED node and this node becomes the current node.
+                """
                 cur = None
                 if self.tree.current.has_left and self.tree.current.left.action == action:
                     cur = self.tree.current.left
@@ -257,9 +265,12 @@ class Controller:
                     exit(-1)
 
                 self.tree.set_current(cur)
-                # print(self.tree.current)
 
             else:
+                """ 
+                In this else branch it is updated the type property of the current node accordingly if
+                the current node is a leaf or has children that are all dead end, otherwise it is not updated 
+                """
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
                     self.__class_logger.log("*** 1) UPDATING TREE (MODE ESCAPING) ***", "gray", newline=True)
                 # print(self.tree.current)
@@ -284,19 +295,13 @@ class Controller:
 
                 else:
                     if Logger.is_loggable(LOGSEVERITY, "low"):
-                        self.__class_logger.log("No DEAD END children, tree'll be updated on next loop", "yellow+",
-                                                italic=True)  # aka warning + debug (?)
-
-                """elif self.tree.current.is_root:
-                    ...
-                    
-
-                    # if the children are all dead end the maze cannot be solved"""
+                        self.__class_logger.log("No DEAD END children, tree will be updated on next loop", "yellow+",
+                                                italic=True)
 
     def control_policy(self) -> list:
         """
-         Accordingly to the values of the sensors, the state of the robot and the tree of the maze
-         it returns a set of actions that the robot can perform but only one of these can be executed effectively
+        Accordingly to the values of the sensors, the state of the robot and the tree of the maze
+        it returns a set of actions that the robot can perform but only one of these can be executed effectively
         """
         global LOGSEVERITY
 
@@ -421,6 +426,10 @@ class Controller:
                     return action
 
     def do_action(self, action):
+        """
+         Accordingly to the action chosen by Decision Making Policy this method translates the action and send
+         a specific command to the PhysicalBody that has to perform, changing also the Robot state
+        """
         global LOGSEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "high"):
@@ -556,8 +565,7 @@ class Controller:
 
             """ 
             Check if there was an unintended move in the opposite direction. 
-            The degrees performed in this case would be > 300
-            The value is not considered (continue)
+            The degrees performed in this case would be > 300 and it is not considered (continue)
             """
 
             if performed_deg_temp > 300:
