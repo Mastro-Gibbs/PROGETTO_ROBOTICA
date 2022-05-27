@@ -1,4 +1,5 @@
 from io import StringIO
+import os
 from enum import Enum
 import configparser
 import datetime
@@ -16,21 +17,49 @@ class Compass(float, Enum):
     EST = 0.0
     OVEST = 180.0
 
-    def test_and_set(cmp: str):
-
-        if 'NORD' == cmp:
+    def string_to_compass(cmp: str):
+        if 'NORD' == cmp or 'N' == cmp:
             return Compass.NORD
-        elif 'SUD' == cmp:
+        elif 'SUD' == cmp or 'S' == cmp:
             return Compass.SUD
-        elif 'EST' == cmp:
+        elif 'EST' == cmp or 'E' == cmp:
             return Compass.EST
-        elif 'OVEST' == cmp:
+        elif 'OVEST' == cmp or 'O' == cmp:
             return Compass.OVEST
+
+    def compass_to_string(cmp):
+        if cmp == Compass.NORD:
+            return "NORD"
+        if cmp == Compass.OVEST:
+            return "OVEST"
+        if cmp == Compass.EST:
+            return "EST"
+        if cmp == Compass.SUD:
+            return "SUD"
+
+    def compass_list_to_string_comma_sep(compass_list):
+        string_list = Compass.compass_to_string(compass_list[0]) + ", " +\
+            Compass.compass_to_string(compass_list[1]) + ", " + \
+            Compass.compass_to_string(compass_list[2]) + ", " + \
+            Compass.compass_to_string(compass_list[3])
+        return string_list
+
+    def compass_list_to_concat_string(compass_list: list) -> str:
+        compass_string = ""
+        for cmp in compass_list:
+            if cmp == Compass.NORD:
+                compass_string += "N"
+            if cmp == Compass.SUD:
+                compass_string += "S"
+            if cmp == Compass.EST:
+                compass_string += "E"
+            if cmp == Compass.OVEST:
+                compass_string += "O"
+        return compass_string
 
 
 class Clockwise(Enum):
     """ Used to understand how the robot has to rotate: to the right or to the left of the robot """
-
     RIGHT = 0
     LEFT = 1
 
@@ -268,12 +297,12 @@ class CFG:
         psr = configparser.ConfigParser()
         psr.read('../resources/data/config.conf')
 
-        pref = psr["ROBOT"]["priority_list"]
-        pref = pref.split(', ')
+        priority_list = psr["ROBOT"]["priority_list"]
+        priority_list = priority_list.split(', ')
 
         i = 0
-        for elem in pref:
-            pref[i] = Compass.test_and_set(elem)
+        for elem in priority_list:
+            priority_list[i] = Compass.string_to_compass(elem)
             i += 1
 
         return {
@@ -281,10 +310,41 @@ class CFG:
             "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
             "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
             "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
-            "PRIORITY_LIST": pref,
+            "PRIORITY_LIST": priority_list,
             "INTELLIGENCE": psr["ROBOT"]["intelligence"]
         }
 
+    @staticmethod
+    def read_data_analysis():
+        ...
+
+    @staticmethod
+    def write_data_analysis(maze_name, time_to_solve, number_of_nodes, number_of_dead_end, priority_list):
+        config = configparser.ConfigParser()
+        path = "../resources/data/"
+        file_name = "data_analysis.conf"
+        conf_file = path + file_name
+
+        # Verifica se data_analysis.conf altrimenti lo crea
+        if os.path.isfile(conf_file):
+            print(f"\nFile {file_name} loaded")
+            config.read(conf_file)
+        else:
+            with open(conf_file, "w") as configfile:
+                config.write(configfile)
+
+        config.add_section(maze_name)
+        config[maze_name] = {
+            "time_to_solve": time_to_solve,
+            "number_of_nodes": number_of_nodes,
+            "number_of_dead_end": number_of_dead_end,
+            "priority_list": priority_list}
+
+        print("\nSezioni del file di config:")
+        print(config.sections())
+
+        with open(conf_file, "w") as configfile:
+            config.write(configfile)
 
     @staticmethod
     def physical_data() -> dict:

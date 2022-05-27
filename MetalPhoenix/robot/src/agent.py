@@ -1,4 +1,5 @@
 from controller import Controller
+import time
 import hashlib
 import builtins
 from tools.utility import Logger, CFG
@@ -21,6 +22,8 @@ def run():
 
     logger.log("AGENT LAUNCHED", "green", italic=True)
 
+    start_time = time.time()
+
     while not GOAL_REACHED:
         GOAL_REACHED = c.algorithm()
 
@@ -31,6 +34,9 @@ def run():
             logger.log("Config file changed", "yellow", italic=True)
             hash_old = hash_
             c.update_cfg()
+
+        end_time = time.time()
+        c.time_to_solve = end_time - start_time
 
 
 def stop():

@@ -8,9 +8,6 @@ This python file contains two class:
 To better understand how a node is generated it is advisable to read the documentation and how the algorithm works
 """
 
-NODE_ID = "n"
-NODE_COUNT = 0
-
 
 class TreeException(Exception):
     pass
@@ -29,7 +26,7 @@ OBSERVED:
 1) A node is OBSERVED when it is first added and not explored yet.
 EXPLORED:
 1) A node is EXPLORED when it is first visited.
-2) It can have DEAD END children but at least one must be EXPLORED or VISITED.
+2) It can have DEAD END children but at least one must be EXPLORED namely visited.
 DEAD END:
 1) A node is dead end if it has not children => it is a leaf.
 2) If all his children are dead end.
@@ -139,6 +136,7 @@ class Node:
 class Tree:
     def __init__(self):
         self.__root: Node = Node(name="root")
+        self.number_of_nodes = 1
         # self.__root.set_type(Type.EXPLORED)
         self.__current: Node = self.__root
         self.__T = {self.__root.name: {}}
@@ -179,9 +177,8 @@ class Tree:
         self.__current = node
 
     def generate_node_id(self) -> str:
-        global NODE_COUNT
-        NODE_COUNT += 1
-        return NODE_ID + str(NODE_COUNT)
+        self.number_of_nodes += 1
+        return "n" + str(self.number_of_nodes)
 
     @property
     def current(self) -> Node:

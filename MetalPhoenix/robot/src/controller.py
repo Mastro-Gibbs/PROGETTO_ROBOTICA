@@ -39,6 +39,7 @@ class Mode(Enum):
     EXPLORING = 0
     ESCAPING = 1
 
+
 """
 ESCAPING
 Tornare indietro quando c'è un dead end. Navigo a ritroso e verifico se i figli del nodo corrente sono nodi OBSERVED 
@@ -64,7 +65,7 @@ class Controller:
 
         self._speed = CFG.controller_data()["SPEED"]
         self._rot_speed = CFG.controller_data()["ROT_SPEED"]
-        
+
         self._speed_m_on_sec = self._speed * 0.25 / (self._speed // 5)
         # Time it takes to position in the center of a junction
         self.junction_sim_time = 0.25 / self._speed_m_on_sec
@@ -88,9 +89,24 @@ class Controller:
         self.prev_action = None
         self.tree = Tree()
 
+        """ DATA ANALYSIS """
+        self.priority_list_data = self.priority_list
+        self.maze_name = "Maze" + "_" + "2" + "_" + Compass.compass_list_to_concat_string(self.priority_list_data)
+        self.time_to_solve = 0  # solving time
+        self.number_of_nodes = 0
+        self.number_of_dead_end = 0
+
     def virtual_destructor(self):
         self._body.virtual_destructor()
         self.__class_logger.log("CONTROLLER STOPPED", "green", italic=True)
+
+    def write_data_analysis(self):
+        priority_list = Compass.compass_list_to_string_comma_sep(self.priority_list_data)
+        CFG.write_data_analysis(self.maze_name,
+                                self.time_to_solve,
+                                self.number_of_nodes,
+                                self.number_of_dead_end,
+                                priority_list)
 
     def read_sensors(self):
         self.left_value = self._body.get_proxL()
@@ -160,13 +176,8 @@ class Controller:
         """
          This method is used to update the tree of the maze accordingly to the actions and the current state
          of the robot.
-         The update is done if only if the robot is in SENSING mode and the actions type must be a Compass
-         or a list of Compass elements.
-         It is called two times in the algorithm cycle, for each call the behaviour of this method changes.
-         First time is called (after the call of the control policy):
-            -the update can be done accordingly to the actions returned by the control policy
-         Second time (after the call of the decision making policy):
-            -the update can be done accordingly to the only action returned by the decision making policy
+         The update is done if only if the robot is in SENSING mode and the actions and action_chosen type must be a Compass
+         or a list of Compass elements respectively.
         """
 
         """ if not actions:
@@ -195,18 +206,21 @@ class Controller:
                     node = Node("M_" + self.tree.generate_node_id(), action)
                     self.tree.append(node, DIRECTION.MID)
                     self.tree.regress()
+                    self.number_of_nodes += 1
                     if Logger.is_loggable(LOGSEVERITY, "mid"):
                         self.__class_logger.log("ADDED MID", "dkgreen")
                 if dict_["LEFT"] == action:
                     node = Node("L_" + self.tree.generate_node_id(), action)
                     self.tree.append(node, DIRECTION.LEFT)
                     self.tree.regress()
+                    self.number_of_nodes += 1
                     if Logger.is_loggable(LOGSEVERITY, "mid"):
                         self.__class_logger.log("ADDED LEFT", "dkgreen")
                 if dict_["RIGHT"] == action:
                     node = Node("R_" + self.tree.generate_node_id(), action)
                     self.tree.append(node, DIRECTION.RIGHT)
                     self.tree.regress()
+                    self.number_of_nodes += 1
                     if Logger.is_loggable(LOGSEVERITY, "mid"):
                         self.__class_logger.log("ADDED RIGHT", "dkgreen")
 
@@ -238,6 +252,7 @@ class Controller:
             # The node is a leaf
             if self.tree.current.is_leaf:
                 self.tree.current.set_type(Type.DEAD_END)
+                self.number_of_dead_end += 1
                 if Logger.is_loggable(LOGSEVERITY, "low"):
                     self.__class_logger.log("*** DEAD END NODE DETECTED ***", "green")
                     self.__class_logger.log(" >>>> REGRESSION <<<< ", "yellow", newline=True)
@@ -254,7 +269,7 @@ class Controller:
                     ((self.tree.current.has_mid and self.tree.current.mid.type == Type.DEAD_END)
                      or self.tree.current.mid is None):
                 self.tree.current.set_type(Type.DEAD_END)
-
+                self.number_of_dead_end += 1
                 if Logger.is_loggable(LOGSEVERITY, "low"):
                     self.__class_logger.log("*** ALL CHILDREN ARE DEAD END NODES ***", "green")
                     self.__class_logger.log(" >>>> REGRESSION <<<< ", "yellow", newline=True)
@@ -300,8 +315,8 @@ class Controller:
         ori = self.orientation
 
         # Sto in RUNNING e l'albero non viene aggiornato
-        if self.mode == Mode.ESCAPING and self.tree.current.type == Type.OBSERVED:
-            self.mode = Mode.EXPLORING
+        """if self.mode == Mode.ESCAPING and self.tree.current.type == Type.OBSERVED:
+            self.mode = Mode.EXPLORING"""
 
         if self._state == State.STARTING and self._position == Position.INITIAL:
             if left is not None and right is not None:
@@ -354,6 +369,7 @@ class Controller:
                     action = self.tree.current.right.action
                     actions.insert(0, action)
 
+                """ 
                 # If there are no OBSERVED nodes
                 if not actions:
                     if self.tree.current.left is not None and self.tree.current.left.type == Type.EXPLORED:
@@ -365,8 +381,9 @@ class Controller:
                     if self.tree.current.right is not None and self.tree.current.right.type == Type.EXPLORED:
                         action = self.tree.current.right.action
                         actions.insert(0, action)
+                """
 
-                # Se non ci sono EXPLORED tornare indietro
+                # Coming back, regressing
                 if not actions:
                     action = negate_compass(self.tree.current.action)
                     actions.insert(0, action)
@@ -376,11 +393,16 @@ class Controller:
                         self.__class_logger.log("NO OBSERVED NO EXPLORED NO ACTIONS", "dkred", True, True)
                         self.__class_logger.log(" >>>>  EXITING  <<<< ", "dkred", italic=True)
                     exit(-1)
-                else:
-                    ...
-                    # self.mode = Mode.EXPLORING
 
         elif self._state == State.RUNNING:
+
+            # Switch da ESCAPING A EXPLORING, messo qui perché se sto in RUNNING l'albero non viene aggiornato
+            # in update_tree (per aggiornarlo lo stato deve essere in SENSING).
+            # Evito così che vengano aggiunti dei nodi duplicati non voluti.
+
+            if self.mode == Mode.ESCAPING and self.tree.current.type == Type.OBSERVED:
+                self.mode = Mode.EXPLORING
+
             if self._position == Position.CORRIDOR:
                 if left is None or right is None:
                     actions.insert(0, Command.GO_TO_JUNCTION)
@@ -739,7 +761,6 @@ class Controller:
         global LOGSEVERITY
 
         if self._body.get_gate():
-
             self.tree.current.set_type(Type.FINAL)
             self.__class_logger.log(" :D SO HAPPY :D ", "green", True, True)
             self.__class_logger.log(" >> MAZE SOLVED << ", "green", italic=True)
@@ -771,4 +792,3 @@ class Controller:
         LOGSEVERITY = CFG.logger_data()["SEVERITY"]
 
         PhysicalBody.update_cfg()
-
