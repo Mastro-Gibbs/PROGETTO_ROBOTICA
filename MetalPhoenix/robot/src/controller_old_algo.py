@@ -115,16 +115,20 @@ class Controller:
 
         # THINK
         actions = self.control_policy()
-        action = self.decision_making_policy(actions)
 
         if Logger.is_loggable(LOGSEVERITY, "low"):
             self.__class_logger.log(f"--MODE: {self.mode}")
             self.__class_logger.log(f"--ACTIONS: {actions}")
-            self.__class_logger.log(f"--ACTION: {action}")
             self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}")
 
-        # Update of the tree
-        self.update_tree(actions, action)
+        # First Update of the tree
+        self.update_tree(actions)
+
+        # THINK
+        action = self.decision_making_policy(actions)
+
+        # Second update of the tree
+        self.update_tree(action)
 
         if Logger.is_loggable(LOGSEVERITY, "low"):
             self.__class_logger.log("--CURRENT TREE:", "gray")
@@ -156,7 +160,7 @@ class Controller:
 
         return False
 
-    def update_tree(self, actions, action_chosen):
+    def update_tree(self, actions):
         """
          This method is used to update the tree of the maze accordingly to the actions and the current state
          of the robot.
@@ -177,105 +181,85 @@ class Controller:
 
         if not self._state == State.SENSING:
             return
-        if isinstance(action_chosen, Command):
+        if isinstance(actions, Command):
             return
 
         if self.mode == Mode.EXPLORING:
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log("*** UPDATING TREE (MODE EXPLORING) ***", "gray", newline=True)
-
-            """ 
-            Different actions returned by Control Policy.
-            In this section are added the nodes of the tree based on the available actions, 
-            updating also the current node as EXPLORED 
-            """
-            for action in actions:
+            """ Only one action that has been decided by DMP """
+            if isinstance(actions, Compass):
+                if Logger.is_loggable(LOGSEVERITY, "mid"):
+                    self.__class_logger.log("*** 2) UPDATING TREE (MODE EXPLORING) ***", "gray", newline=True)
+                """ In this section it is updated the current node of the tree based on the action chosen """
+                action = actions
                 dict_ = f_r_l_b_to_compass(self.orientation)
                 if dict_["FRONT"] == action:
-                    node = Node("M_" + self.tree.generate_node_id(), action)
-                    self.tree.append(node, DIRECTION.MID)
-                    self.tree.regress()
-                    if Logger.is_loggable(LOGSEVERITY, "mid"):
-                        self.__class_logger.log("ADDED MID", "dkgreen")
-                if dict_["LEFT"] == action:
-                    node = Node("L_" + self.tree.generate_node_id(), action)
-                    self.tree.append(node, DIRECTION.LEFT)
-                    self.tree.regress()
-                    if Logger.is_loggable(LOGSEVERITY, "mid"):
-                        self.__class_logger.log("ADDED LEFT", "dkgreen")
-                if dict_["RIGHT"] == action:
-                    node = Node("R_" + self.tree.generate_node_id(), action)
-                    self.tree.append(node, DIRECTION.RIGHT)
-                    self.tree.regress()
-                    if Logger.is_loggable(LOGSEVERITY, "mid"):
-                        self.__class_logger.log("ADDED RIGHT", "dkgreen")
-
-            self.tree.current.set_type(Type.EXPLORED)
-
-            """ 
-            Only one action that has been decided by DMP. 
-            In this section it is updated the current node of the tree based on the action chosen 
-            """
-            dict_ = f_r_l_b_to_compass(self.orientation)
-            if dict_["FRONT"] == action_chosen:
-                self.tree.set_current(self.tree.current.mid)
-            elif dict_["LEFT"] == action_chosen:
-                self.tree.set_current(self.tree.current.left)
-            elif dict_["RIGHT"] == action_chosen:
-                self.tree.set_current(self.tree.current.right)
-
-        elif self.mode == Mode.ESCAPING:
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log("*** UPDATING TREE (MODE ESCAPING) ***", "gray", newline=True)
-
-            """ 
-            In this section it is updated the type property of the current node accordingly if
-            the current node is a leaf or has children that are all dead end, otherwise it is updated the current node
-            """
-
-            cur = None
-
-            # The node is a leaf
-            if self.tree.current.is_leaf:
-                self.tree.current.set_type(Type.DEAD_END)
-                if Logger.is_loggable(LOGSEVERITY, "low"):
-                    self.__class_logger.log("*** DEAD END NODE DETECTED ***", "green")
-                    self.__class_logger.log(" >>>> REGRESSION <<<< ", "yellow", newline=True)
-                    self.__class_logger.log(f" --CURRENT NODE: {self.tree.current}", "yellow")
-                    self.__class_logger.log(f" --PARENT NODE: {self.tree.current.parent}", "yellow")
-
-                cur = self.tree.current.parent
-
-            # The children are all DEAD END
-            elif ((self.tree.current.has_left and self.tree.current.left.type == Type.DEAD_END) or
-                  self.tree.current.left is None) and \
-                    ((self.tree.current.has_right and self.tree.current.right.type == Type.DEAD_END)
-                     or self.tree.current.right is None) and \
-                    ((self.tree.current.has_mid and self.tree.current.mid.type == Type.DEAD_END)
-                     or self.tree.current.mid is None):
-                self.tree.current.set_type(Type.DEAD_END)
-
-                if Logger.is_loggable(LOGSEVERITY, "low"):
-                    self.__class_logger.log("*** ALL CHILDREN ARE DEAD END NODES ***", "green")
-                    self.__class_logger.log(" >>>> REGRESSION <<<< ", "yellow", newline=True)
-                    self.__class_logger.log(f" --CURRENT NODE: {self.tree.current}", "yellow")
-                    self.__class_logger.log(f" --PARENT NODE: {self.tree.current.parent}", "yellow")
-
-                cur = self.tree.current.parent
+                    self.tree.set_current(self.tree.current.mid)
+                elif dict_["LEFT"] == action:
+                    self.tree.set_current(self.tree.current.left)
+                elif dict_["RIGHT"] == action:
+                    self.tree.set_current(self.tree.current.right)
 
             else:
+                if Logger.is_loggable(LOGSEVERITY, "mid"):
+                    self.__class_logger.log("*** 1) UPDATING TREE (MODE EXPLORING) ***", "gray", newline=True)
+                """ 
+                Different actions returned by Control Policy.
+                In this section are added the nodes of the tree based on the available actions, 
+                updating also the current node as EXPLORED 
+                """
+                for action in actions:
+                    dict_ = f_r_l_b_to_compass(self.orientation)
+                    if dict_["FRONT"] == action:
+                        node = Node("M_" + self.tree.generate_node_id(), action)
+                        self.tree.append(node, DIRECTION.MID)
+                        self.tree.regress()
+                        if Logger.is_loggable(LOGSEVERITY, "mid"):
+                            self.__class_logger.log("ADDED MID", "dkgreen")
+                    if dict_["LEFT"] == action:
+                        node = Node("L_" + self.tree.generate_node_id(), action)
+                        self.tree.append(node, DIRECTION.LEFT)
+                        self.tree.regress()
+                        if Logger.is_loggable(LOGSEVERITY, "mid"):
+                            self.__class_logger.log("ADDED LEFT", "dkgreen")
+                    if dict_["RIGHT"] == action:
+                        node = Node("R_" + self.tree.generate_node_id(), action)
+                        self.tree.append(node, DIRECTION.RIGHT)
+                        self.tree.regress()
+                        if Logger.is_loggable(LOGSEVERITY, "mid"):
+                            self.__class_logger.log("ADDED RIGHT", "dkgreen")
+
+                self.tree.current.set_type(Type.EXPLORED)
+
+        elif self.mode == Mode.ESCAPING:
+            if isinstance(actions, Compass):
+                """ Only one action that has been decided by DMP """
+                if Logger.is_loggable(LOGSEVERITY, "mid"):
+                    self.__class_logger.log("*** 2) UPDATING TREE (MODE ESCAPING) ***", "gray", newline=True)
+
+                action = actions
+                """ 
+                If the action chosen by DMP is the opposite of the direction of the robot,
+                namely is the opposite of the action that has generated the current node, it means that the robot
+                is in a dead end so the tree must regrees of a node.
+                """
+                if negate_compass(self.tree.current.action) == action:
+                    if Logger.is_loggable(LOGSEVERITY, "low"):
+                        self.__class_logger.log(" >>>> REGRESSION <<<< ", "yellow", newline=True)
+                        self.__class_logger.log(f" --CURRENT NODE: {self.tree.current}", "yellow")
+
+                    self.tree.regress()
+                    return
+
                 """ 
                 This is the case when the action chosen by DMP is an action that brings the robot
                 to an OBSERVED node and this node becomes the current node.
                 """
-                if Logger.is_loggable(LOGSEVERITY, "low"):
-                    self.__class_logger.log("No leaf or DEAD END children", "yellow+", italic=True)
-
-                if self.tree.current.has_left and self.tree.current.left.action == action_chosen:
+                cur = None
+                if self.tree.current.has_left and self.tree.current.left.action == action:
                     cur = self.tree.current.left
-                elif self.tree.current.has_mid and self.tree.current.mid.action == action_chosen:
+                elif self.tree.current.has_mid and self.tree.current.mid.action == action:
                     cur = self.tree.current.mid
-                elif self.tree.current.has_right and self.tree.current.right.action == action_chosen:
+                elif self.tree.current.has_right and self.tree.current.right.action == action:
                     cur = self.tree.current.right
                 else:
                     if Logger.is_loggable(LOGSEVERITY, "low"):
@@ -283,7 +267,39 @@ class Controller:
                         self.__class_logger.log(" >>>>  EXITING  <<<< ", "red", italic=True)
                     exit(-1)
 
-            self.tree.set_current(cur)
+                self.tree.set_current(cur)
+
+            else:
+                """ 
+                In this else branch it is updated the type property of the current node accordingly if
+                the current node is a leaf or has children that are all dead end, otherwise it is not updated 
+                """
+                if Logger.is_loggable(LOGSEVERITY, "mid"):
+                    self.__class_logger.log("*** 1) UPDATING TREE (MODE ESCAPING) ***", "gray", newline=True)
+                # print(self.tree.current)
+
+                # The node is a leaf
+                if self.tree.current.is_leaf:
+                    self.tree.current.set_type(Type.DEAD_END)
+                    if Logger.is_loggable(LOGSEVERITY, "low"):
+                        self.__class_logger.log("*** DEAD END NODE DETECTED ***", "green")
+
+                # The children are all DEAD END
+                elif ((self.tree.current.has_left and self.tree.current.left.type == Type.DEAD_END) or
+                      self.tree.current.left is None) and \
+                        ((self.tree.current.has_right and self.tree.current.right.type == Type.DEAD_END)
+                         or self.tree.current.right is None) and \
+                        ((self.tree.current.has_mid and self.tree.current.mid.type == Type.DEAD_END)
+                         or self.tree.current.mid is None):
+                    self.tree.current.set_type(Type.DEAD_END)
+
+                    if Logger.is_loggable(LOGSEVERITY, "low"):
+                        self.__class_logger.log("*** ALL CHILDREN ARE DEAD END NODE ***", "green")
+
+                else:
+                    if Logger.is_loggable(LOGSEVERITY, "low"):
+                        self.__class_logger.log("No DEAD END children, tree will be updated on next loop", "yellow+",
+                                                italic=True)
 
     def control_policy(self) -> list:
         """
@@ -771,4 +787,5 @@ class Controller:
         LOGSEVERITY = CFG.logger_data()["SEVERITY"]
 
         PhysicalBody.update_cfg()
+
 
