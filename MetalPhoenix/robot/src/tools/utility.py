@@ -319,7 +319,7 @@ class CFG:
         ...
 
     @staticmethod
-    def write_data_analysis(maze_name, time_to_solve, number_of_nodes, number_of_dead_end, priority_list):
+    def write_data_analysis(maze_name, time_to_solve, number_of_nodes, number_of_dead_end, intelligence, priority_list):
         config = configparser.ConfigParser()
         path = "../resources/data/"
         file_name = "data_analysis.conf"
@@ -333,11 +333,21 @@ class CFG:
             with open(conf_file, "w") as configfile:
                 config.write(configfile)
 
-        config.add_section(maze_name)
-        config[maze_name] = {
-            "time_to_solve": time_to_solve,
+        new_section_name_found = False
+        trial = 0
+        while not new_section_name_found:
+            section_name = maze_name + "_" + str(trial)
+            if section_name in config:
+                trial += 1
+            else:
+                new_section_name_found = True
+
+        config.add_section(section_name)
+        config[section_name] = {
+            "time_to_solve_sec": time_to_solve,
             "number_of_nodes": number_of_nodes,
             "number_of_dead_end": number_of_dead_end,
+            "intelligence": intelligence,
             "priority_list": priority_list}
 
         print("\nSezioni del file di config:")

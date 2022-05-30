@@ -3,6 +3,7 @@ import agent
 
 try:
     agent.run()
+    agent.c.write_data_analysis()
 
 except KeyboardInterrupt:
     print()
@@ -12,7 +13,7 @@ except KeyboardInterrupt:
     print("TIME: ", agent.c.time_to_solve)
     print("Number of nodes", agent.c.number_of_nodes)
     print("Number of dead end", agent.c.number_of_dead_end)
-    print("Priority list", agent.c.priority_list_data)
+    print("Priority list", agent.c.priority_list)
     agent.c.write_data_analysis()
     print()
 

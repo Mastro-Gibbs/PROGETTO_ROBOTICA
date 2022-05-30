@@ -90,8 +90,9 @@ class Controller:
         self.tree = Tree()
 
         """ DATA ANALYSIS """
-        self.priority_list_data = self.priority_list
-        self.maze_name = "Maze" + "_" + "2" + "_" + Compass.compass_list_to_concat_string(self.priority_list_data)
+        maze_number = 1  # Each maze must have a number to be identified, change this number if the maze changes
+        self.maze_name = "Maze" + "_" + str(maze_number) + "_" + Compass.compass_list_to_concat_string(
+            self.priority_list)
         self.time_to_solve = 0  # solving time
         self.number_of_nodes = 0
         self.number_of_dead_end = 0
@@ -101,12 +102,13 @@ class Controller:
         self.__class_logger.log("CONTROLLER STOPPED", "green", italic=True)
 
     def write_data_analysis(self):
-        priority_list = Compass.compass_list_to_string_comma_sep(self.priority_list_data)
+        priority_list = Compass.compass_list_to_string_comma_sep(self.priority_list)
         CFG.write_data_analysis(self.maze_name,
                                 self.time_to_solve,
                                 self.number_of_nodes,
                                 self.number_of_dead_end,
-                                priority_list)
+                                INTELLIGENCE,
+                                priority_list if INTELLIGENCE == "low" else "variable")
 
     def read_sensors(self):
         self.left_value = self._body.get_proxL()
