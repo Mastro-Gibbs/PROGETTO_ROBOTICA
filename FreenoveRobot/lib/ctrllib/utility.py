@@ -243,7 +243,7 @@ class CFG:
 
         i = 0
         for elem in pref:
-            pref[i] = Compass.test_and_set(elem)
+            pref[i] = Compass.string_to_compass(elem)
             i += 1
 
         return {

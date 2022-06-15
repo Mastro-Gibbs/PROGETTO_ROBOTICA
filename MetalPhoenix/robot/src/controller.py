@@ -90,11 +90,11 @@ class Controller:
         self.tree = Tree()
 
         """ DATA ANALYSIS """
-        maze_number = 1  # Each maze must have a number to be identified, change this number if the maze changes
-        self.maze_name = "Maze" + "_" + str(maze_number) + "_" + Compass.compass_list_to_concat_string(
+        self.maze_number = 1  # Each maze must have a number to be identified, change this number if the maze changes
+        self.maze_name = "Maze" + "_" + str(self.maze_number) + "_" + Compass.compass_list_to_concat_string(
             self.priority_list)
         self.time_to_solve = 0  # solving time
-        self.number_of_nodes = 0
+        self.number_of_nodes = 1
         self.number_of_dead_end = 0
 
     def virtual_destructor(self):
