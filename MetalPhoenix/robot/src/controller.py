@@ -22,7 +22,7 @@ class State(Enum):
 
 
 class Position(Enum):
-    INITIAL = 0
+    INITIAL = 0  # or UNKNOWN
     CORRIDOR = 1
     JUNCTION = 2
 
@@ -195,7 +195,7 @@ class Controller:
 
         if self.mode == Mode.EXPLORING:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log("*** UPDATING TREE (MODE EXPLORING) ***", "gray", newline=True)
+                self.__class_logger.log("*** UPDATING TREE (MODE: EXPLORING) ***", "gray", newline=True)
 
             """ 
             Different actions returned by Control Policy.
@@ -242,7 +242,7 @@ class Controller:
 
         elif self.mode == Mode.ESCAPING:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log("*** UPDATING TREE (MODE ESCAPING) ***", "gray", newline=True)
+                self.__class_logger.log("*** UPDATING TREE (MODE: ESCAPING) ***", "gray", newline=True)
 
             """ 
             In this section it is updated the type property of the current node accordingly if
@@ -304,7 +304,7 @@ class Controller:
 
     def control_policy(self) -> list:
         """
-        Accordingly to the values of the sensors, the state of the robot and the tree of the maze
+        Accordingly to the values of the sensors, the state of the robot and the tree of the maze,
         it returns a set of actions that the robot can perform but only one of these can be executed effectively
         """
         global LOGSEVERITY
