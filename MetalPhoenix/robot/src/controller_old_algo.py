@@ -7,10 +7,10 @@ from tools.utility import Logger, Compass, f_r_l_b_to_compass, negate_compass, \
     normalize_angle, round_v, Clockwise, detect_target, CFG
 from tools.tree import Tree, Node, DIRECTION, Type
 
-OR_MAX_ATTEMPT = CFG.controller_data()["MAX_ATTEMPTS"]
-SAFE_DISTANCE = CFG.controller_data()["SAFE_DIST"]
+OR_MAX_ATTEMPT = CFG.robot_conf_data()["MAX_ATTEMPTS"]
+SAFE_DISTANCE = CFG.robot_conf_data()["SAFE_DIST"]
 LOGSEVERITY = CFG.logger_data()["SEVERITY"]
-INTELLIGENCE = CFG.controller_data()["INTELLIGENCE"]
+INTELLIGENCE = CFG.robot_conf_data()["INTELLIGENCE"]
 
 
 class State(Enum):
@@ -62,8 +62,8 @@ class Controller:
         self._position = Position.INITIAL
         self.mode = Mode.EXPLORING
 
-        self._speed = CFG.controller_data()["SPEED"]
-        self._rot_speed = CFG.controller_data()["ROT_SPEED"]
+        self._speed = CFG.robot_conf_data()["SPEED"]
+        self._rot_speed = CFG.robot_conf_data()["ROT_SPEED"]
         
         self._speed_m_on_sec = self._speed * 0.25 / (self._speed // 5)
         # Time it takes to position in the center of a junction
@@ -81,7 +81,7 @@ class Controller:
 
         self.target = 0
 
-        self.priority_list = CFG.controller_data()["PRIORITY_LIST"]
+        self.priority_list = CFG.robot_conf_data()["PRIORITY_LIST"]
 
         self.trajectory = list()
         self.performed_commands = list()
@@ -780,10 +780,10 @@ class Controller:
         global SAFE_DISTANCE
         global LOGSEVERITY
 
-        self._speed = CFG.controller_data()["SPEED"]
-        self._rot_speed = CFG.controller_data()["ROT_SPEED"]
-        OR_MAX_ATTEMPT = CFG.controller_data()["MAX_ATTEMPTS"]
-        SAFE_DISTANCE = CFG.controller_data()["SAFE_DIST"]
+        self._speed = CFG.robot_conf_data()["SPEED"]
+        self._rot_speed = CFG.robot_conf_data()["ROT_SPEED"]
+        OR_MAX_ATTEMPT = CFG.robot_conf_data()["MAX_ATTEMPTS"]
+        SAFE_DISTANCE = CFG.robot_conf_data()["SAFE_DIST"]
         LOGSEVERITY = CFG.logger_data()["SEVERITY"]
 
         PhysicalBody.update_cfg()

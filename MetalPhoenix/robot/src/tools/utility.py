@@ -293,7 +293,7 @@ class CFG:
         ...
 
     @staticmethod
-    def controller_data() -> dict:
+    def robot_conf_data() -> dict:
         psr = configparser.ConfigParser()
         psr.read('../resources/data/config.conf')
 
@@ -325,7 +325,7 @@ class CFG:
         file_name = "data_analysis.conf"
         conf_file = path + file_name
 
-        # Verifica se data_analysis.conf altrimenti lo crea
+        # Verifica se data_analysis.conf esiste altrimenti lo crea
         if os.path.isfile(conf_file):
             print(f"\nFile {file_name} loaded")
             config.read(conf_file)
