@@ -5,18 +5,12 @@
 1°) Intelligenza
 
 2°) reformat code
-    Commmentare:
-    coppelia.py
-    agent.py
-    controller.py (da finire)
+    command rotate
+    redis (virtual)
+
 8°) documentation
 
 9°) slide
-
-
-TO DO:
-1) Gestire meglio comandi per la ROTAZIONE
-
 
 ########################################################################################################################
 

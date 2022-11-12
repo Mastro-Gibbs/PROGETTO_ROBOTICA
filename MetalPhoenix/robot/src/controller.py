@@ -105,10 +105,14 @@ class Controller:
         priority_list = Compass.compass_list_to_string_comma_sep(self.priority_list)
         CFG.write_data_analysis(self.maze_name,
                                 self.time_to_solve,
+                                self.tree.build_tree_dict(),
                                 self.number_of_nodes,
                                 self.number_of_dead_end,
+                                self.performed_commands,
+                                self.trajectory,
                                 INTELLIGENCE,
-                                priority_list if INTELLIGENCE == "low" else "variable")
+                                priority_list if INTELLIGENCE == "low" else "variable"
+                                )
 
     def read_sensors(self):
         self.left_value = self._body.get_proxL()
