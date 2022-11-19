@@ -19,7 +19,6 @@ struct
   {
     int pot_val;
     int old_pot_val;
-    int serialClock;
   } Potentiometer;
 
   const int UPPER = D1;
@@ -42,7 +41,7 @@ struct
   byte first_p;
   byte second_p;
   byte third_p;
-  
+
 } LedGroup;
 
 
@@ -78,7 +77,6 @@ void init_Keys()
 
   Key.Potentiometer.pot_val = 0;
   Key.Potentiometer.old_pot_val = 0;
-  Key.Potentiometer.serialClock = 0;
 }
 
 void init_LedGroup()
@@ -96,7 +94,7 @@ void init_LedGroup()
 
 
 void setup()
-{  
+{
   Serial.begin(9600);
   //Serial.println();
 
@@ -112,7 +110,7 @@ void setup()
   pinMode(LedGroup.LED_THIRD_IP,  OUTPUT);
 
   delay(1000);
-  
+
   WiFi.mode(WIFI_AP);
   WiFi.softAP(ssid, pass);
   //Serial.println("AP started");
@@ -137,63 +135,59 @@ void loop()
   Key.keys[2].pressed = digitalRead(Key.LOWER) ? 0:1;
   Key.keys[3].pressed = digitalRead(Key.RIGHT) ? 0:1;
   Key.keys[4].pressed = digitalRead(Key.MODE)  ? 0:1;
-  
-  if (Key.Potentiometer.serialClock == 10000) 
-  {
-    Key.Potentiometer.pot_val = (((analogRead(Key.POT) * 3495) / 1024) / 50) * 50;
-    Key.Potentiometer.serialClock = 0;
-  } 
-  else 
-    Key.Potentiometer.serialClock++;
 
-  detectCommand();   
+  Key.Potentiometer.pot_val = (((analogRead(Key.POT) * 3495) / 1024) / 50) * 50;
+
+  detectCommand();
 }
 
 
 void detectCommand()
 {
-  uint8_t currState = 0, oldState = 0, cmd;
+  uint8_t* currState;
+  uint8_t* oldState;
+  uint8_t* cmd;
+
   for (uint8_t i = 0; i < 5; i++)
   {
-    currState = Key.keys[i].pressed;
-    oldState  = Key.keys[i].old;
-    cmd       = Key.keys[i].cmd;
-    
-    if (currState == 1 && currState != oldState)
+    currState = &Key.keys[i].pressed;
+    oldState  = &Key.keys[i].old;
+    cmd       = &Key.keys[i].cmd;
+
+    if (*currState == 1 && *currState != *oldState)
     {
-      if (cmd == 'w')
+      switch (*cmd)
       {
-        myBroker.publish("CMD", "FORWARD");
-        Serial.println("FORWARD");
+        case 'w':
+          myBroker.publish("CMD", "FORWARD");
+          Serial.println("FORWARD");
+          break;
+        case 's':
+          myBroker.publish("CMD", "BACKWARD");
+          Serial.println("BACKWARD");
+          break;
+        case 'a':
+          myBroker.publish("CMD", "LEFT");
+          Serial.println("LEFT");
+          break;
+        case 'd':
+          myBroker.publish("CMD", "RIGHT");
+          Serial.println("RIGHT");
+          break;
+        case 'm':
+          myBroker.publish("CMD", "DONE");
+          Serial.println("DONE");
+          break;
       }
-      else if (cmd == 's')
-      {
-        myBroker.publish("CMD", "BACKWARD");
-        Serial.println("BACKWARD");
-      }
-      else if (cmd == 'a')
-      {
-        myBroker.publish("CMD", "LEFT");
-        Serial.println("LEFT");
-      }
-      else if (cmd == 'd')
-      {
-        myBroker.publish("CMD", "RIGHT");
-        Serial.println("RIGHT");
-      }
-      else if (cmd == 'm')
-      {
-        myBroker.publish("CMD", "DONE");
-        Serial.println("DONE");
-      } 
-      Key.keys[i].old = currState;
+
+      Key.keys[i].old = *currState;
     }
-    else if (currState == 0 && currState != oldState)
+    else if (*currState == 0 && *currState != *oldState)
     {
       myBroker.publish("CMD", "STOP");
-      Key.keys[i].old = currState;
-
       Serial.println("STOP");
+
+      Key.keys[i].old = *currState;
     }
   }
 
@@ -205,13 +199,13 @@ void detectCommand()
     Serial.println((String)(Key.Potentiometer.pot_val + 600));
   }
 
-  delay(10);
-  
+  delay(20);
+
 }
 
 
 void toogle_led(const String ip)
-{  
+{
    if (ip.equalsIgnoreCase("192.168.4.1"))
    {
       LedGroup.self_p == 0 ? digitalWrite(LedGroup.LED_SELF_IP, HIGH) : digitalWrite(LedGroup.LED_SELF_IP, LOW);
@@ -232,5 +226,4 @@ void toogle_led(const String ip)
       LedGroup.third_p == 0 ? digitalWrite(LedGroup.LED_THIRD_IP, HIGH) : digitalWrite(LedGroup.LED_THIRD_IP, LOW);
       LedGroup.third_p = !LedGroup.third_p;
    }
-   
 }
