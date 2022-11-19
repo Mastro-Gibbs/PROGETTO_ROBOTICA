@@ -335,6 +335,7 @@ class CFG:
             with open(conf_file, "w") as configfile:
                 config.write(configfile)
 
+        section_name = ""
         new_section_name_found = False
         trial = 0
         while not new_section_name_found:

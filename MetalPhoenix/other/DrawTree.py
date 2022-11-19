@@ -25,32 +25,35 @@ if os.path.isfile(conf_file):
     config.read(conf_file)
 else:
     print("Error: file " + conf_file + " not found")
+    SystemError()
 
-"""
-print("Sections:")
-print(config.sections())
-print()
-"""
+
+i = 1
 
 # Print the trees of the all sections of the configuration file "data_analysis.conf"
 for section in config.sections():
+    
+    print("Plotting " + str(i) + "°" + " tree...")
+    print("Info: " + section)
     tree_dict = config[section]["tree_dict"]
     tree_dict = ast.literal_eval(tree_dict)
     
-    T1 = networkx.DiGraph(tree_dict)    
+    T1 = networkx.DiGraph(tree_dict)
     pos = graphviz_layout(T1, prog="dot")
     plt.figure(figsize=(35, 35))
     networkx.draw(T1, pos, with_labels=True, node_size=450, font_size=8)
-    
+
     labels_ = {}
     for k, v in tree_dict.items():
         for key in v:
             labels_[(k, key)] = str(v[key])
-    
+
     networkx.draw_networkx_edge_labels(T1, pos, edge_labels=labels_)
     plt.savefig("Tree_" + section)
     plt.show()
-
+    i = i + 1
+    
+    
 """
 
 --- OLD BUT GOLD ---
@@ -78,10 +81,3 @@ networkx.draw_networkx_edge_labels(T1, pos, edge_labels=labels_)
 plt.show()
 
 """
-
-
-
-
-
-
-

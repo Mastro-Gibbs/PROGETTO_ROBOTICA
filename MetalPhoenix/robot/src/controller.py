@@ -31,7 +31,7 @@ class Command(Enum):
     START = -1
     STOP = 0
     RUN = 1
-    ROTATE = 2  # ?
+    ROTATE = 2
     GO_TO_JUNCTION = 3
 
 
@@ -91,8 +91,8 @@ class Controller:
 
         """ DATA ANALYSIS """
         self.maze_number = 1  # Each maze must have a number to be identified, change this number if the maze changes
-        self.maze_name = "Maze" + "_" + str(self.maze_number) + "_" + Compass.compass_list_to_concat_string(
-            self.priority_list)
+        self.maze_name = "Maze" + "_" + str(self.maze_number) + "_" + \
+                         (Compass.compass_list_to_concat_string(self.priority_list) if INTELLIGENCE == "low" else "RANDOM")
         self.time_to_solve = 0  # solving time
         self.number_of_nodes = 1
         self.number_of_dead_end = 0
@@ -111,7 +111,7 @@ class Controller:
                                 self.performed_commands,
                                 self.trajectory,
                                 INTELLIGENCE,
-                                priority_list if INTELLIGENCE == "low" else "variable"
+                                priority_list if INTELLIGENCE == "low" else "random"
                                 )
 
     def read_sensors(self):
@@ -136,13 +136,15 @@ class Controller:
         self.right_values.append(self.right_value)
 
         # THINK
-        actions = self.control_policy()
-        action = self.decision_making_policy(actions)
+        actions, com_actions = self.control_policy()
+        com_action = self.decision_making_policy(com_actions)
+        command = com_action[0]
+        action = com_action[1]
 
         if Logger.is_loggable(LOGSEVERITY, "low"):
             self.__class_logger.log(f"--MODE: {self.mode}")
-            self.__class_logger.log(f"--ACTIONS: {actions}")
-            self.__class_logger.log(f"--ACTION: {action}")
+            self.__class_logger.log(f"--ACTIONS: {com_actions}")
+            self.__class_logger.log(f"--ACTION: {com_action}")
             self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}")
 
         # Update of the tree
@@ -152,20 +154,20 @@ class Controller:
             self.__class_logger.log("--CURRENT TREE:", "gray")
             self.__class_logger.log(f"{self.tree.build_tree_dict()}", "gray", noheader=True)
             self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}", "gray", newline=True)
-            self.__class_logger.log(f"--Available actions: {actions}", "green")
+            self.__class_logger.log(f"--Available actions: {com_actions}", "green")
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})", "gray")
-            self.__class_logger.log(f"--Performing action: {action}", "gray")
+            self.__class_logger.log(f"--Performing action: {com_action}", "gray")
 
-        if action is None:
+        if com_action is None:
             self.__class_logger.log("NO ACTION AVAILABLE!", "dkred", newline=True)
             self.__class_logger.log(" >>>>  EXITING  <<<< ", "dkred", italic=True)
             self.virtual_destructor()
             exit(-1)
 
         # ACT
-        performed = self.do_action(action)
+        performed = self.do_action(com_action)
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})", "gray")
@@ -193,8 +195,6 @@ class Controller:
         global LOGSEVERITY
 
         if not self._state == State.SENSING:
-            return
-        if isinstance(action_chosen, Command):
             return
 
         if self.mode == Mode.EXPLORING:
@@ -306,40 +306,42 @@ class Controller:
 
             self.tree.set_current(cur)
 
-    def control_policy(self) -> list:
+    def control_policy(self) -> tuple:
         """
         Accordingly to the values of the sensors, the state of the robot and the tree of the maze,
-        it returns a set of actions that the robot can perform but only one of these can be executed effectively
+        it returns a tuple of two list.
+        The first is a list of actions (elements of Compass type), it is used only to update the tree.
+        The second list, com_actions that is the abbreviation of command_actions,
+        is a list of lists of two elements type: Command and Compass.
+        It contains a set of couples [command, action] that the robot can perform, but only one of these can be executed.
         """
+
         global LOGSEVERITY
 
         actions = list()
+        com_actions = list(list())
 
         left = self.left_value
         front = self.front_value
         right = self.right_value
         ori = self.orientation
 
-        # Sto in RUNNING e l'albero non viene aggiornato
-        """if self.mode == Mode.ESCAPING and self.tree.current.type == Type.OBSERVED:
-            self.mode = Mode.EXPLORING"""
-
         if self._state == State.STARTING and self._position == Position.INITIAL:
             if left is not None and right is not None:
                 self._position = Position.CORRIDOR
             elif left is None or right is None:
                 self._position = Position.JUNCTION
-            actions.insert(0, Command.START)
+            self._state = State.SENSING
+            # actions.insert(0, Command.START)
+            com_actions.insert(0, [Command.START, None])
 
         elif self._state == State.ROTATING:
             actions.insert(0, self.performed_commands[len(self.performed_commands) - 1])
+            com_actions.insert(0, [Command.RUN, detect_target(self.orientation)])
 
-        elif self._state == State.STOPPED or \
-                self._state == State.SENSING or \
-                (self._state == State.STARTING and not self._position == Position.INITIAL):
+        elif self._state == State.STOPPED or self._state == State.SENSING:
 
-            if self._state == State.STARTING:
-                self._state = State.SENSING
+            self._state = State.SENSING
 
             if self.mode == Mode.EXPLORING:
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
@@ -348,16 +350,20 @@ class Controller:
                 if front is None:
                     action = f_r_l_b_to_compass(ori)["FRONT"]
                     actions.insert(0, action)
+                    com_actions.insert(0, [Command.RUN, action])
                 if left is None:
                     action = f_r_l_b_to_compass(ori)["LEFT"]
                     actions.insert(0, action)
+                    com_actions.insert(0, [Command.ROTATE, action])
                 if right is None:
                     action = f_r_l_b_to_compass(ori)["RIGHT"]
                     actions.insert(0, action)
+                    com_actions.insert(0, [Command.ROTATE, action])
 
                 if not actions:
                     action = negate_compass(self.tree.current.action)
                     actions.insert(0, action)
+                    com_actions.insert(0, [Command.ROTATE, action])
                     self.mode = Mode.ESCAPING
                     self._state = State.SENSING
 
@@ -368,12 +374,24 @@ class Controller:
                 if self.tree.current.left is not None and self.tree.current.left.type == Type.OBSERVED:
                     action = self.tree.current.left.action
                     actions.insert(0, action)
+                    if action == detect_target(self.orientation):
+                        com_actions.insert(0, [Command.RUN, action])
+                    else:
+                        com_actions.insert(0, [Command.ROTATE, action])
                 if self.tree.current.mid is not None and self.tree.current.mid.type == Type.OBSERVED:
                     action = self.tree.current.mid.action
                     actions.insert(0, action)
+                    if action == detect_target(self.orientation):
+                        com_actions.insert(0, [Command.RUN, action])
+                    else:
+                        com_actions.insert(0, [Command.ROTATE, action])
                 if self.tree.current.right is not None and self.tree.current.right.type == Type.OBSERVED:
                     action = self.tree.current.right.action
                     actions.insert(0, action)
+                    if action == detect_target(self.orientation):
+                        com_actions.insert(0, [Command.RUN, action])
+                    else:
+                        com_actions.insert(0, [Command.ROTATE, action])
 
                 """ 
                 # If there are no OBSERVED nodes
@@ -393,6 +411,7 @@ class Controller:
                 if not actions:
                     action = negate_compass(self.tree.current.action)
                     actions.insert(0, action)
+                    com_actions.insert(0, [Command.ROTATE, action])
 
                 if not actions:
                     if Logger.is_loggable(LOGSEVERITY, "low"):
@@ -411,43 +430,47 @@ class Controller:
 
             if self._position == Position.CORRIDOR:
                 if left is None or right is None:
-                    actions.insert(0, Command.GO_TO_JUNCTION)
+                    # actions.insert(0, Command.GO_TO_JUNCTION)
+                    com_actions.insert(0, [Command.GO_TO_JUNCTION, detect_target(self.orientation)])
                 elif front is None or front > SAFE_DISTANCE:
-                    actions.insert(0, Command.RUN)
+                    # actions.insert(0, Command.RUN)
+                    com_actions.insert(0, [Command.RUN, detect_target(self.orientation)])
                 elif front <= SAFE_DISTANCE:
-                    actions.insert(0, Command.STOP)
+                    # actions.insert(0, Command.STOP)
+                    com_actions.insert(0, [Command.STOP, None])
 
             elif self._position == Position.JUNCTION:
                 if left is not None and right is not None:
                     self._position = Position.CORRIDOR
                 if front is None or front > SAFE_DISTANCE:
-                    actions.insert(0, Command.RUN)
+                    # actions.insert(0, Command.RUN)
+                    com_actions.insert(0, [Command.RUN, detect_target(self.orientation)])
                 elif front <= SAFE_DISTANCE:
-                    actions.insert(0, Command.STOP)
+                    # actions.insert(0, Command.STOP)
+                    com_actions.insert(0, [Command.STOP, None])
 
-        return actions
+        return actions, com_actions
 
-    def decision_making_policy(self, actions: list) -> Compass | None:
+    def decision_making_policy(self, com_actions) -> list:
         """ Given a set of actions it decides what action the robot has to perform """
+
+        if len(com_actions) == 1:
+            return com_actions[0]
 
         if INTELLIGENCE == "mid" and self._state == State.SENSING:
             self.priority_list = random.sample(self.priority_list, 4)
-            print(self.priority_list)
+            if Logger.is_loggable(LOGSEVERITY, "low"):
+                self.__class_logger.log(f"--PRIORITY LIST (RANDOM): {self.priority_list}")
         elif INTELLIGENCE == "high":
             ...
 
-        if not actions:
-            return None
-
-        if isinstance(actions[0], Command):
-            return actions[0]
-
         for direction in self.priority_list:  # [ S, N, O, E ]
-            for action in actions:  # [ E, O, N ]
+            for com_action in com_actions:  # [[Command.ROTATE, Compass.NORD], [...], [...] ]
+                action = com_action[1]
                 if direction == action:
-                    return action
+                    return com_action
 
-    def do_action(self, action):
+    def do_action(self, com_action):
         """
          Accordingly to the action chosen by Decision Making Policy this method translates the action and send
          a specific command to the PhysicalBody that has to perform, changing also the Robot state
@@ -457,36 +480,36 @@ class Controller:
         if Logger.is_loggable(LOGSEVERITY, "high"):
             self.__class_logger.log(" ~~~ [ACTION TIME] ~~~ ", "gray", True, True)
 
-        if action == Command.START:
-            self._body.stop()
-
+        if com_action[0] == Command.START:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND START ** ", "gray")
+
+            self._body.stop()
 
             return True
 
         # Stop
-        elif action == Command.STOP:
-            self._body.stop()
-
+        elif com_action[0] == Command.STOP:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND STOP ** ", "gray")
 
+            self._body.stop()
             self._state = State.STOPPED
+
             return True
 
         # Go on
-        elif action == detect_target(self.orientation) or action == Command.RUN:
-            self._body.move_forward(self._speed)
-
+        elif com_action[0] == Command.RUN:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND RUN ** ", "gray")
 
+            self._body.move_forward(self._speed)
             self._state = State.RUNNING
+
             return True
 
         # Go to Junction
-        elif action == Command.GO_TO_JUNCTION:
+        elif com_action[0] == Command.GO_TO_JUNCTION:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log(" ** JOINING THE JUNCTION ** ", "gray")
 
@@ -506,18 +529,23 @@ class Controller:
                 self.__class_logger.log(" ** STATE SENSING ARISE ** ", "gray")
 
             time.sleep(0.5)
+
             return True
 
-        else:
+        elif com_action[0] == Command.ROTATE:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND ROTATE ** ", "gray")
 
-            self._body.stop()
-            self.rotate_to_final_g(self._rot_speed, action.value)
-            self._body.stop()
             self._state = State.ROTATING
+            self._body.stop()
+            self.rotate_to_final_g(self._rot_speed, com_action[1])
+            self._body.stop()
 
             return True
+
+        else:
+            print("ERROR: ACTION NOT RECOGNIZED")
+            exit(-1)
 
     """ INTELLIGENCE """
 
