@@ -1,12 +1,14 @@
 from io import StringIO
+import os
 from enum import Enum
 import configparser
 import datetime
 
+""" This python file contains all the static methods and classes that are useful for the maze algorithm """
 
 date = datetime.datetime.now()
 sign = "[" + str(date.year) + "-" + str(date.month) + "-" + str(date.day) + "_" + str(date.hour) \
-        + "_" + str(date.minute) + "_" + str(date.second) + "]"
+       + "_" + str(date.minute) + "_" + str(date.second) + "]"
 
 
 class Compass(float, Enum):
@@ -15,8 +17,49 @@ class Compass(float, Enum):
     EST = 0.0
     OVEST = 180.0
 
+    def string_to_compass(cmp: str):
+        if 'NORD' == cmp or 'N' == cmp:
+            return Compass.NORD
+        elif 'SUD' == cmp or 'S' == cmp:
+            return Compass.SUD
+        elif 'EST' == cmp or 'E' == cmp:
+            return Compass.EST
+        elif 'OVEST' == cmp or 'O' == cmp:
+            return Compass.OVEST
+
+    def compass_to_string(cmp):
+        if cmp == Compass.NORD:
+            return "NORD"
+        if cmp == Compass.OVEST:
+            return "OVEST"
+        if cmp == Compass.EST:
+            return "EST"
+        if cmp == Compass.SUD:
+            return "SUD"
+
+    def compass_list_to_string_comma_sep(compass_list):
+        string_list = Compass.compass_to_string(compass_list[0]) + ", " +\
+            Compass.compass_to_string(compass_list[1]) + ", " + \
+            Compass.compass_to_string(compass_list[2]) + ", " + \
+            Compass.compass_to_string(compass_list[3])
+        return string_list
+
+    def compass_list_to_concat_string(compass_list: list) -> str:
+        compass_string = ""
+        for cmp in compass_list:
+            if cmp == Compass.NORD:
+                compass_string += "N"
+            if cmp == Compass.SUD:
+                compass_string += "S"
+            if cmp == Compass.EST:
+                compass_string += "E"
+            if cmp == Compass.OVEST:
+                compass_string += "O"
+        return compass_string
+
 
 class Clockwise(Enum):
+    """ Used to understand how the robot has to rotate: to the right or to the left of the robot """
     RIGHT = 0
     LEFT = 1
 
@@ -69,19 +112,25 @@ def detect_target(begin: float) -> Compass | None:
     return target
 
 
-# Front Right Left Back to compass
-def f_r_l_b_to_compass(curr_ori: float) -> dict:
-    if detect_target(curr_ori) == 0:  # Muso robot ad EST
+def f_r_l_b_to_compass(curr_ori: float) -> {}:
+    """
+    Front Right Left Back to compass.
+    It returns a dict according to the robot orientation where:
+    key: Front or Right or Left or Back
+    value: Est or Sud or Nord or West
+    """
+    if detect_target(curr_ori) == 0:  # EAST front
         return {"FRONT": Compass.EST, "RIGHT": Compass.SUD, "LEFT": Compass.NORD, "BACK": Compass.OVEST}
-    elif detect_target(curr_ori) == 90:  # Muso robot a NORD
+    elif detect_target(curr_ori) == 90:  # NORD front
         return {"FRONT": Compass.NORD, "RIGHT": Compass.EST, "LEFT": Compass.OVEST, "BACK": Compass.SUD}
-    elif detect_target(curr_ori) == 180:  # Muso robot ad OVEST
+    elif detect_target(curr_ori) == 180:  # WEST front
         return {"FRONT": Compass.OVEST, "RIGHT": Compass.NORD, "LEFT": Compass.SUD, "BACK": Compass.EST}
-    else:  # -90
+    else:  # SUD front
         return {"FRONT": Compass.SUD, "RIGHT": Compass.OVEST, "LEFT": Compass.EST, "BACK": Compass.NORD}
 
 
 def negate_compass(compass: float) -> Compass:
+    """ Given a compass value it returns the negate value """
     if compass == Compass.NORD:
         return Compass.SUD
     elif compass == Compass.SUD:
@@ -93,7 +142,7 @@ def negate_compass(compass: float) -> Compass:
 
 
 class StringBuilder:
-    """C++ style StringStream class."""
+    """ C++ style StringStream class. """
     _file_str = None
 
     def __init__(self):
@@ -244,36 +293,97 @@ class CFG:
         ...
 
     @staticmethod
-    def controller_data() -> dict:
+    def robot_conf_data() -> dict:
         psr = configparser.ConfigParser()
         psr.read('../resources/data/config.conf')
+
+        priority_list = psr["ROBOT"]["priority_list"]
+        priority_list = priority_list.split(', ')
+
+        i = 0
+        for elem in priority_list:
+            priority_list[i] = Compass.string_to_compass(elem)
+            i += 1
+
         return {
-                "SPEED": float(psr["ROBOT"]["speed"]),
-                "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
-                "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
-                "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"])
-                }
+            "SPEED": float(psr["ROBOT"]["speed"]),
+            "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
+            "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
+            "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
+            "PRIORITY_LIST": priority_list,
+            "INTELLIGENCE": psr["ROBOT"]["intelligence"]
+        }
+
+    @staticmethod
+    def read_data_analysis():
+        ...
+
+    @staticmethod
+    def write_data_analysis(maze_name, time_to_solve, tree_dict,
+                            number_of_nodes, number_of_dead_end, performed_commands,
+                            trajectory, intelligence, priority_list):
+        config = configparser.ConfigParser()
+        path = "../resources/data/"
+        file_name = "data_analysis.conf"
+        conf_file = path + file_name
+
+        # Verifica se data_analysis.conf esiste altrimenti lo crea
+        if os.path.isfile(conf_file):
+            print(f"\nFile {file_name} loaded")
+            config.read(conf_file)
+        else:
+            with open(conf_file, "w") as configfile:
+                config.write(configfile)
+
+        new_section_name_found = False
+        trial = 0
+        while not new_section_name_found:
+            section_name = maze_name + "_" + str(trial)
+            if section_name in config:
+                trial += 1
+            else:
+                new_section_name_found = True
+
+        config.add_section(section_name)
+        config[section_name] = {
+            "time_to_solve_sec": time_to_solve,
+            "intelligence": intelligence,
+            "priority_list": priority_list,
+            "number_of_nodes": number_of_nodes,
+            "number_of_dead_end": number_of_dead_end,
+            "tree_dict": tree_dict,
+            "performed_commands": performed_commands,
+            "trajectory": trajectory
+            }
+
+        """
+            print("\nSezioni del file di config:")
+            print(config.sections())
+        """
+
+        with open(conf_file, "w") as configfile:
+            config.write(configfile)
 
     @staticmethod
     def physical_data() -> dict:
         psr = configparser.ConfigParser()
         psr.read('../resources/data/config.conf')
         return {
-                "IP": psr["COPPELIA"]["ip"],
-                "PORT": int(psr["COPPELIA"]["port"])
-                }
+            "IP": psr["COPPELIA"]["ip"],
+            "PORT": int(psr["COPPELIA"]["port"])
+        }
 
     @staticmethod
     def logger_data() -> dict:
         psr = configparser.ConfigParser()
         psr.read('../resources/data/config.conf')
         return {
-                "CLOGFILE": psr["UTILITY"]["controllerlog"],
-                "BLOGFILE": psr["UTILITY"]["bodylog"],
-                "ALOGFILE": psr["UTILITY"]["agentlog"],
-                "EXT": psr["UTILITY"]["ext"],
-                "SEVERITY": psr["UTILITY"]["severity"]
-                }
+            "CLOGFILE": psr["UTILITY"]["controllerlog"],
+            "BLOGFILE": psr["UTILITY"]["bodylog"],
+            "ALOGFILE": psr["UTILITY"]["agentlog"],
+            "EXT": psr["UTILITY"]["ext"],
+            "SEVERITY": psr["UTILITY"]["severity"]
+        }
 
     @staticmethod
     def redis_data() -> dict:

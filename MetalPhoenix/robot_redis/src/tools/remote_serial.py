@@ -10,6 +10,8 @@ from redis import Redis
 
 
 class RemoteEmitter(LineReader):
+    RC_KEY = 'RC_KEY'
+
     redis = Redis('localhost', 6379, decode_responses=True)
 
     def connection_made(self, transport):
@@ -25,7 +27,8 @@ class RemoteEmitter(LineReader):
             out['command'] = data
             out['speed'] = 'null'
 
-        self.redis.publish("RC", json.dumps(out, indent=0))
+        self.redis.set(self.RC_KEY, json.dumps(out, indent=0))
+        self.redis.publish("RC", self.RC_KEY)
 
     def connection_lost(self, exc):
         if exc:

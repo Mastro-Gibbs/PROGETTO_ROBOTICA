@@ -1,4 +1,5 @@
 from controller import Controller
+import time
 import hashlib
 import builtins
 from tools.utility import Logger, CFG
@@ -21,8 +22,10 @@ def run():
 
     logger.log("AGENT LAUNCHED", "green", italic=True)
 
-    while not c.goal_reached() and not GOAL_REACHED:
-        c.algorithm()
+    start_time = time.time()
+
+    while not GOAL_REACHED:
+        GOAL_REACHED = c.algorithm()
 
         with builtins.open("../resources/data/config.conf", "rb") as f:
             hash_ = hashlib.md5(f.read()).hexdigest()
@@ -32,10 +35,13 @@ def run():
             hash_old = hash_
             c.update_cfg()
 
+        end_time = time.time()
+        c.time_to_solve = end_time - start_time
+
 
 def stop():
     global GOAL_REACHED
-    EXIT = True
+    GOAL_REACHED = True
 
     c.virtual_destructor()
     logger.log("AGENT STOPPED", "yellow", italic=True)
