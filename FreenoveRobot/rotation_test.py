@@ -1,3 +1,4 @@
+from time import sleep
 from controller import Controller, ControllerException
 
 
@@ -6,7 +7,11 @@ try:
     c = Controller()
     c.begin()
 
-    c.rotate(90)
+    c.rotate(180)
+
+    sleep(10)
+
+
 
     c.virtual_destructor()
 

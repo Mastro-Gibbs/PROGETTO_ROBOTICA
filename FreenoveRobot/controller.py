@@ -468,8 +468,7 @@ class Controller:
 
 
     def __is_algorithm_unlocked(self) -> bool:
-        if self.__orientation_sensor and self.__left_infrared_sensor and \
-            self.__mid_infrared_sensor and self.__right_infrared_sensor:
+        if self.__orientation_sensor:
 
             return True
 
@@ -533,14 +532,14 @@ class Controller:
         
         if opt_vel != None:
             if clk == Clockwise.RIGHT:
-                self.__send_command(RCMD.ROTATER, [opt_vel, target]) 
+                self.__send_command(RCMD.ROTATER, [opt_vel, abs(target)]) 
             elif clk == Clockwise.LEFT:
-                self.__send_command(RCMD.ROTATEL, [opt_vel, target])
+                self.__send_command(RCMD.ROTATEL, [opt_vel, abs(target)])
         else:
             if clk == Clockwise.RIGHT:
-                self.__send_command(RCMD.ROTATER, [self.__robot_rotation_speed, target])
+                self.__send_command(RCMD.ROTATER, [self.__robot_rotation_speed, abs(target)])
             elif clk == Clockwise.LEFT:
-                self.__send_command(RCMD.ROTATEL, [self.__robot_rotation_speed, target])
+                self.__send_command(RCMD.ROTATEL, [self.__robot_rotation_speed, abs(target)])
 
         while _response == _LOCAL_ACK:
             time.sleep(0.1)

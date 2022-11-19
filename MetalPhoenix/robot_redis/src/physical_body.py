@@ -1,3 +1,4 @@
+import json
 from math import pi
 
 from tools.coppeliaAPI.simConst import *
@@ -112,32 +113,30 @@ class PhysicalBody:
         global SENSORS_K
         global B_TOPIC
 
-        _l = str(self.get_proxL())
-        _f = str(self.get_proxF())
-        _r = str(self.get_proxR())
-        _b = str(self.get_proxB())
-        _g = str(self.get_gate())
-        _o = str(self.get_orientation_deg())
+        data = dict()
+        data['proxL'] = str(self.get_proxL())
+        data['proxF'] = str(self.get_proxF())
+        data['proxR'] = str(self.get_proxR())
+        data['proxB'] = str(self.get_proxB())
+        data['proxG'] = str(self.get_gate())
+        data['Zaxis'] = str(self.get_orientation_deg())
 
-        msg = ';'.join([_l, _f, _r, _b, _g, _o])
-
-        self.__redis.set(SENSORS_K, msg)
+        self.__redis.set(SENSORS_K, json.dumps(data, indent=0))
         self.__redis.publish(B_TOPIC, SENSORS_K)
 
     def get_commands(self):
         msg = self.__pubsub.get_message()
-
         try:
             if msg["type"] == 'message':
                 key = msg["data"]
 
                 values = str(self.__redis.get(key))
-                read_values = values.split(';')
+                read_values = json.loads(values)
 
-                self.__rum = float(read_values[0]) if read_values[0] != 'None' else None
-                self.__lum = float(read_values[1]) if read_values[1] != 'None' else None
-                self.__rlm = float(read_values[2]) if read_values[2] != 'None' else None
-                self.__llm = float(read_values[3]) if read_values[3] != 'None' else None
+                self.__rum = float(read_values['rum']) if read_values['rum'] != 'None' else None
+                self.__lum = float(read_values['lum']) if read_values['lum'] != 'None' else None
+                self.__rlm = float(read_values['rlm']) if read_values['rlm'] != 'None' else None
+                self.__llm = float(read_values['llm']) if read_values['llm'] != 'None' else None
 
                 if self.__rum is not None and \
                         self.__lum is not None and \
