@@ -1,5 +1,8 @@
-from enum import Enum
+import json
 import configparser
+
+from enum import Enum
+
 
 def lacal_CFG_parser() -> dict:
     psr = configparser.ConfigParser()
@@ -21,6 +24,7 @@ def lacal_CFG_parser() -> dict:
 
 REDISDICT: dict = lacal_CFG_parser()
 
+
 class Color(str, Enum):
     DARKGREEN = '\033[32m',
     DARKRED = '\033[31m',
@@ -39,7 +43,7 @@ class STDOUTDecor(str, Enum):
     FASTBLINK = '\033[06m',
     STOPBLINK = '\033[25m',
     DEFAULT = '\033[00m',
-    ITALIC = '\033[03m'    
+    ITALIC = '\033[03m'
 
 
 class State(Enum):
@@ -51,7 +55,7 @@ class State(Enum):
 
 
 class Position(Enum):
-    INITIAL = 0
+    INITIAL = 0  # or UNKNOWN
     CORRIDOR = 1
     JUNCTION = 2
 
@@ -60,7 +64,7 @@ class Command(Enum):
     START = -1
     STOP = 0
     RUN = 1
-    ROTATE = 2  # ?
+    ROTATE = 2
     GO_TO_JUNCTION = 3
 
 
@@ -68,43 +72,7 @@ class Mode(Enum):
     EXPLORING = 0
     ESCAPING = 1
 
-
-class Compass(float, Enum):
-    NORD = 90.0
-    SUD = -90.0
-    EST = 0.0
-    OVEST = 180.0
-
-    def test_and_set(cmp: str):
-        base = 'Compass.'
-        if base + 'NORD' == cmp or 'NORD' == cmp:
-            return Compass.NORD
-        elif base + 'SUD' == cmp or 'SUD' == cmp:
-            return Compass.SUD
-        elif base + 'EST' == cmp or 'EST' == cmp:
-            return Compass.EST
-        elif base + 'OVEST' == cmp or 'OVEST' == cmp:
-            return Compass.OVEST
-
-
-class Clockwise(Enum):
-    RIGHT = 0
-    LEFT = 1
-
-
-class WAY(Enum):
-    LEFT = 1
-    MID = 2
-    RIGHT = 3
-
-
-class Type(Enum):
-    OBSERVED = "OBSERVED"
-    EXPLORED = "EXPLORED"
-    DEAD_END = "DEAD_END"
-    FINAL = "FINAL"
-
-
+'''
 class RedisCOMMAND(str, Enum):
     RUN = 'MOTORS_RUN',
     STOP = 'MOTORS_STOP',
@@ -118,7 +86,6 @@ class RedisCOMMAND(str, Enum):
     BZZINTERRUPT = 'BZZINT'
 
 
-
 class RedisKEYS(str, Enum):
     LED = REDISDICT["LED"],
     BUZZER = REDISDICT["BUZZER"],
@@ -129,10 +96,5 @@ class RedisKEYS(str, Enum):
     ROTATION = REDISDICT["ROTATION"]
 
 
-class RedisTOPICS(str, Enum):
-    BODY_TOPIC = REDISDICT["BODY_TOPIC"],
-    CTRL_TOPIC = REDISDICT["CTRL_TOPIC"]
+'''
 
-class RedisCONNECTION(str, Enum):
-    HOST = REDISDICT["HOST"],
-    PORT = REDISDICT["PORT"]
