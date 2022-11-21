@@ -1,5 +1,4 @@
 import os
-import json
 import datetime
 import configparser
 
@@ -417,7 +416,7 @@ class CFG:
         }
 
     @staticmethod
-    def redis_data() -> dict:
+    def cfg_redis_data() -> dict:
         psr = configparser.ConfigParser()
         psr.read('data/config.conf')
         return {
@@ -434,135 +433,4 @@ class CFG:
         }
 
 
-__CFG__: dict = CFG.redis_data()
-
-
-class RedisData:
-
-    class Connection:
-        Host = __CFG__['HOST']
-        Port = __CFG__["PORT"]
-
-    class Topic:
-        Body = __CFG__["BODY_TOPIC"]
-        Remote = __CFG__["REMOTE_CONTROLLER_TOPIC"]
-        Controller = __CFG__["CTRL_TOPIC"]
-
-    class Key:
-        MPU = __CFG__["MPU_KEY"]
-        Led = __CFG__["LED_KEY"]
-        Motor = __CFG__["MOTORS_KEY"]
-        Buzzer = __CFG__["BUZZER_KEY"]
-        Infrared = __CFG__["INFRARED_KEY"]
-        Ultrasonic = __CFG__["ULTRASONIC_KEY"]
-
-    class Command:
-        Led = 'Led'
-        Motor = 'Motor'
-        Buzzer = 'Buzzer'
-
-    class Value:
-        class __Value:
-            __status = False
-
-            @classmethod
-            @property
-            def changed(cls):
-                return cls.__status
-
-            @classmethod
-            def toggle(cls):
-                cls.__status = not cls.__status
-
-            @classmethod
-            def set(cls, _b: bool):
-                cls.__status = _b
-
-            @classmethod
-            def status(cls) -> bool:
-                return cls.__status
-
-        class Machine:
-            __data: dict = dict()
-            __goal = False
-
-            @classmethod
-            def on_values(cls, data):
-                cls.__data.update(data)
-
-                if int(cls.__data['irL']) and int(cls.__data['irM']) and int(cls.__data['irR']):
-                    cls.__goal = True
-
-            @classmethod
-            def front(cls):
-                return float(cls.__data['proxF']) if cls.__data['proxF'] != 'None' else None
-
-            @classmethod
-            def left(cls):
-                return float(cls.__data['proxL']) if cls.__data['proxL'] != 'None' else None
-
-            @classmethod
-            def right(cls):
-                return float(cls.__data['proxR']) if cls.__data['proxR'] != 'None' else None
-
-            @classmethod
-            def back(cls):
-                return float(cls.__data['proxB']) if cls.__data['proxB'] != 'None' else None
-
-            @classmethod
-            def goal(cls):
-                return cls.__goal
-
-            @classmethod
-            def z_axis(cls):
-                return float(cls.__data['Zaxis']) if cls.__data['Zaxis'] != 'None' else None
-
-            @classmethod
-            def left_ir(cls):
-                return int(cls.__data['irL']) if cls.__data['irL'] != 'None' else None
-
-            @classmethod
-            def mid_ir(cls):
-                return int(cls.__data['irM']) if cls.__data['irM'] != 'None' else None
-
-            @classmethod
-            def right_ir(cls):
-                return int(cls.__data['irR']) if cls.__data['irR'] != 'None' else None
-
-        class Motor(__Value):
-            __rum = None
-            __lum = None
-            __rlm = None
-            __llm = None
-
-            @classmethod
-            def on_values(cls, rum: int, lum: int, rlm: int, llm: int):
-                if cls.__rum == rum and cls.__lum == lum and cls.__rlm == rlm and cls.__llm == llm:
-                    super().set(False)
-                else:
-                    cls.__rum = rum
-                    cls.__lum = lum
-                    cls.__rlm = rlm
-                    cls.__llm = llm
-
-                    super().set(True)
-
-            @classmethod
-            @property
-            def values(cls):
-                data = dict()
-                data['rum'] = cls.__rum
-                data['lum'] = cls.__lum
-                data['rlm'] = cls.__rlm
-                data['llm'] = cls.__llm
-
-                super().set(False)
-
-                return json.dumps(data, indent=0)
-
-        class Led(__Value):
-            pass
-
-        class Buzzer(__Value):
-            pass
-
+__CFG__: dict = CFG.cfg_redis_data()

@@ -3,13 +3,15 @@ import random
 import time
 
 from math import pi
-from sys import stdout
+
+from lib.ctrllib.remote_serial import RemoteController
+from lib.librd.redisdata import ControllerData, RemoteControllerData
 
 from lib.ctrllib.utility import Compass, Clockwise
 from lib.ctrllib.utility import f_r_l_b_to_compass
 from lib.ctrllib.utility import negate_compass, detect_target
 from lib.ctrllib.utility import Logger, CFG
-from lib.ctrllib.utility import RedisData, round_v, normalize_angle
+from lib.ctrllib.utility import round_v, normalize_angle
 
 from lib.ctrllib.tree import Tree, Node, Type, DIRECTION
 
@@ -51,13 +53,15 @@ class Controller:
 
         try:
             self.__redis_message_handler = None
-            self.__redis = Redis(host=RedisData.Connection.Host, port=RedisData.Connection.Port, decode_responses=True)
+            self.__redis = Redis(host=ControllerData.Connection.Host, port=ControllerData.Connection.Port, decode_responses=True)
             self.__redis.flushall()
             self.__pubsub = self.__redis.pubsub()
-            self.__pubsub.psubscribe(**{RedisData.Topic.Body: self.__on_message})
+            self.__pubsub.psubscribe(**{ControllerData.Topic.Body: self.__on_message})
         except RedisConnError or OSError or ConnectionRefusedError:
             raise ControllerException(f'Unable to connect to redis server at: '
-                                      f'{RedisData.Connection.Host}:{RedisData.Connection.Port}')
+                                      f'{ControllerData.Connection.Host}:{ControllerData.Connection.Port}')
+
+        self.__remote = RemoteController() if RemoteControllerData.is_enabled else None
 
         self.__robot_mode: Mode = Mode.EXPLORING
         self.__robot_state: State = State.STARTING
@@ -73,9 +77,6 @@ class Controller:
         self.__front_ultrasonic_stored_values: list = list()
         self.__left_ultrasonic_stored_values: list = list()
         self.__right_ultrasonic_stored_values: list = list()
-
-        self.__rotation_status: bool = False
-        self.__rotation_ack: int = 0
 
         self.__maze_tree = Tree()
         self.__maze_trajectory = list()
@@ -96,10 +97,16 @@ class Controller:
         self.__redis_message_handler.stop()
         self.__redis.close()
 
+        if self.__remote is not None:
+            self.__remote.stop()
+
     def begin(self) -> None:
         self.__logger.log('Controller fully initialized', Color.GREEN, newline=True, italic=True)
         self.__new_motor_values(0, 0, 0, 0, emit=True)
         self.__redis_message_handler: PubSubWorkerThread = self.__pubsub.run_in_thread(sleep_time=0.01)
+
+        if self.__remote is not None:
+            self.__remote.begin()
 
     #                                                                                           #
     #                                                                                           #
@@ -152,8 +159,8 @@ class Controller:
             start_time = time.time()
             time_expired = False
 
-            while not time_expired and (RedisData.Value.Machine.front() is None
-                                        or RedisData.Value.Machine.front() > self._SAFE_DISTANCE):
+            while not time_expired and (ControllerData.Machine.front() is None
+                                        or ControllerData.Machine.front() > self._SAFE_DISTANCE):
                 self.__execute_motor(Command.RUN)
                 if time.time() - start_time >= self.__junction_sim_time:
                     time_expired = True
@@ -170,7 +177,7 @@ class Controller:
 
             self._state = State.ROTATING
             self.__execute_motor(Command.STOP)
-            self.rotate(com_action[1])
+            self.rotate_to_final_g(self.__robot_rotation_speed, com_action[1])
             self.__execute_motor(Command.STOP)
 
             return True
@@ -181,11 +188,11 @@ class Controller:
 
     # Check if maze was solved. 
     def goal_reached(self) -> bool:
-        return RedisData.Value.Machine.goal()
+        return ControllerData.Machine.goal()
 
     # ending animation if maze were solved
     def ending_animation(self) -> None:
-        if RedisData.Value.Machine.goal():
+        if ControllerData.Machine.goal():
             self.__logger.log('Maze finished', Color.GREEN, newline=True, italic=True, blink=True)
             self.__new_led(status=True, emit=True)
 
@@ -247,51 +254,51 @@ class Controller:
         _key = msg['data']
         _message: dict = json.loads(self.__redis.get(_key))
 
-        RedisData.Value.Machine.on_values(_message)
+        ControllerData.Machine.on_values(_message)
 
     # sender method
     def __send_command(self, _cmd) -> None: # RESET
 
-        if _cmd == RedisData.Command.Motor and RedisData.Value.Motor.changed:
-            self.__redis.set(RedisData.Key.Motor, RedisData.Value.Motor.values)
-            self.__redis.publish(RedisData.Topic.Controller, RedisData.Key.Motor)
+        if _cmd == ControllerData.Command.Motor and ControllerData.Motor.changed:
+            self.__redis.set(ControllerData.Key.Motor, ControllerData.Motor.values)
+            self.__redis.publish(ControllerData.Topic.Controller, ControllerData.Key.Motor)
 
-        elif _cmd == RedisData.Command.Led and RedisData.Value.Led.changed:
-            self.__redis.set(RedisData.Key.Led, RedisData.Value.Led.status())
-            self.__redis.publish(RedisData.Topic.Controller, RedisData.Key.Led)
+        elif _cmd == ControllerData.Command.Led and ControllerData.Led.changed:
+            self.__redis.set(ControllerData.Key.Led, ControllerData.Led.status())
+            self.__redis.publish(ControllerData.Topic.Controller, ControllerData.Key.Led)
 
-        elif _cmd == RedisData.Command.Buzzer and RedisData.Value.Buzzer.changed:
-            self.__redis.set(RedisData.Key.Buzzer, RedisData.Value.Buzzer.status())
-            self.__redis.publish(RedisData.Topic.Controller, RedisData.Key.Buzzer)
+        elif _cmd == ControllerData.Command.Buzzer and ControllerData.Buzzer.changed:
+            self.__redis.set(ControllerData.Key.Buzzer, ControllerData.Buzzer.status())
+            self.__redis.publish(ControllerData.Topic.Controller, ControllerData.Key.Buzzer)
 
     def __execute_motor(self, cmd):
         if cmd == Command.STOP:
             self.__new_motor_values(0, 0, 0, 0, True)
 
         elif cmd == Command.RUN:
-            self.__new_motor_values(self.__robot_speed,
-                                    self.__robot_speed,
-                                    self.__robot_speed,
-                                    self.__robot_speed,
+            self.__new_motor_values(-self.__robot_speed,
+                                    -self.__robot_speed,
+                                    -self.__robot_speed,
+                                    -self.__robot_speed,
                                     True)
 
     def __new_motor_values(self, rum, lum, rlm, llm, emit: bool):
-        RedisData.Value.Motor.on_values(rum, lum, rlm, llm)
+        ControllerData.Motor.on_values(rum, lum, rlm, llm)
 
         if emit:
-            self.__send_command(RedisData.Command.Motor)
+            self.__send_command(ControllerData.Command.Motor)
 
     def __new_led(self, status: bool, emit: bool = False):
-        RedisData.Value.Led.set(status)
+        ControllerData.Led.set(status)
 
         if emit:
-            self.__send_command(RedisData.Command.Led)
+            self.__send_command(ControllerData.Command.Led)
 
     def __new_buzzer(self, status: bool, emit: bool = False):
-        RedisData.Value.Buzzer.set(status)
+        ControllerData.Buzzer.set(status)
 
         if emit:
-            self.__send_command(RedisData.Command.Buzzer)
+            self.__send_command(ControllerData.Command.Buzzer)
 
     #                                                                                           #
     #                                                                                           #
@@ -326,9 +333,9 @@ class Controller:
             self._ITERATION += 1
 
             # SENSE
-            self.__left_ultrasonic_stored_values.append(RedisData.Value.Machine.left())
-            self.__front_ultrasonic_stored_values.append(RedisData.Value.Machine.front())
-            self.__right_ultrasonic_stored_values.append(RedisData.Value.Machine.right())
+            self.__left_ultrasonic_stored_values.append(ControllerData.Machine.left())
+            self.__front_ultrasonic_stored_values.append(ControllerData.Machine.front())
+            self.__right_ultrasonic_stored_values.append(ControllerData.Machine.right())
 
             # THINK
             actions, com_actions = self.__control_policy()
@@ -398,7 +405,7 @@ class Controller:
             updating also the current node as EXPLORED 
             """
             for action in actions:
-                dict_ = f_r_l_b_to_compass(RedisData.Value.Machine.z_axis())
+                dict_ = f_r_l_b_to_compass(ControllerData.Machine.z_axis())
                 if dict_["FRONT"] == action:
                     node = Node("M_" + self.__maze_tree.generate_node_id(), action)
                     self.__maze_tree.append(node, DIRECTION.MID)
@@ -427,7 +434,7 @@ class Controller:
             Only one action that has been decided by DMP. 
             In this section it is updated the current node of the tree based on the action chosen 
             """
-            dict_ = f_r_l_b_to_compass(RedisData.Value.Machine.z_axis())
+            dict_ = f_r_l_b_to_compass(ControllerData.Machine.z_axis())
             if dict_["FRONT"] == action_chosen:
                 self.__maze_tree.set_current(self.__maze_tree.current.mid)
             elif dict_["LEFT"] == action_chosen:
@@ -512,10 +519,10 @@ class Controller:
         actions = list()
         com_actions = list(list())
 
-        left = RedisData.Value.Machine.left()
-        front = RedisData.Value.Machine.front()
-        right = RedisData.Value.Machine.right()
-        ori = RedisData.Value.Machine.z_axis()
+        left = ControllerData.Machine.left()
+        front = ControllerData.Machine.front()
+        right = ControllerData.Machine.right()
+        ori = ControllerData.Machine.z_axis()
 
         if self._state == State.STARTING and self._position == Position.INITIAL:
             if left is not None and right is not None:
@@ -528,7 +535,7 @@ class Controller:
 
         elif self._state == State.ROTATING:
             actions.insert(0, self.__maze_performed_commands[len(self.__maze_performed_commands) - 1])
-            com_actions.insert(0, [Command.RUN, detect_target(RedisData.Value.Machine.z_axis())])
+            com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.z_axis())])
 
         elif self._state == State.STOPPED or self._state == State.SENSING:
 
@@ -565,21 +572,21 @@ class Controller:
                 if self.__maze_tree.current.left is not None and self.__maze_tree.current.left.type == Type.OBSERVED:
                     action = self.__maze_tree.current.left.action
                     actions.insert(0, action)
-                    if action == detect_target(RedisData.Value.Machine.z_axis()):
+                    if action == detect_target(ControllerData.Machine.z_axis()):
                         com_actions.insert(0, [Command.RUN, action])
                     else:
                         com_actions.insert(0, [Command.ROTATE, action])
                 if self.__maze_tree.current.mid is not None and self.__maze_tree.current.mid.type == Type.OBSERVED:
                     action = self.__maze_tree.current.mid.action
                     actions.insert(0, action)
-                    if action == detect_target(RedisData.Value.Machine.z_axis()):
+                    if action == detect_target(ControllerData.Machine.z_axis()):
                         com_actions.insert(0, [Command.RUN, action])
                     else:
                         com_actions.insert(0, [Command.ROTATE, action])
                 if self.__maze_tree.current.right is not None and self.__maze_tree.current.right.type == Type.OBSERVED:
                     action = self.__maze_tree.current.right.action
                     actions.insert(0, action)
-                    if action == detect_target(RedisData.Value.Machine.z_axis()):
+                    if action == detect_target(ControllerData.Machine.z_axis()):
                         com_actions.insert(0, [Command.RUN, action])
                     else:
                         com_actions.insert(0, [Command.ROTATE, action])
@@ -622,10 +629,10 @@ class Controller:
             if self._position == Position.CORRIDOR:
                 if left is None or right is None:
                     # actions.insert(0, Command.GO_TO_JUNCTION)
-                    com_actions.insert(0, [Command.GO_TO_JUNCTION, detect_target(RedisData.Value.Machine.z_axis())])
+                    com_actions.insert(0, [Command.GO_TO_JUNCTION, detect_target(ControllerData.Machine.z_axis())])
                 elif front is None or front > self._SAFE_DISTANCE:
                     # actions.insert(0, Command.RUN)
-                    com_actions.insert(0, [Command.RUN, detect_target(RedisData.Value.Machine.z_axis())])
+                    com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.z_axis())])
                 elif front <= self._SAFE_DISTANCE:
                     # actions.insert(0, Command.STOP)
                     com_actions.insert(0, [Command.STOP, None])
@@ -635,7 +642,7 @@ class Controller:
                     self._position = Position.CORRIDOR
                 if front is None or front > self._SAFE_DISTANCE:
                     # actions.insert(0, Command.RUN)
-                    com_actions.insert(0, [Command.RUN, detect_target(RedisData.Value.Machine.z_axis())])
+                    com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.z_axis())])
                 elif front <= self._SAFE_DISTANCE:
                     # actions.insert(0, Command.STOP)
                     com_actions.insert(0, [Command.STOP, None])
@@ -664,7 +671,7 @@ class Controller:
 
 
     def __is_algorithm_unlocked(self) -> bool:
-        if RedisData.Value.Machine.z_axis():
+        if ControllerData.Machine.z_axis():
             return True
         return False
 
@@ -682,12 +689,15 @@ class Controller:
     #                                                                                              #
     # ******************************************************************************************** #
 
-    def rotate(self, final_g):
+    def rotate_to_final_g(self, vel, final_g):
         """ Rotate function that rotates the robot until it reaches final_g """
 
-        init_g = RedisData.Value.Machine.z_axis()
+        init_g = ControllerData.Machine.z_axis()
         degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
+        
+        self.__do_rotation(vel, c, degrees, final_g)
 
+    def __do_rotation(self, vel, c: Clockwise, degrees, final_g):
         """
         This method calls __rotate to perform the rotation.
         It also checks the outcome of check_orientation:
@@ -701,7 +711,7 @@ class Controller:
         degrees = abs(degrees)
         it = 0
 
-        self.__rotate(c, degrees)
+        self.__rotate(vel, c, degrees)
 
         ok, curr_g, limit_range = self.check_orientation(final_g)
 
@@ -715,14 +725,14 @@ class Controller:
                 self.__logger.log(" >>>>  EXITING  <<<< ", Color.DARKRED, italic=True)
             exit(-1)
 
-    def __rotate(self, c: Clockwise, degrees):
+    def __rotate(self, vel, c: Clockwise, degrees):
         """
         Function that given vel, Clockwise and rotation degrees computes
         the rotation of the Robot around the z axis
         The orientation of the robot must reach the interval [degrees - delta, degrees + delta]
         """
         degrees = abs(degrees)
-        init_g = RedisData.Value.Machine.z_axis()
+        init_g = ControllerData.Machine.z_axis()
 
         delta = 0.8
         stop = False
@@ -730,22 +740,14 @@ class Controller:
         performed_deg = 0.0
 
         while not stop:
-            curr_g = RedisData.Value.Machine.z_axis()
+            curr_g = ControllerData.Machine.z_axis()
 
             if c == Clockwise.RIGHT:
-                self.__new_motor_values(-self.__robot_rotation_speed,
-                                        self.__robot_rotation_speed,
-                                        -self.__robot_rotation_speed,
-                                        self.__robot_rotation_speed,
-                                        True)
+                self.__new_motor_values(vel, -vel, vel, -vel, True)
             elif c == Clockwise.LEFT:
-                self.__new_motor_values(self.__robot_rotation_speed,
-                                        -self.__robot_rotation_speed,
-                                        self.__robot_rotation_speed,
-                                        -self.__robot_rotation_speed,
-                                        True)
+                self.__new_motor_values(-vel, vel, -vel, vel, True)
 
-            performed_deg_temp = compute_performed_degrees(c, init_g, curr_g)
+            performed_deg_temp = self.compute_performed_degrees(c, init_g, curr_g)
 
             """ 
             Check if there was an unintended move in the opposite direction. 
@@ -778,7 +780,7 @@ class Controller:
         if Logger.is_loggable(self._LOGSEVERITY, "mid"):
             self.__logger.log(" ** ORIENTATION CHECKING ** ", Color.GRAY, True, True)
 
-        curr_g = RedisData.Value.Machine.z_axis()
+        curr_g = ControllerData.Machine.z_axis()
 
         ok = False
         if abs(final_g) + delta > 180:
@@ -828,7 +830,7 @@ class Controller:
         it = 0
 
         while not ok and it < self._ROTATION_MAX_ATTEMPTS:
-            curr_g = RedisData.Value.Machine.z_axis()
+            curr_g = ControllerData.Machine.z_axis()
 
             degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
 

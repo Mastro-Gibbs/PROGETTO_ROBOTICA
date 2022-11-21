@@ -76,6 +76,12 @@ class PhysicalBody:
         self.__mpu6050.begin()
         self.__infrared.begin()
 
+    def set_tuple_motor_model(self, data):
+        rum, lum, rlm, llm = data
+        self.__motors.left_upper_wheel(lum)
+        self.__motors.left_lower_wheel(llm)
+        self.__motors.right_upper_wheel(rum)
+        self.__motors.right_lower_wheel(rlm)
 
     def set_motor_model(self, cmd: str, rate: int = 0) -> None:
         """
@@ -103,7 +109,7 @@ class PhysicalBody:
         else:
             _cmd = None
 
-        if _cmd != None:
+        if _cmd is not None:
             self.__motors.set_model(_cmd, _vel)
 
     def read_distances(self) -> tuple:
