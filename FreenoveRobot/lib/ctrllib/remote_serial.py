@@ -13,8 +13,10 @@ from serial.threaded import LineReader
 
 
 class RemoteReader(ReaderThread):
-    def __init__(self, serial_instance, protocol_factory):
+    def __init__(self, serial_instance, protocol_factory, name):
         super().__init__(serial_instance, protocol_factory)
+
+        self.name = name
 
     def __tid(self):
         if self.is_alive():
@@ -56,9 +58,8 @@ class RemoteEmitter(LineReader):
         else:
             rcData.on_values(data, None)
 
-        if rcData.changed:
-            self.__redis.set(rcData.Key.RC, rcData.Remote.Controller.values)
-            self.__redis.publish(rcData.Topic.Remote, rcData.Key.RC)
+        self.__redis.set(rcData.Key.RC, rcData.values)
+        self.__redis.publish(rcData.Topic.Remote, rcData.Key.RC)
 
     def connection_lost(self, exc):
         if exc:
@@ -71,7 +72,7 @@ class RemoteController:
 
     @classmethod
     def begin(cls):
-        cls.__runner = RemoteReader(Serial('/dev/ttyUSB0', baudrate=9600), RemoteEmitter)
+        cls.__runner = RemoteReader(Serial('/dev/ttyUSB0', baudrate=9600), RemoteEmitter, 'RemoteDiscover')
         cls.__runner.start()
 
     @classmethod

@@ -278,8 +278,16 @@ class ControllerData(__RedisData):
 class RemoteControllerData(__RedisData):
     __enabled = __CFG__['RC_ENABLED']
 
-    __speed = None
+    __speed = 600
     __command = None
+
+    __fw = 'FORWARD'
+    __bw = 'BACKWARD'
+
+    __lf = 'LEFT'
+    __rg = 'RIGHT'
+
+    __st = 'STOP'
 
     @classmethod
     @property
@@ -288,7 +296,9 @@ class RemoteControllerData(__RedisData):
 
     @classmethod
     def on_values(cls, command, speed):
-        cls.__speed = speed
+        if speed is not None:
+            cls.__speed = speed
+
         cls.__command = command
 
     @classmethod
@@ -299,3 +309,22 @@ class RemoteControllerData(__RedisData):
         data['rc_cmd'] = cls.__command
 
         return json.dumps(data, indent=0)
+
+    @classmethod
+    @property
+    def is_valid(cls):
+        return True if cls.__command is not None and cls.__command != 'DONE' else False
+
+    @classmethod
+    def get_motor(cls):
+        if cls.__command == cls.__st:
+            return 0, 0, 0, 0
+        elif cls.__command == cls.__fw:
+            return -cls.__speed, -cls.__speed, -cls.__speed, -cls.__speed
+        elif cls.__command == cls.__bw:
+            return cls.__speed, cls.__speed, cls.__speed, cls.__speed
+        elif cls.__command == cls.__lf:
+            return -cls.__speed, cls.__speed, -cls.__speed, cls.__speed
+        elif cls.__command == cls.__rg:
+            return cls.__speed, -cls.__speed, cls.__speed, -cls.__speed
+

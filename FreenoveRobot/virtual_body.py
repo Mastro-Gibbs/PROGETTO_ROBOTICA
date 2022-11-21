@@ -1,3 +1,5 @@
+import json
+
 from time import sleep, time
 from sys import stdout
 
@@ -7,7 +9,7 @@ from redis.exceptions import ConnectionError as RedisConnError
 
 from physiscal_body import PhysicalBody as Body
 
-from lib.librd.redisdata import BodyData
+from lib.librd.redisdata import BodyData, RemoteControllerData as rcData
 
 from lib.workerthread import RobotThread
 from lib.robotAPI.motor import MOTORSCommand
@@ -34,6 +36,7 @@ class VirtualBody:
             self.__redis = Redis(host=BodyData.Connection.Host, port=BodyData.Connection.Port, decode_responses=True)
             self.__pubsub = self.__redis.pubsub()
             self.__pubsub.psubscribe(**{BodyData.Topic.Controller: self.__on_message})
+            self.__pubsub.psubscribe(**{BodyData.Topic.Remote:     self.__on_remote})
         except RedisConnError or OSError or ConnectionRefusedError:
             raise BodyException(f'Unable to connect to redis server at: '
                                 f'{BodyData.Connection.Host}:{BodyData.Connection.Port}')
@@ -154,6 +157,17 @@ class VirtualBody:
             if BodyData.Motor.changed:
                 self.__body.set_tuple_motor_model(BodyData.Motor.values)
 
+    def __on_remote(self, msg):
+        _key = msg['data']
+        _value = self.__redis.get(_key)
+
+        if _key == rcData.Key.RC:
+            data = json.loads(_value)
+            rcData.on_values(data['rc_cmd'], data['rc_spd'])
+
+            if rcData.is_valid:
+                self.__body.set_tuple_motor_model(rcData.get_motor())
+
     def __yaw_discover(self):
         while True:
             _yaw = self.__body.orientation()[2]
@@ -163,7 +177,6 @@ class VirtualBody:
             if BodyData.Yaw.changed:
                 self.__redis.set(BodyData.Key.MPU, BodyData.Yaw.value)
                 self.__redis.publish(BodyData.Topic.Body, BodyData.Key.MPU)
-                _OLD_YAW = _yaw
 
             sleep(0.005)
 
