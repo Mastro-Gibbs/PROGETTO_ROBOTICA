@@ -422,14 +422,20 @@ class CFG:
         return {
             "HOST": psr["REDIS"]["host"],
             "PORT": psr["REDIS"]["port"],
+
             "BODY_TOPIC": psr["REDIS"]["body_topic"],
             "CTRL_TOPIC": psr["REDIS"]["ctrl_topic"],
-            "LED": psr["REDIS"]["led_key"],
-            "BUZZER": psr["REDIS"]["buzzer_key"],
-            "INFRARED": psr["REDIS"]["infrared_key"],
-            "ULTRASONIC": psr["REDIS"]["ultrasonic_key"],
-            "MPU": psr["REDIS"]["mpu_key"],
-            "MOTORS": psr["REDIS"]["motors_key"]
+            "REMOTE_CONTROLLER_TOPIC": psr['REDIS']['rc_topic'],
+
+            "RC_KEY": psr["REDIS"]["rc_key"],
+            "LED_KEY": psr["REDIS"]["led_key"],
+            "MPU_KEY": psr["REDIS"]["mpu_key"],
+            "MOTORS_KEY": psr["REDIS"]["motors_key"],
+            "BUZZER_KEY": psr["REDIS"]["buzzer_key"],
+            "INFRARED_KEY": psr["REDIS"]["infrared_key"],
+            "ULTRASONIC_KEY": psr["REDIS"]["ultrasonic_key"],
+
+            "RC_ENABLED": bool(int(psr["REDIS"]["rc_enabled"]))
         }
 
 
