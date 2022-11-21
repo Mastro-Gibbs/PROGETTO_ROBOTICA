@@ -5,7 +5,7 @@ import configparser
 from sys import stdout
 from enum import Enum
 
-from lib.ctrllib.enums import Command, Color, STDOUTDecor
+from lib.libctrl.enums import Command, Color, STDOUTDecor
 
 """ This python file contains all the static methods and classes that are useful for the maze algorithm """
 

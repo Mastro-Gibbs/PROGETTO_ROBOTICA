@@ -12,8 +12,8 @@ from lib.robotAPI.led import Led, Color
 from lib.robotAPI.buzzer import Buzzer
 from lib.workerthread import RobotThread
 from lib.robotAPI.utils import ROBOTAPIConstants as RC
-from lib.MPU6050lib.MPUSensor import MPUSensor as MPU 
-from lib.MPU6050lib.MPUSensor import MPUSensorException
+from lib.libMPU6050.MPUSensor import MPUSensor as MPU
+from lib.libMPU6050.MPUSensor import MPUSensorException
 
 
 class PhysicalBody:

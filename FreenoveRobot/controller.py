@@ -4,19 +4,19 @@ import time
 
 from math import pi
 
-from lib.ctrllib.remote_serial import RemoteController
+from lib.libctrl.remote_serial import RemoteController
 from lib.librd.redisdata import ControllerData, RemoteControllerData
 
-from lib.ctrllib.utility import Compass, Clockwise
-from lib.ctrllib.utility import f_r_l_b_to_compass
-from lib.ctrllib.utility import negate_compass, detect_target
-from lib.ctrllib.utility import Logger, CFG
-from lib.ctrllib.utility import round_v, normalize_angle
+from lib.libctrl.utility import Compass, Clockwise
+from lib.libctrl.utility import f_r_l_b_to_compass
+from lib.libctrl.utility import negate_compass, detect_target
+from lib.libctrl.utility import Logger, CFG
+from lib.libctrl.utility import round_v, normalize_angle
 
-from lib.ctrllib.tree import Tree, Node, Type, DIRECTION
+from lib.libctrl.tree import Tree, Node, Type, DIRECTION
 
-from lib.ctrllib.enums import Command, Position, Mode, State
-from lib.ctrllib.enums import Color, STDOUTDecor
+from lib.libctrl.enums import Command, Position, Mode, State
+from lib.libctrl.enums import Color, STDOUTDecor
 
 from lib.exit_codes import NOACTIONS, TREEUPDATEERROR
 

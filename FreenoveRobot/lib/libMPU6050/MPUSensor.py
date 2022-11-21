@@ -1,4 +1,4 @@
-from lib.MPU6050lib.MPU6050 import MPU6050
+from lib.libMPU6050.MPU6050 import MPU6050
 from lib.workerthread import RobotThread
 from os import getpid, stat
 from sys import argv, stdout

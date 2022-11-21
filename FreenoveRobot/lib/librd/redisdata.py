@@ -1,6 +1,6 @@
 import json
 
-from lib.ctrllib.utility import __CFG__
+from lib.libctrl.utility import __CFG__
 
 
 

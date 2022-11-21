@@ -5,43 +5,20 @@ import ctypes
 import inspect
 
 from redis import Redis
+
+from lib.workerthread import RobotThread
 from lib.librd.redisdata import RemoteControllerData as rcData
+
 
 from serial import Serial
 from serial.threaded import ReaderThread
 from serial.threaded import LineReader
 
 
-class RemoteReader(ReaderThread):
+class RemoteReader(ReaderThread, RobotThread):
     def __init__(self, serial_instance, protocol_factory, name):
         super().__init__(serial_instance, protocol_factory)
-
         self.name = name
-
-    def __tid(self):
-        if self.is_alive():
-            return ctypes.c_long(self.ident)
-
-        print(f'Thread {self.name} is not alive')
-        return None
-
-    def bury(self):
-        tid = self.__tid()
-        if tid != None:
-            exctype = SystemExit
-
-            if not inspect.isclass(exctype):
-                exctype = type(exctype)
-
-            res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
-
-            if res == 1:
-                print(f'Thread {self.name} burried')
-            elif res == 0:
-                raise ValueError("invalid thread id")
-            elif res != 1:
-                ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-                raise SystemError("PyThreadState_SetAsyncExc failed")
 
 
 class RemoteEmitter(LineReader):

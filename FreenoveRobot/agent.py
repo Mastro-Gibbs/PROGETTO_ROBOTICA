@@ -2,8 +2,8 @@ import builtins
 from hashlib import md5
 
 from controller import Controller, ControllerException
-from lib.ctrllib.utility import Logger, CFG
-from lib.ctrllib.enums import Color
+from lib.libctrl.utility import Logger, CFG
+from lib.libctrl.enums import Color
 
 
 CONFIG_FILE_HASHCODE: str = None

@@ -8,8 +8,8 @@ MetalPhoenix/robot_redis/src/tools/__pycache__/
 MetalPhoenix/robot_redis/src/tools/coppeliaAPI/__pycache__/
 FreenoveRobot/__pycache__/
 FreenoveRobot/lib/__pycache__/
-FreenoveRobot/lib/ctrllib/__pycache__/
-FreenoveRobot/lib/MPU6050lib/__pycache__/
+FreenoveRobot/lib/libctrl/__pycache__/
+FreenoveRobot/lib/libMPU6050/__pycache__/
 FreenoveRobot/lib/robotAPI/__pycache__/
 FreenoveRobot/data/logs/
 MetalPhoenix/robot/resources/data/logs/

@@ -2,7 +2,6 @@ from threading import Thread
 import inspect
 import ctypes
 
-    
 
 class RobotThread(Thread):
     
@@ -12,7 +11,6 @@ class RobotThread(Thread):
 
         print(f'Thread {self.name} is not alive')
         return None
-        
 
     def bury(self):
         tid = self.__tid()

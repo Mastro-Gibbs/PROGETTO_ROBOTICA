@@ -1,4 +1,4 @@
-from lib.ctrllib.utility import Compass
+from lib.libctrl.utility import Compass
 from enum import Enum
 
 """
