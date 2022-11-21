@@ -1,10 +1,8 @@
-import json
 import sys
 import traceback
-import ctypes
-import inspect
 
 from redis import Redis
+from redis.exceptions import ConnectionError as RedisConnError
 
 from lib.workerthread import RobotThread
 from lib.librd.redisdata import RemoteControllerData as rcData
@@ -15,10 +13,18 @@ from serial.threaded import ReaderThread
 from serial.threaded import LineReader
 
 
+class RCException(Exception):
+    pass
+
+
 class RemoteReader(ReaderThread, RobotThread):
     def __init__(self, serial_instance, protocol_factory, name):
         super().__init__(serial_instance, protocol_factory)
         self.name = name
+
+    def close(self):
+        if self.protocol is not None:
+            self.protocol.close()
 
 
 class RemoteEmitter(LineReader):
@@ -27,7 +33,11 @@ class RemoteEmitter(LineReader):
     def connection_made(self, transport):
         super(RemoteEmitter, self).connection_made(transport)
 
-        self.__redis = Redis(host=rcData.Connection.Host, port=rcData.Connection.Port, decode_responses=True)
+        try:
+            self.__redis = Redis(host=rcData.Connection.Host, port=rcData.Connection.Port, decode_responses=True)
+        except RedisConnError or OSError or ConnectionRefusedError:
+            raise RCException(f'Unable to connect to redis server at: '
+                                f'{rcData.Connection.Host}:{rcData.Connection.Port}')
 
     def handle_line(self, data):
         if str(data).isdecimal():
@@ -43,6 +53,10 @@ class RemoteEmitter(LineReader):
             traceback.print_exc(exc)
         sys.stdout.write('port closed\n')
 
+    def close(self):
+        if self.__redis is not None:
+            self.__redis.close()
+
 
 class RemoteController:
     __runner: RemoteReader = None
@@ -56,3 +70,4 @@ class RemoteController:
     def stop(cls):
         if cls.__runner is not None:
             cls.__runner.bury()
+            cls.__runner.close()
