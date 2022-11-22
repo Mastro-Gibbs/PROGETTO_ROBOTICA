@@ -144,9 +144,20 @@ class VirtualBody:
                 self.__body.interrupt_trill()
 
         elif _key == BodyData.Key.Led:
-            status = int(_value)
+            data = json.loads(_value)
+            BodyData.Led.set(int(data['status']))
+            BodyData.Led.on_arrow(int(data['arrow']), int(data['cw']))
 
-            if status:
+            if BodyData.Led.arrow:
+                '''
+                    Accedere i led in modalità freccia
+                '''
+            elif not BodyData.Led.arrow:
+                '''
+                    Spegnere i led in modalità freccia
+                '''
+
+            if BodyData.Led.status():
                 self.__body.magic_rainbow(True)
             else:
                 self.__body.interrupt_magic_rainbow()

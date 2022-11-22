@@ -264,7 +264,7 @@ class Controller:
             self.__redis.publish(ControllerData.Topic.Controller, ControllerData.Key.Motor)
 
         elif _cmd == ControllerData.Command.Led and ControllerData.Led.changed:
-            self.__redis.set(ControllerData.Key.Led, ControllerData.Led.status())
+            self.__redis.set(ControllerData.Key.Led, ControllerData.Led.leds())
             self.__redis.publish(ControllerData.Topic.Controller, ControllerData.Key.Led)
 
         elif _cmd == ControllerData.Command.Buzzer and ControllerData.Buzzer.changed:
@@ -288,7 +288,8 @@ class Controller:
         if emit:
             self.__send_command(ControllerData.Command.Motor)
 
-    def __new_led(self, status: bool, emit: bool = False):
+    def __new_led(self, status: bool, arrow: bool = False, clockwise: Clockwise = None, emit: bool = False):
+        ControllerData.Led.on_arrow(arrow, clockwise)
         ControllerData.Led.set(status)
 
         if emit:
@@ -742,6 +743,23 @@ class Controller:
         while not stop:
             curr_g = ControllerData.Machine.z_axis()
 
+            '''
+                Attivazione RC, emit buzzer e led blinking
+            
+            if c == Clockwise.RIGHT:
+                self.__new_buzzer(status=True, emit=True)
+                self.__new_led(status=True, arrow=True, clockwise=c, emit=True)
+
+                time.sleep(1)
+
+                self.__new_buzzer(status=False, emit=True)
+                self.__new_led(status=False, arrow=False, emit=True)
+                
+            '''
+
+            '''
+                Algoritmo normale
+            '''
             if c == Clockwise.RIGHT:
                 self.__new_motor_values(vel, -vel, vel, -vel, True)
             elif c == Clockwise.LEFT:

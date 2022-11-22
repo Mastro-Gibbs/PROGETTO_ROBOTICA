@@ -1,6 +1,6 @@
 import json
 
-from lib.libctrl.utility import __CFG__
+from lib.libctrl.utility import __CFG__, Clockwise
 
 
 
@@ -157,6 +157,32 @@ class BodyData(__RedisData):
 
             return json.dumps(data, indent=0)
 
+    class Led(__Value):
+        __arrow = 0
+        __clockwise = None
+
+        @classmethod
+        def on_arrow(cls, arrow: int, cw: int):
+            cls.__arrow = arrow
+            cls.__clockwise = cw
+
+        @classmethod
+        def leds(cls):
+            data: dict = dict()
+            data['status'] = cls.status()
+            data['arrow']  = cls.__arrow
+            data['cw']     = cls.__clockwise if cls.__clockwise is not None else None
+
+            cls.__arrow = False
+            cls.__clockwise = None
+
+            return json.dumps(data, indent=0)
+
+        @classmethod
+        @property
+        def arrow(cls):
+            return int(cls.__arrow)
+
 
 class ControllerData(__RedisData):
     class __Value:
@@ -269,7 +295,30 @@ class ControllerData(__RedisData):
             return json.dumps(data, indent=0)
 
     class Led(__Value):
-        pass
+        __arrow = 0
+        __clockwise = None
+
+        @classmethod
+        def on_arrow(cls, arrow: bool, cw: Clockwise):
+            cls.__arrow = int(arrow)
+            cls.__clockwise = cw.value
+
+        @classmethod
+        def leds(cls):
+            data: dict = dict()
+            data['status'] = cls.status()
+            data['arrow']  = cls.__arrow
+            data['cw']     = cls.__clockwise if cls.__clockwise is not None else None
+
+            cls.__arrow = False
+            cls.__clockwise = None
+
+            return json.dumps(data, indent=0)
+
+        @classmethod
+        @property
+        def arrow(cls):
+            return int(cls.__arrow)
 
     class Buzzer(__Value):
         pass
