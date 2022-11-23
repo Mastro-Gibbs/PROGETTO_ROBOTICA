@@ -3,7 +3,6 @@ import json
 from lib.libctrl.utility import __CFG__, Clockwise
 
 
-
 class __RedisData:
     class Connection:
         Host = __CFG__['HOST']
@@ -248,7 +247,7 @@ class ControllerData(__RedisData):
             return cls.__goal
 
         @classmethod
-        def z_axis(cls):
+        def orientation(cls):
             return float(cls.__data['Zaxis']) if cls.__data['Zaxis'] != 'None' else None
 
         @classmethod
@@ -310,7 +309,7 @@ class ControllerData(__RedisData):
             data['arrow']  = cls.__arrow
             data['cw']     = cls.__clockwise if cls.__clockwise is not None else None
 
-            cls.__arrow = False
+            cls.__arrow = 0
             cls.__clockwise = None
 
             return json.dumps(data, indent=0)
@@ -338,6 +337,8 @@ class RemoteControllerData(__RedisData):
 
     __st = 'STOP'
 
+    __dn = 'DONE'
+
     @classmethod
     @property
     def is_enabled(cls):
@@ -362,7 +363,12 @@ class RemoteControllerData(__RedisData):
     @classmethod
     @property
     def is_valid(cls):
-        return True if cls.__command is not None and cls.__command != 'DONE' else False
+        return True if cls.__command is not None and cls.__command != cls.__dn else False
+
+    @classmethod
+    @property
+    def is_rotation_done(cls):
+        return True if cls.__command == cls.__dn else False
 
     @classmethod
     def get_motor(cls):

@@ -56,7 +56,8 @@ class Controller:
             self.__redis = Redis(host=ControllerData.Connection.Host, port=ControllerData.Connection.Port, decode_responses=True)
             self.__redis.flushall()
             self.__pubsub = self.__redis.pubsub()
-            self.__pubsub.psubscribe(**{ControllerData.Topic.Body: self.__on_message})
+            self.__pubsub.psubscribe(**{ControllerData.Topic.Body:   self.__on_message})
+            self.__pubsub.psubscribe(**{ControllerData.Topic.Remote: self.__on_remote})
         except RedisConnError or OSError or ConnectionRefusedError:
             raise ControllerException(f'Unable to connect to redis server at: '
                                       f'{ControllerData.Connection.Host}:{ControllerData.Connection.Port}')
@@ -249,6 +250,14 @@ class Controller:
     #                                                                                           #
     # ***************************************************************************************** #
 
+    def __on_remote(self, msg):
+        _key = msg['data']
+        _value = self.__redis.get(_key)
+
+        if _key == RemoteControllerData.Key.RC:
+            data = json.loads(_value)
+            RemoteControllerData.on_values(data['rc_cmd'], data['rc_spd'])
+
     # callback receiver
     def __on_message(self, msg):
         _key = msg['data']
@@ -319,7 +328,6 @@ class Controller:
     #                                                                                                    #
     # ************************************************************************************************** #
 
-    # OK
     # Algorithm entry
     def algorithm(self) -> bool:
         if self.__is_algorithm_unlocked():
@@ -390,7 +398,6 @@ class Controller:
                               STDOUTDecor.DEFAULT.value, Color.RED, italic=True, _stdout=True)
             time.sleep(0.1)
 
-    # OK
     # Tree updater
     def __update_tree(self, actions, action_chosen) -> None:
         if not self._state == State.SENSING:
@@ -406,7 +413,7 @@ class Controller:
             updating also the current node as EXPLORED 
             """
             for action in actions:
-                dict_ = f_r_l_b_to_compass(ControllerData.Machine.z_axis())
+                dict_ = f_r_l_b_to_compass(ControllerData.Machine.orientation())
                 if dict_["FRONT"] == action:
                     node = Node("M_" + self.__maze_tree.generate_node_id(), action)
                     self.__maze_tree.append(node, DIRECTION.MID)
@@ -435,7 +442,7 @@ class Controller:
             Only one action that has been decided by DMP. 
             In this section it is updated the current node of the tree based on the action chosen 
             """
-            dict_ = f_r_l_b_to_compass(ControllerData.Machine.z_axis())
+            dict_ = f_r_l_b_to_compass(ControllerData.Machine.orientation())
             if dict_["FRONT"] == action_chosen:
                 self.__maze_tree.set_current(self.__maze_tree.current.mid)
             elif dict_["LEFT"] == action_chosen:
@@ -505,7 +512,6 @@ class Controller:
 
             self.__maze_tree.set_current(cur)
 
-    # OK
     # Action maker
     def __control_policy(self) -> tuple:
         """
@@ -523,7 +529,7 @@ class Controller:
         left = ControllerData.Machine.left()
         front = ControllerData.Machine.front()
         right = ControllerData.Machine.right()
-        ori = ControllerData.Machine.z_axis()
+        ori = ControllerData.Machine.orientation()
 
         if self._state == State.STARTING and self._position == Position.INITIAL:
             if left is not None and right is not None:
@@ -536,7 +542,7 @@ class Controller:
 
         elif self._state == State.ROTATING:
             actions.insert(0, self.__maze_performed_commands[len(self.__maze_performed_commands) - 1])
-            com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.z_axis())])
+            com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.orientation())])
 
         elif self._state == State.STOPPED or self._state == State.SENSING:
 
@@ -573,21 +579,21 @@ class Controller:
                 if self.__maze_tree.current.left is not None and self.__maze_tree.current.left.type == Type.OBSERVED:
                     action = self.__maze_tree.current.left.action
                     actions.insert(0, action)
-                    if action == detect_target(ControllerData.Machine.z_axis()):
+                    if action == detect_target(ControllerData.Machine.orientation()):
                         com_actions.insert(0, [Command.RUN, action])
                     else:
                         com_actions.insert(0, [Command.ROTATE, action])
                 if self.__maze_tree.current.mid is not None and self.__maze_tree.current.mid.type == Type.OBSERVED:
                     action = self.__maze_tree.current.mid.action
                     actions.insert(0, action)
-                    if action == detect_target(ControllerData.Machine.z_axis()):
+                    if action == detect_target(ControllerData.Machine.orientation()):
                         com_actions.insert(0, [Command.RUN, action])
                     else:
                         com_actions.insert(0, [Command.ROTATE, action])
                 if self.__maze_tree.current.right is not None and self.__maze_tree.current.right.type == Type.OBSERVED:
                     action = self.__maze_tree.current.right.action
                     actions.insert(0, action)
-                    if action == detect_target(ControllerData.Machine.z_axis()):
+                    if action == detect_target(ControllerData.Machine.orientation()):
                         com_actions.insert(0, [Command.RUN, action])
                     else:
                         com_actions.insert(0, [Command.ROTATE, action])
@@ -630,10 +636,10 @@ class Controller:
             if self._position == Position.CORRIDOR:
                 if left is None or right is None:
                     # actions.insert(0, Command.GO_TO_JUNCTION)
-                    com_actions.insert(0, [Command.GO_TO_JUNCTION, detect_target(ControllerData.Machine.z_axis())])
+                    com_actions.insert(0, [Command.GO_TO_JUNCTION, detect_target(ControllerData.Machine.orientation())])
                 elif front is None or front > self._SAFE_DISTANCE:
                     # actions.insert(0, Command.RUN)
-                    com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.z_axis())])
+                    com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.orientation())])
                 elif front <= self._SAFE_DISTANCE:
                     # actions.insert(0, Command.STOP)
                     com_actions.insert(0, [Command.STOP, None])
@@ -643,14 +649,13 @@ class Controller:
                     self._position = Position.CORRIDOR
                 if front is None or front > self._SAFE_DISTANCE:
                     # actions.insert(0, Command.RUN)
-                    com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.z_axis())])
+                    com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.orientation())])
                 elif front <= self._SAFE_DISTANCE:
                     # actions.insert(0, Command.STOP)
                     com_actions.insert(0, [Command.STOP, None])
 
         return actions, com_actions
 
-    # OK
     def __decision_making_policy(self, com_actions) -> list:
         """ Given a set of actions it decides what action the robot has to perform """
 
@@ -670,9 +675,8 @@ class Controller:
                 if direction == action:
                     return com_action
 
-
     def __is_algorithm_unlocked(self) -> bool:
-        if ControllerData.Machine.z_axis():
+        if ControllerData.Machine.orientation():
             return True
         return False
 
@@ -693,7 +697,7 @@ class Controller:
     def rotate_to_final_g(self, vel, final_g):
         """ Rotate function that rotates the robot until it reaches final_g """
 
-        init_g = ControllerData.Machine.z_axis()
+        init_g = ControllerData.Machine.orientation()
         degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
         
         self.__do_rotation(vel, c, degrees, final_g)
@@ -733,7 +737,7 @@ class Controller:
         The orientation of the robot must reach the interval [degrees - delta, degrees + delta]
         """
         degrees = abs(degrees)
-        init_g = ControllerData.Machine.z_axis()
+        init_g = ControllerData.Machine.orientation()
 
         delta = 0.8
         stop = False
@@ -741,29 +745,24 @@ class Controller:
         performed_deg = 0.0
 
         while not stop:
-            curr_g = ControllerData.Machine.z_axis()
+            curr_g = ControllerData.Machine.orientation()
 
-            '''
-                Attivazione RC, emit buzzer e led blinking
-            
-            if c == Clockwise.RIGHT:
-                self.__new_buzzer(status=True, emit=True)
+            if self.__remote is not None:
                 self.__new_led(status=True, arrow=True, clockwise=c, emit=True)
 
+                self.__new_buzzer(status=True, emit=True)
                 time.sleep(1)
-
                 self.__new_buzzer(status=False, emit=True)
-                self.__new_led(status=False, arrow=False, emit=True)
-                
-            '''
 
-            '''
-                Algoritmo normale
-            '''
-            if c == Clockwise.RIGHT:
-                self.__new_motor_values(vel, -vel, vel, -vel, True)
-            elif c == Clockwise.LEFT:
-                self.__new_motor_values(-vel, vel, -vel, vel, True)
+                while RemoteControllerData.is_rotation_done:
+                    time.sleep(0.01)
+
+                self.__new_led(status=False, arrow=False, emit=True)
+            else:
+                if c == Clockwise.RIGHT:
+                    self.__new_motor_values(vel, -vel, vel, -vel, True)
+                elif c == Clockwise.LEFT:
+                    self.__new_motor_values(-vel, vel, -vel, vel, True)
 
             performed_deg_temp = self.compute_performed_degrees(c, init_g, curr_g)
 
@@ -798,7 +797,7 @@ class Controller:
         if Logger.is_loggable(self._LOGSEVERITY, "mid"):
             self.__logger.log(" ** ORIENTATION CHECKING ** ", Color.GRAY, True, True)
 
-        curr_g = ControllerData.Machine.z_axis()
+        curr_g = ControllerData.Machine.orientation()
 
         ok = False
         if abs(final_g) + delta > 180:
@@ -848,7 +847,7 @@ class Controller:
         it = 0
 
         while not ok and it < self._ROTATION_MAX_ATTEMPTS:
-            curr_g = ControllerData.Machine.z_axis()
+            curr_g = ControllerData.Machine.orientation()
 
             degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
 
