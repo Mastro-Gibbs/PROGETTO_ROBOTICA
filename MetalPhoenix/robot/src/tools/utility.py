@@ -38,10 +38,10 @@ class Compass(float, Enum):
             return "SUD"
 
     def compass_list_to_string_comma_sep(compass_list):
-        string_list = Compass.compass_to_string(compass_list[0]) + ", " +\
-            Compass.compass_to_string(compass_list[1]) + ", " + \
-            Compass.compass_to_string(compass_list[2]) + ", " + \
-            Compass.compass_to_string(compass_list[3])
+        string_list = Compass.compass_to_string(compass_list[0]) + ", " + \
+                      Compass.compass_to_string(compass_list[1]) + ", " + \
+                      Compass.compass_to_string(compass_list[2]) + ", " + \
+                      Compass.compass_to_string(compass_list[3])
         return string_list
 
     def compass_list_to_concat_string(compass_list: list) -> str:
@@ -319,7 +319,7 @@ class CFG:
         ...
 
     @staticmethod
-    def write_data_analysis(maze_name, time_to_solve, tree_dict,
+    def write_data_analysis(maze_name, maze_solved, execution_time, tree_dict,
                             number_of_nodes, number_of_dead_end, performed_commands,
                             trajectory, intelligence, priority_list):
         config = configparser.ConfigParser()
@@ -347,7 +347,8 @@ class CFG:
 
         config.add_section(section_name)
         config[section_name] = {
-            "time_to_solve_sec": time_to_solve,
+            "maze_solved": maze_solved,
+            "execution_time_sec": execution_time,
             "intelligence": intelligence,
             "priority_list": priority_list,
             "number_of_nodes": number_of_nodes,
@@ -355,7 +356,7 @@ class CFG:
             "tree_dict": tree_dict,
             "performed_commands": performed_commands,
             "trajectory": trajectory
-            }
+        }
 
         """
             print("\nSezioni del file di config:")
@@ -384,4 +385,12 @@ class CFG:
             "ALOGFILE": psr["UTILITY"]["agentlog"],
             "EXT": psr["UTILITY"]["ext"],
             "SEVERITY": psr["UTILITY"]["severity"]
+        }
+
+    @staticmethod
+    def maze_data() -> dict:
+        psr = configparser.ConfigParser()
+        psr.read('../resources/data/config.conf')
+        return {
+            "MAZE_NUMBER": psr["MAZE"]["maze_number"],
         }

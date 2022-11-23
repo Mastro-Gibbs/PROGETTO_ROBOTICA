@@ -36,7 +36,7 @@ def run():
             c.update_cfg()
 
         end_time = time.time()
-        c.time_to_solve = end_time - start_time
+        c.execution_time = end_time - start_time
 
 
 def stop():

@@ -19,12 +19,14 @@ class State(Enum):
     RUNNING = 1
     ROTATING = 2
     SENSING = 3
+    # BALANCING = 4 # TO DO
 
 
 class Position(Enum):
-    INITIAL = 0  # or UNKNOWN
-    CORRIDOR = 1
-    JUNCTION = 2
+    UNKNOWN = 0
+    INITIAL = 1
+    CORRIDOR = 2
+    JUNCTION = 3
 
 
 class Command(Enum):
@@ -60,8 +62,8 @@ class Controller:
         self._body.stop()
 
         self._state = State.STARTING
-        self._position = Position.INITIAL
-        self.mode = Mode.EXPLORING
+        self._position = Position.UNKNOWN
+        self._mode = Mode.EXPLORING
 
         self.robot_config_data = CFG.robot_conf_data()
         self._speed = self.robot_config_data["SPEED"]
@@ -89,11 +91,15 @@ class Controller:
         self.prev_action = None
         self.tree = Tree()
 
+        self._maze_solved = False
+        self.attempts_to_unstuck = 0
+
         """ DATA ANALYSIS """
-        self.maze_number = 1  # Each maze must have a number to be identified, change this number if the maze changes
+        self.maze_number = CFG.maze_data()["MAZE_NUMBER"]  # Each maze must have a number to be identified, change this number if the maze changes
         self.maze_name = "Maze" + "_" + str(self.maze_number) + "_" + \
-                         (Compass.compass_list_to_concat_string(self.priority_list) if INTELLIGENCE == "low" else "RANDOM")
-        self.time_to_solve = 0  # solving time
+                         (Compass.compass_list_to_concat_string(
+                             self.priority_list) if INTELLIGENCE == "low" else "RANDOM")
+        self.execution_time = 0
         self.number_of_nodes = 1
         self.number_of_dead_end = 0
 
@@ -104,7 +110,8 @@ class Controller:
     def write_data_analysis(self):
         priority_list = Compass.compass_list_to_string_comma_sep(self.priority_list)
         CFG.write_data_analysis(self.maze_name,
-                                self.time_to_solve,
+                                self._maze_solved,
+                                self.execution_time,
                                 self.tree.build_tree_dict(),
                                 self.number_of_nodes,
                                 self.number_of_dead_end,
@@ -142,7 +149,7 @@ class Controller:
         action = com_action[1]
 
         if Logger.is_loggable(LOGSEVERITY, "low"):
-            self.__class_logger.log(f"--MODE: {self.mode}")
+            self.__class_logger.log(f"--MODE: {self._mode}")
             self.__class_logger.log(f"--ACTIONS: {com_actions}")
             self.__class_logger.log(f"--ACTION: {com_action}")
             self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}")
@@ -197,7 +204,7 @@ class Controller:
         if not self._state == State.SENSING:
             return
 
-        if self.mode == Mode.EXPLORING:
+        if self._mode == Mode.EXPLORING:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log("*** UPDATING TREE (MODE: EXPLORING) ***", "gray", newline=True)
 
@@ -244,7 +251,7 @@ class Controller:
             elif dict_["RIGHT"] == action_chosen:
                 self.tree.set_current(self.tree.current.right)
 
-        elif self.mode == Mode.ESCAPING:
+        elif self._mode == Mode.ESCAPING:
             if Logger.is_loggable(LOGSEVERITY, "mid"):
                 self.__class_logger.log("*** UPDATING TREE (MODE: ESCAPING) ***", "gray", newline=True)
 
@@ -302,6 +309,7 @@ class Controller:
                     if Logger.is_loggable(LOGSEVERITY, "low"):
                         self.__class_logger.log("!!! ESCAPING ERROR UPDATING CURRENT !!!", "dkred", True, True)
                         self.__class_logger.log(" >>>>  EXITING  <<<< ", "red", italic=True)
+                    self.virtual_destructor()
                     exit(-1)
 
             self.tree.set_current(cur)
@@ -326,24 +334,82 @@ class Controller:
         right = self.right_value
         ori = self.orientation
 
-        if self._state == State.STARTING and self._position == Position.INITIAL:
-            if left is not None and right is not None:
-                self._position = Position.CORRIDOR
-            elif left is None or right is None:
-                self._position = Position.JUNCTION
-            self._state = State.SENSING
-            # actions.insert(0, Command.START)
+        if self._state == State.STARTING and self._position == Position.UNKNOWN:
+
+            if front is None:
+                # Ho il muro dietro (dato che nei vincoli non posso mettere il robot
+                # in una giunzione dove ci sono 4 direzioni/strade libere)
+                if (left is not None and right is not None) or (left is None and right is None):
+                    self._state = State.STARTING
+                    self._position = Position.INITIAL
+                    com_actions.insert(0, [Command.START, None])
+                else:
+                    # Muro a sinistra
+                    if left is not None:
+                        action = detect_target(detect_target(self.orientation) - 90)
+                        com_actions.insert(0, [Command.ROTATE, action])
+                        print("MURO A SINISTRA")
+
+                    # Muro a destra
+                    elif right is not None:
+                        action = detect_target(detect_target(self.orientation) + 90)
+                        com_actions.insert(0, [Command.ROTATE, action])
+                        print("MURO A DESTRA")
+
+            # Faccio 180° per avere il muro dietro
+            elif front is not None:
+                if left is None or right is None:
+                    action = negate_compass(detect_target(self.orientation))
+                    com_actions.insert(0, [Command.ROTATE, action])
+
+                elif left is not None and right is not None:
+                    action = negate_compass(detect_target(self.orientation))
+                    com_actions.insert(0, [Command.ROTATE, action])
+                    self.attempts_to_unstuck = 1
+
+        # In questo caso ho sempre il muro dietro
+        elif self._state == State.STARTING and self._position == Position.INITIAL:
+
+            if front is None:
+                if left is not None and right is not None:
+                    self._state = State.SENSING
+                    self._position = Position.CORRIDOR
+                    self.attempts_to_unstuck = 0
+
+                elif left is None or right is None:
+                    self._state = State.SENSING
+                    self._position = Position.JUNCTION
+                    self.attempts_to_unstuck = 0
+
+            elif front is not None:
+                if left is None or right is None:
+                    self._state = State.SENSING
+                    self._position = Position.CORRIDOR
+                    self.attempts_to_unstuck = 0
+
+                elif left is not None and right is not None:
+                    if self.attempts_to_unstuck == 1:
+                        self.__class_logger.log("Robot in stuck. Cannot solve the maze.", "red", True, True)
+                        self.virtual_destructor()
+                        exit(-1)
+
             com_actions.insert(0, [Command.START, None])
 
-        elif self._state == State.ROTATING:
-            actions.insert(0, self.performed_commands[len(self.performed_commands) - 1])
-            com_actions.insert(0, [Command.RUN, detect_target(self.orientation)])
+        elif self._state == State.ROTATING:  # the robot has already rotated
+            if self._position == Position.UNKNOWN:
+                self._state = State.STARTING
+                self._position = Position.INITIAL
+                com_actions.insert(0, [Command.START, None])
+
+            else:
+                actions.insert(0, self.performed_commands[len(self.performed_commands) - 1])
+                com_actions.insert(0, [Command.RUN, detect_target(self.orientation)])
 
         elif self._state == State.STOPPED or self._state == State.SENSING:
 
             self._state = State.SENSING
 
-            if self.mode == Mode.EXPLORING:
+            if self._mode == Mode.EXPLORING:
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
                     self.__class_logger.log("Control policy EXPLORING", "gray")
 
@@ -361,13 +427,13 @@ class Controller:
                     com_actions.insert(0, [Command.ROTATE, action])
 
                 if not actions:
+                    self._mode = Mode.ESCAPING
+                    self._state = State.SENSING
                     action = negate_compass(self.tree.current.action)
                     actions.insert(0, action)
                     com_actions.insert(0, [Command.ROTATE, action])
-                    self.mode = Mode.ESCAPING
-                    self._state = State.SENSING
 
-            elif self.mode == Mode.ESCAPING:
+            elif self._mode == Mode.ESCAPING:
                 if Logger.is_loggable(LOGSEVERITY, "mid"):
                     self.__class_logger.log("Control policy ESCAPING", "gray")
 
@@ -407,17 +473,20 @@ class Controller:
                         actions.insert(0, action)
                 """
 
-                # Coming back, regressing
                 if not actions:
+                    if (self.tree.current.left is None or self.tree.current.left.type == Type.DEAD_END) and \
+                        (self.tree.current.mid is None or self.tree.current.mid.type == Type.DEAD_END) and \
+                            (self.tree.current.right is None or self.tree.current.right.type == Type.DEAD_END) and \
+                            self.tree.current.action is None:
+                        self.__class_logger.log("NO OBSERVED NO EXPLORED NO ACTIONS", "dkred", True, True)
+                        self.__class_logger.log(" >>>>  EXITING  <<<< ", "dkred", italic=True)
+                        self.virtual_destructor()
+                        exit(-1)
+
+                    # Coming back, regressing
                     action = negate_compass(self.tree.current.action)
                     actions.insert(0, action)
                     com_actions.insert(0, [Command.ROTATE, action])
-
-                if not actions:
-                    if Logger.is_loggable(LOGSEVERITY, "low"):
-                        self.__class_logger.log("NO OBSERVED NO EXPLORED NO ACTIONS", "dkred", True, True)
-                        self.__class_logger.log(" >>>>  EXITING  <<<< ", "dkred", italic=True)
-                    exit(-1)
 
         elif self._state == State.RUNNING:
 
@@ -425,28 +494,23 @@ class Controller:
             # in update_tree (per aggiornarlo lo stato deve essere in SENSING).
             # Evito così che vengano aggiunti dei nodi duplicati non voluti.
 
-            if self.mode == Mode.ESCAPING and self.tree.current.type == Type.OBSERVED:
-                self.mode = Mode.EXPLORING
+            if self._mode == Mode.ESCAPING and self.tree.current.type == Type.OBSERVED:
+                self._mode = Mode.EXPLORING
 
             if self._position == Position.CORRIDOR:
                 if left is None or right is None:
-                    # actions.insert(0, Command.GO_TO_JUNCTION)
                     com_actions.insert(0, [Command.GO_TO_JUNCTION, detect_target(self.orientation)])
                 elif front is None or front > SAFE_DISTANCE:
-                    # actions.insert(0, Command.RUN)
                     com_actions.insert(0, [Command.RUN, detect_target(self.orientation)])
                 elif front <= SAFE_DISTANCE:
-                    # actions.insert(0, Command.STOP)
                     com_actions.insert(0, [Command.STOP, None])
 
             elif self._position == Position.JUNCTION:
                 if left is not None and right is not None:
                     self._position = Position.CORRIDOR
                 if front is None or front > SAFE_DISTANCE:
-                    # actions.insert(0, Command.RUN)
                     com_actions.insert(0, [Command.RUN, detect_target(self.orientation)])
                 elif front <= SAFE_DISTANCE:
-                    # actions.insert(0, Command.STOP)
                     com_actions.insert(0, [Command.STOP, None])
 
         return actions, com_actions
@@ -544,7 +608,8 @@ class Controller:
             return True
 
         else:
-            print("ERROR: ACTION NOT RECOGNIZED")
+            self.__class_logger.log("ERROR: ACTION NOT RECOGNIZED", "red")
+            self.virtual_destructor()
             exit(-1)
 
     """ INTELLIGENCE """
@@ -593,6 +658,7 @@ class Controller:
             if Logger.is_loggable(LOGSEVERITY, "low"):
                 self.__class_logger.log(" ** MAX ATTEMPTS REACHED ** ", "dkred", True, True)
                 self.__class_logger.log(" >>>>  EXITING  <<<< ", "dkred", italic=True)
+            self.virtual_destructor()
             exit(-1)
 
     def __rotate(self, vel, c: Clockwise, degrees):
@@ -795,6 +861,7 @@ class Controller:
         global LOGSEVERITY
 
         if self._body.get_gate():
+            self._maze_solved = True
             self.tree.current.set_type(Type.FINAL)
             self.__class_logger.log(" :D SO HAPPY :D ", "green", True, True)
             self.__class_logger.log(" >> MAZE SOLVED << ", "green", italic=True)
@@ -802,10 +869,9 @@ class Controller:
             self.__class_logger.log(" ~~ SAYING GOODBYE TO DEAD END CHILDREN :( ~~ ", "green", True)
             self.__class_logger.log(" ~~ THANKS TO DEVELOPERS THAT HAVE DONE THIS  ~~ ", "green", True)
             self.__class_logger.log(" ^^ FLYING TO THE HEAVEN ^^ ", "green", True, True)
-            print("\n")
-            print("Tree: ", self.tree.build_tree_dict(), "\n")
-            print("Performed commands: ", self.performed_commands, "\n")
-            print("Trajectory: ", self.trajectory, "\n")
+            self.__class_logger.log("Tree: " + str(self.tree.build_tree_dict()), "green", True, True)
+            self.__class_logger.log("Performed commands: " + str(self.performed_commands), "green", True, True)
+            self.__class_logger.log("Trajectory: " + str(self.trajectory), "green", True, True)
 
             return True
 

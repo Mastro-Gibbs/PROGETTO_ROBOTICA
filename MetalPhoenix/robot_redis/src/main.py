@@ -7,7 +7,7 @@ try:
 
 except KeyboardInterrupt:
     print()
-    print("TIME: ", agent.c.time_to_solve)
+    print("TIME: ", agent.c.execution_time)
 
     print("Number of nodes: ", agent.c.number_of_nodes)
     print("Number of dead end: ", agent.c.number_of_dead_end)

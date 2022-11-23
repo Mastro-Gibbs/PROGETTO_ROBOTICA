@@ -26,7 +26,7 @@ OBSERVED:
 1) A node is OBSERVED when it is first added and not explored yet.
 EXPLORED:
 1) A node is EXPLORED when it is first visited.
-2) It can have DEAD END children but at least one must be EXPLORED namely visited.
+2) It can have DEAD END children but at least one must be EXPLORED.
 DEAD END:
 1) A node is dead end if it has not children => it is a leaf.
 2) If all his children are dead end.
