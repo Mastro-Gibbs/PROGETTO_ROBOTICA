@@ -52,12 +52,14 @@ class State(Enum):
     RUNNING = 1
     ROTATING = 2
     SENSING = 3
+    # BALANCING = 4 # TO DO
 
 
 class Position(Enum):
-    INITIAL = 0  # or UNKNOWN
-    CORRIDOR = 1
-    JUNCTION = 2
+    UNKNOWN = 0
+    INITIAL = 1
+    CORRIDOR = 2
+    JUNCTION = 3
 
 
 class Command(Enum):

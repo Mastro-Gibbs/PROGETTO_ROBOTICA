@@ -148,72 +148,6 @@ def negate_compass(compass: float) -> Compass:
         return Compass.EST
 
 
-'''
-def decision_making_policy(priority: list, actions: list) -> Compass:
-        if not actions:
-            return None
-
-        if isinstance(actions[0], Command):
-            return actions[0]
-
-        for direction in priority:  # [ S, N, O, E ]
-            for action in actions:  # [ E, O, N ]
-                if direction == action:
-                    return action
-
-
-def compute_performed_degrees(c, init_g, curr_g):
-        """Calculates the angle between init_g and curr_g that the robot performed based on the direction of rotation"""
-
-        if init_g == curr_g:
-            return 0
-
-        init_g_360 = normalize_angle(init_g, 0)
-        curr_g_360 = normalize_angle(curr_g, 0)
-
-        first_angle = curr_g_360 - init_g_360
-        second_angle = -1 * first_angle / \
-            abs(first_angle) * (360 - abs(first_angle))
-
-        if c == Clockwise.RIGHT:
-            if first_angle < 0:
-                performed_degrees = abs(first_angle)
-            else:
-                performed_degrees = abs(second_angle)
-        else:
-            if first_angle > 0:
-                performed_degrees = abs(first_angle)
-            else:
-                performed_degrees = abs(second_angle)
-        return performed_degrees
-
-
-def best_angle_and_rotation_way(init_g, final_g):
-        """Calculate the best (minimum) angle between init_g and final_g and how you need to rotate"""
-        if init_g == final_g:
-            return 0
-
-        init_g_360 = normalize_angle(init_g, 0)
-        final_g_360 = normalize_angle(final_g, 0)
-
-        first_angle = final_g_360 - init_g_360
-
-        second_angle = -1 * first_angle / \
-            abs(first_angle) * (360 - abs(first_angle))
-        smallest = first_angle
-
-        if abs(first_angle) > 180:
-            smallest = second_angle
-
-        if smallest < 0:
-            c = Clockwise.RIGHT
-        else:
-            c = Clockwise.LEFT
-
-        return smallest, c
-'''
-
-
 class Logger:
     """
     Class to menage stdout log colors && log files.
@@ -348,7 +282,7 @@ class CFG:
         ...
 
     @staticmethod
-    def write_data_analysis(maze_name, time_to_solve, tree_dict,
+    def write_data_analysis(maze_name, maze_solved, execution_time, tree_dict,
                             number_of_nodes, number_of_dead_end, performed_commands,
                             trajectory, intelligence, priority_list):
         config = configparser.ConfigParser()
@@ -376,7 +310,8 @@ class CFG:
 
         config.add_section(section_name)
         config[section_name] = {
-            "time_to_solve_sec": time_to_solve,
+            "maze_solved": maze_solved,
+            "execution_time_sec": execution_time,
             "intelligence": intelligence,
             "priority_list": priority_list,
             "number_of_nodes": number_of_nodes,
@@ -384,7 +319,7 @@ class CFG:
             "tree_dict": tree_dict,
             "performed_commands": performed_commands,
             "trajectory": trajectory
-            }
+        }
 
         """
             print("\nSezioni del file di config:")
@@ -438,5 +373,12 @@ class CFG:
             "RC_ENABLED": bool(int(psr["REDIS"]["rc_enabled"]))
         }
 
+    @staticmethod
+    def maze_data() -> dict:
+        psr = configparser.ConfigParser()
+        psr.read('../resources/data/config.conf')
+        return {
+            "MAZE_NUMBER": psr["MAZE"]["maze_number"],
+        }
 
 __CFG__: dict = CFG.cfg_redis_data()

@@ -79,7 +79,27 @@ class Led:
                     (int(i * 256 / self.strip.numPixels()) + j) & 255))
             self.strip.show()
             time.sleep(wait_ms/1000.0)
-        self.colorWipe(Color(0,0,0), 10)
+        self.colorWipe(Color(0, 0, 0), 10)
+
+    def car_arrow(self, clockwise):
+        wait_s = 0.5
+        data = [1, 3, 5, 7] if clockwise == 0 else [0, 2, 4, 6]
+
+        off    = self.LED_TYPR(self.ORDER, Color(255, 168, 0))
+        orange = self.LED_TYPR(self.ORDER, Color(0, 0, 0))
+
+        while True:
+            for index in data:
+                self.strip.setPixelColor(index, orange)
+
+            self.strip.show()
+            time.sleep(wait_s)
+
+            for index in data:
+                self.strip.setPixelColor(index, off)
+
+            self.strip.show()
+            time.sleep(wait_s)
 
     def theaterChaseRainbow(self, wait_ms=50):
         """Rainbow movie theater light style chaser animation."""
@@ -104,19 +124,19 @@ class Led:
         self.mode = n
         while True:
             if self.mode == '1':
-                self.colorWipe(self.strip, Color(255, 0, 0))  # Red wipe
-                self.colorWipe(self.strip, Color(0, 255, 0))  # Green wipe
-                self.colorWipe(self.strip, Color(0, 0, 255))  # Blue wipe
-                self.colorWipe(self.strip, Color(0, 0, 0), 10)
+                self.colorWipe(Color(255, 0, 0))  # Red wipe
+                self.colorWipe(Color(0, 255, 0))  # Green wipe
+                self.colorWipe(Color(0, 0, 255))  # Blue wipe
+                self.colorWipe(Color(0, 0, 0), 10)
             elif self.mode == '2':
-                self.theaterChaseRainbow(self.strip)
-                self.colorWipe(self.strip, Color(0, 0, 0), 10)
+                self.theaterChaseRainbow()
+                self.colorWipe(Color(0, 0, 0), 10)
             elif self.mode == '3':
-                self.rainbow(self.strip)
-                self.colorWipe(self.strip, Color(0, 0, 0), 10)
+                self.rainbow()
+                self.colorWipe(Color(0, 0, 0), 10)
             elif self.mode == '4':
-                self.rainbowCycle(self.strip)
-                self.colorWipe(self.strip, Color(0, 0, 0), 10)
+                self.rainbowCycle()
+                self.colorWipe(Color(0, 0, 0), 10)
             else:
-                self.colorWipe(self.strip, Color(0, 0, 0), 10)
+                self.colorWipe(Color(0, 0, 0), 10)
                 break

@@ -182,6 +182,11 @@ class BodyData(__RedisData):
         def arrow(cls):
             return int(cls.__arrow)
 
+        @classmethod
+        @property
+        def direction(cls):
+            return int(cls.__clockwise)
+
 
 class ControllerData(__RedisData):
     class __Value:

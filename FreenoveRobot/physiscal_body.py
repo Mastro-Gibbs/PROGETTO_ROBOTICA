@@ -46,7 +46,9 @@ class PhysicalBody:
 
         # led strip instance
         self.__strip = Led()
-        self.__wizard = RobotThread(target=self.__strip.rainbowCycle, name='led_wizard', args=(RC.LED_ANIM_DELAY, RC.LED_ANIM_LOOPS,))
+        self.__wizard = RobotThread(target=self.__strip.rainbowCycle, name='led_wizard',
+                                    args=(RC.LED_ANIM_DELAY, RC.LED_ANIM_LOOPS,))
+        self.__arrow = None
 
         print('Sensors successfully initialized')
 
@@ -157,7 +159,10 @@ class PhysicalBody:
         """
         self.__buzzer.stop()
 
-    
+    def blink_car_arrow(self, clockwise) -> None:
+        self.__arrow = RobotThread(target=self.__strip.car_arrow, name='led_arrow', args=(clockwise,))
+        self.__arrow.start()
+
     def magic_rainbow(self, mode: bool = False) -> None:
         """
             @Warning: possible multithread method.
@@ -176,14 +181,18 @@ class PhysicalBody:
         else:
             self.__strip.rainbowCycle()
     
-    def interrupt_magic_rainbow(self) -> None:
+    def interrupt_led(self) -> None:
         """
             Interrupt wizard thread if it is alive.
             Turn off leds.
         """
-        self.__wizard.bury()
+        if self.__wizard is not None and self.__wizard.is_alive():
+            self.__wizard.bury()
 
-        self.__strip.colorWipe(Color(0,0,0), 10)
+        if self.__arrow is not None and self.__arrow.is_alive():
+            self.__arrow.bury()
+
+        self.__strip.colorWipe(Color(0, 0, 0), 10)
     
     def orientation(self) -> tuple:
         """
