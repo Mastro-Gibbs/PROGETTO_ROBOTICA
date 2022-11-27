@@ -11,6 +11,8 @@ from physiscal_body import PhysicalBody as Body
 
 from lib.librd.redisdata import BodyData, RemoteControllerData as rcData
 
+from lib.libctrl.utility import Clockwise
+
 from lib.workerthread import RobotThread
 from lib.robotAPI.motor import MOTORSCommand
 from lib.exit_codes import CALIB_ERROR
@@ -148,19 +150,13 @@ class VirtualBody:
             BodyData.Led.set(int(data['status']))
             BodyData.Led.on_arrow(int(data['arrow']), int(data['cw']))
 
-            if BodyData.Led.arrow:
-                '''
-                    Accedere i led in modalità freccia
-                '''
-            elif not BodyData.Led.arrow:
-                '''
-                    Spegnere i led in modalità freccia
-                '''
-
             if BodyData.Led.status():
-                self.__body.magic_rainbow(True)
-            else:
-                self.__body.interrupt_magic_rainbow()
+                if BodyData.Led.arrow:          # LED ON, ARROW ON
+                    self.__body.blink_car_arrow(clockwise=BodyData.Led.direction)
+                elif not BodyData.Led.arrow:    # LED ON, ARROW OFF
+                    self.__body.magic_rainbow(True)
+            else:                               # LED OFF
+                self.__body.interrupt_led()
 
         elif _key == BodyData.Key.Motor:
             BodyData.Motor.on_values(_value)

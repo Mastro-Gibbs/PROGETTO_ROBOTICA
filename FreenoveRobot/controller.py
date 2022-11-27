@@ -66,7 +66,7 @@ class Controller:
 
         self.__robot_mode: Mode = Mode.EXPLORING
         self.__robot_state: State = State.STARTING
-        self.__robot_position: Position = Position.INITIAL
+        self.__robot_position: Position = Position.UNKNOWN
         self.__robot_priority_list = self._CONTROLLER_DATA['PRIORITY_LIST']
 
         self.__robot_speed = self._CONTROLLER_DATA["SPEED"]
@@ -531,18 +531,76 @@ class Controller:
         right = ControllerData.Machine.right()
         ori = ControllerData.Machine.orientation()
 
-        if self._state == State.STARTING and self._position == Position.INITIAL:
-            if left is not None and right is not None:
-                self._position = Position.CORRIDOR
-            elif left is None or right is None:
-                self._position = Position.JUNCTION
-            self._state = State.SENSING
-            # actions.insert(0, Command.START)
+        if self._state == State.STARTING and self._position == Position.UNKNOWN:
+
+            if front is None:
+                # Ho il muro dietro (dato che nei vincoli non posso mettere il robot
+                # in una giunzione dove ci sono 4 direzioni/strade libere)
+                if (left is not None and right is not None) or (left is None and right is None):
+                    self._state = State.STARTING
+                    self._position = Position.INITIAL
+                    com_actions.insert(0, [Command.START, None])
+                else:
+                    # Muro a sinistra
+                    if left is not None:
+                        action = detect_target(detect_target(ControllerData.Machine.orientation()) - 90)
+                        com_actions.insert(0, [Command.ROTATE, action])
+                        print("MURO A SINISTRA")
+
+                    # Muro a destra
+                    elif right is not None:
+                        action = detect_target(detect_target(ControllerData.Machine.orientation()) + 90)
+                        com_actions.insert(0, [Command.ROTATE, action])
+                        print("MURO A DESTRA")
+
+            # Faccio 180° per avere il muro dietro
+            elif front is not None:
+                if left is None or right is None:
+                    action = negate_compass(detect_target(ControllerData.Machine.orientation()))
+                    com_actions.insert(0, [Command.ROTATE, action])
+
+                elif left is not None and right is not None:
+                    action = negate_compass(detect_target(ControllerData.Machine.orientation()))
+                    com_actions.insert(0, [Command.ROTATE, action])
+                    self.attempts_to_unstuck = 1
+
+        # In questo caso ho sempre il muro dietro
+        elif self._state == State.STARTING and self._position == Position.INITIAL:
+
+            if front is None:
+                if left is not None and right is not None:
+                    self._state = State.SENSING
+                    self._position = Position.CORRIDOR
+                    self.attempts_to_unstuck = 0
+
+                elif left is None or right is None:
+                    self._state = State.SENSING
+                    self._position = Position.JUNCTION
+                    self.attempts_to_unstuck = 0
+
+            elif front is not None:
+                if left is None or right is None:
+                    self._state = State.SENSING
+                    self._position = Position.CORRIDOR
+                    self.attempts_to_unstuck = 0
+
+                elif left is not None and right is not None:
+                    if self.attempts_to_unstuck == 1:
+                        self.__logger.log("Robot in stuck. Cannot solve the maze.", Color.RED, True, True)
+                        self.virtual_destructor()
+                        exit(-1)
+
             com_actions.insert(0, [Command.START, None])
 
-        elif self._state == State.ROTATING:
-            actions.insert(0, self.__maze_performed_commands[len(self.__maze_performed_commands) - 1])
-            com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.orientation())])
+        elif self._state == State.ROTATING:  # the robot has already rotated
+            if self._position == Position.UNKNOWN:
+                self._state = State.STARTING
+                self._position = Position.INITIAL
+                com_actions.insert(0, [Command.START, None])
+
+            else:
+                actions.insert(0, self.__maze_performed_commands[len(self.__maze_performed_commands) - 1])
+                com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.orientation())])
 
         elif self._state == State.STOPPED or self._state == State.SENSING:
 
@@ -612,17 +670,20 @@ class Controller:
                         actions.insert(0, action)
                 """
 
-                # Coming back, regressing
                 if not actions:
+                    if (self.__maze_tree.current.left is None or self.__maze_tree.current.left.type == Type.DEAD_END) and \
+                            (self.__maze_tree.current.mid is None or self.__maze_tree.current.mid.type == Type.DEAD_END) and \
+                            (self.__maze_tree.current.right is None or self.__maze_tree.current.right.type == Type.DEAD_END) and \
+                            self.__maze_tree.current.action is None:
+                        self.__logger.log("NO OBSERVED NO EXPLORED NO ACTIONS", Color.DARKRED, True, True)
+                        self.__logger.log(" >>>>  EXITING  <<<< ", Color.DARKRED, italic=True)
+                        self.virtual_destructor()
+                        exit(-1)
+
+                    # Coming back, regressing
                     action = negate_compass(self.__maze_tree.current.action)
                     actions.insert(0, action)
                     com_actions.insert(0, [Command.ROTATE, action])
-
-                if not actions:
-                    if Logger.is_loggable(self._LOGSEVERITY, "low"):
-                        self.__logger.log("NO OBSERVED NO EXPLORED NO ACTIONS", Color.DARKRED, True, True)
-                        self.__logger.log(" >>>>  EXITING  <<<< ", Color.DARKRED, italic=True)
-                    exit(-1)
 
         elif self._state == State.RUNNING:
 
@@ -754,10 +815,10 @@ class Controller:
                 time.sleep(1)
                 self.__new_buzzer(status=False, emit=True)
 
-                while RemoteControllerData.is_rotation_done:
+                while not RemoteControllerData.is_rotation_done:
                     time.sleep(0.01)
 
-                self.__new_led(status=False, arrow=False, emit=True)
+                self.__new_led(status=False, emit=True)
             else:
                 if c == Clockwise.RIGHT:
                     self.__new_motor_values(vel, -vel, vel, -vel, True)
