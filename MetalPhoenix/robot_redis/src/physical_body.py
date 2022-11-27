@@ -7,7 +7,7 @@ from tools.coppelia import *
 from tools.utility import Logger, CFG
 from redis import Redis
 
-LOGSEVERITY = CFG.logger_data()["SEVERITY"]
+LOG_SEVERITY = CFG.logger_data()["SEVERITY"]
 SENSORS_K = CFG.redis_data()["SENSORS_KEY"]
 C_TOPIC = CFG.redis_data()["C_TOPIC"]
 B_TOPIC = CFG.redis_data()["B_TOPIC"]
@@ -33,7 +33,7 @@ class PhysicalBody:
 
         self.__class_logger = Logger(class_name="PhysicalBody", color="purple")
         self.__class_logger.set_logfile(CFG.logger_data()["BLOGFILE"])
-        self.__class_logger.log(f"LOG SEVERYTY: {str.upper(LOGSEVERITY)}\n", color="dkgreen")
+        self.__class_logger.log(f"LOG SEVERYTY: {str.upper(LOG_SEVERITY)}\n", color="dkgreen")
         self.__class_logger.log("PHYSICAL BODY LAUNCHED", color="green", italic=True)
 
         self.__sim = SimConnection(ip=CFG.physical_data()["IP"], port=CFG.physical_data()["PORT"])
@@ -238,6 +238,6 @@ class PhysicalBody:
 
     @staticmethod
     def update_cfg():
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         LOGSEVERITY = CFG.logger_data()["SEVERITY"]

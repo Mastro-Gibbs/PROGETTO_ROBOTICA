@@ -33,7 +33,7 @@ def run():
         if hash_old != hash_:
             logger.log("Config file changed", "yellow", italic=True)
             hash_old = hash_
-            c.update_cfg()
+            c.load_cfg_values()
 
         end_time = time.time()
         c.execution_time = end_time - start_time

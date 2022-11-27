@@ -309,9 +309,11 @@ class CFG:
             "SPEED": float(psr["ROBOT"]["speed"]),
             "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
             "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
-            "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
+            "SAFE_SIDE_DIST": float(psr["ROBOT"]["safe_side_dist"]),
+            "MAX_ROT_ATTEMPTS": int(psr["ROBOT"]["max_rot_attempts"]),
             "PRIORITY_LIST": priority_list,
-            "INTELLIGENCE": psr["ROBOT"]["intelligence"]
+            "INTELLIGENCE": psr["ROBOT"]["intelligence"],
+            "AUTO_BALANCING": psr["ROBOT"]["auto_balancing"]
         }
 
     @staticmethod
@@ -321,7 +323,7 @@ class CFG:
     @staticmethod
     def write_data_analysis(maze_name, maze_solved, execution_time, tree_dict,
                             number_of_nodes, number_of_dead_end, performed_commands,
-                            trajectory, intelligence, priority_list):
+                            trajectory, intelligence, auto_balancing, priority_list):
         config = configparser.ConfigParser()
         path = "../resources/data/"
         file_name = "data_analysis.conf"
@@ -350,6 +352,7 @@ class CFG:
             "maze_solved": maze_solved,
             "execution_time_sec": execution_time,
             "intelligence": intelligence,
+            "auto_balancing": auto_balancing,
             "priority_list": priority_list,
             "number_of_nodes": number_of_nodes,
             "number_of_dead_end": number_of_dead_end,
@@ -394,3 +397,6 @@ class CFG:
         return {
             "MAZE_NUMBER": psr["MAZE"]["maze_number"],
         }
+
+
+

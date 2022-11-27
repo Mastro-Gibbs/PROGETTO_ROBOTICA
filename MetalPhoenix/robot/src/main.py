@@ -15,6 +15,7 @@ except KeyboardInterrupt:
     print("Tree: ", agent.c.tree.build_tree_dict(), "\n")
     print("Trajectory: ", agent.c.trajectory, "\n")
     print("Performed commands: ", agent.c.performed_commands, "\n")
+    print("Performed commands and actions: ", agent.c.performed_com_actions, "\n")
     print("---- Exporting data ... ----")
     agent.c.write_data_analysis()
     print()
