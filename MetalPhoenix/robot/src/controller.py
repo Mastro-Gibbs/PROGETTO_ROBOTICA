@@ -93,9 +93,9 @@ class Controller:
         self.performed_commands = list()
         self.performed_com_actions = list(list())
         self.prev_action = None
+        self.prev_com_action = list()
         self.tree = Tree()
 
-        self._maze_solved = False
         self.attempts_to_unstuck = 0
         self.cycle = 0
         self.store = Store()
@@ -109,6 +109,7 @@ class Controller:
         self.execution_time = 0
         self.number_of_nodes = 1
         self.number_of_dead_end = 0
+        self._maze_solved = False
 
     def virtual_destructor(self):
         self._body.virtual_destructor()
@@ -188,12 +189,14 @@ class Controller:
         if Logger.is_loggable(LOG_SEVERITY, "mid"):
             self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})", "gray")
 
-        # verificare bene se i comandi sono salvati correttamente
+        # Saving performed commands and actions
+        if self.prev_com_action != com_action:
+            self.performed_com_actions.append(com_action)
+            self.prev_com_action = com_action
+        # Saving trajectory
         if performed and self.prev_action != action:
             self.performed_commands.append(action)
-            self.performed_com_actions.append(com_action)
-            if action in self.priority_list:
-                self.trajectory.append(action)
+            self.trajectory.append(action)
             self.prev_action = action
 
         return False
@@ -947,7 +950,7 @@ class Controller:
 
     def load_cfg_values(self):
         """
-        Updates the values of the config file since it can be modified also during the execution of the algorithm
+        It loads the values of the config file since it can be modified also during the execution of the algorithm
         """
         global MAX_ROT_ATTEMPTS
         global SAFE_DISTANCE

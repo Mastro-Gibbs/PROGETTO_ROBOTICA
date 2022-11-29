@@ -17,6 +17,7 @@ class Compass(float, Enum):
     EST = 0.0
     OVEST = 180.0
 
+    @staticmethod
     def string_to_compass(cmp: str):
         if 'NORD' == cmp or 'N' == cmp:
             return Compass.NORD
@@ -27,6 +28,7 @@ class Compass(float, Enum):
         elif 'OVEST' == cmp or 'O' == cmp:
             return Compass.OVEST
 
+    @staticmethod
     def compass_to_string(cmp):
         if cmp == Compass.NORD:
             return "NORD"
@@ -37,6 +39,7 @@ class Compass(float, Enum):
         if cmp == Compass.SUD:
             return "SUD"
 
+    @staticmethod
     def compass_list_to_string_comma_sep(compass_list):
         string_list = Compass.compass_to_string(compass_list[0]) + ", " + \
                       Compass.compass_to_string(compass_list[1]) + ", " + \
@@ -44,6 +47,7 @@ class Compass(float, Enum):
                       Compass.compass_to_string(compass_list[3])
         return string_list
 
+    @staticmethod
     def compass_list_to_concat_string(compass_list: list) -> str:
         compass_string = ""
         for cmp in compass_list:
