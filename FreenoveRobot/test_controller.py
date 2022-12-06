@@ -24,6 +24,7 @@ from redis import Redis
 from redis.client import PubSubWorkerThread
 from redis.exceptions import ConnectionError as RedisConnError
 
+
 class ControllerException(Exception):
     pass
 
@@ -59,7 +60,7 @@ class test:
 
         if self.__remote is not None:
             self.__remote.begin()
-            
+
     def __on_remote(self, msg):
         _key = msg['data']
         _value = self.__redis.get(_key)
@@ -74,7 +75,7 @@ class test:
         ControllerData.Machine.on_values(self.__redis.get(_key))
 
     # sender method
-    def __send_command(self, _cmd) -> None: # RESET
+    def __send_command(self, _cmd) -> None:  # RESET
 
         if _cmd == ControllerData.Command.Motor and ControllerData.Motor.changed:
             self.__redis.set(ControllerData.Key.Motor, ControllerData.Motor.values)
@@ -118,39 +119,62 @@ class test:
         if emit:
             self.__send_command(ControllerData.Command.Buzzer)
 
-    def loop(self):
-        st = time.time()
+    def test(self):
+        time.sleep(1)
 
-        while True:
-            if (time.time() - st) > 10:
-                st = time.time()
+        self.__execute_motor(Command.RUN)
+        while ControllerData.Machine.front() > 10:
+            print(f"\rFront prox test [1/4] => {ControllerData.Machine.front()} cm", end='')
 
-                c = Clockwise(random.randint(0, 1))
+        self.__execute_motor(Command.STOP)
 
-                if self.__remote is not None:
-                    self.__remote.allow()
-                    self.__new_led(status=True, arrow=True, clockwise=c, emit=True)
+        time.sleep(1)
+        print()
+        self.__execute_motor(Command.RUN)
+        while ControllerData.Machine.left() > 10:
+            print(f"\rLeft prox test [2/4] => {ControllerData.Machine.left()} cm", end='')
 
-                    self.__new_buzzer(status=True, emit=True)
-                    time.sleep(0.5)
-                    self.__new_buzzer(status=False, emit=True)
+        self.__execute_motor(Command.STOP)
 
-                    while not RemoteControllerData.is_rotation_done:
-                        time.sleep(0.01)
+        time.sleep(1)
+        print()
+        self.__execute_motor(Command.RUN)
+        while ControllerData.Machine.right() > 10:
+            print(f"\rRight prox test [3/4] => {ControllerData.Machine.right()} cm", end='')
 
-                    self.__remote.dismiss()
+        self.__execute_motor(Command.STOP)
+        print()
 
-                    self.__new_led(status=False, emit=True)
+        print(f"\rGoal test [4/5] => {ControllerData.Machine.goal()} ", end='')
+        print()
 
-            time.sleep(0.5)
+        time.sleep(5)
+        print("RC test [5/5]")
+        time.sleep(1)
+        c = Clockwise(random.randint(0, 1))
 
+        if self.__remote is not None:
+            self.__remote.allow()
+            self.__new_led(status=True, arrow=True, clockwise=c, emit=True)
+
+            self.__new_buzzer(status=True, emit=True)
+            time.sleep(0.1)
+            self.__new_buzzer(status=False, emit=True)
+
+            while not RemoteControllerData.is_rotation_done:
+                time.sleep(0.01)
+
+            self.__remote.dismiss()
+
+            self.__new_led(status=False, emit=True)
+
+        self.virtual_destructor()
 
 if __name__ == "__main__":
     t = test()
     t.begin()
 
     try:
-        t.loop()
+        t.test()
     except KeyboardInterrupt:
         t.virtual_destructor()
-

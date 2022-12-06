@@ -74,6 +74,9 @@ class RemoteEmitter(LineReader):
         self.__allow = True
 
     def dismiss(self):
+        rcData.on_values('STOP', None)
+        self.__redis.set(rcData.Key.RC, rcData.values)
+        self.__redis.publish(rcData.Topic.Remote, rcData.Key.RC)
         self.__allow = False
 
 

@@ -216,6 +216,10 @@ class ControllerData(__RedisData):
         __data['irL'] = 0
         __data['irM'] = 0
         __data['irR'] = 0
+        __data['proxL'] = 0
+        __data['proxF'] = 0
+        __data['proxR'] = 0
+        __data['Zaxis'] = None
         __goal = False
 
         @classmethod
@@ -229,19 +233,15 @@ class ControllerData(__RedisData):
 
         @classmethod
         def front(cls):
-            return int(cls.__data['proxF']) if cls.__data['proxF'] != 'None' else None
+            return int(cls.__data['proxF'])
 
         @classmethod
         def left(cls):
-            return int(cls.__data['proxL']) if cls.__data['proxL'] != 'None' else None
+            return int(cls.__data['proxL'])
 
         @classmethod
         def right(cls):
-            return int(cls.__data['proxR']) if cls.__data['proxR'] != 'None' else None
-
-        @classmethod
-        def back(cls):
-            return int(cls.__data['proxB']) if cls.__data['proxB'] != 'None' else None
+            return int(cls.__data['proxR'])
 
         @classmethod
         def goal(cls):
@@ -249,19 +249,19 @@ class ControllerData(__RedisData):
 
         @classmethod
         def orientation(cls):
-            return float(cls.__data['Zaxis']) if cls.__data['Zaxis'] != 'None' else None
+            return float(cls.__data['Zaxis']) if cls.__data['Zaxis'] else None
 
         @classmethod
         def left_ir(cls):
-            return int(cls.__data['irL']) if cls.__data['irL'] != 'None' else None
+            return int(cls.__data['irL'])
 
         @classmethod
         def mid_ir(cls):
-            return int(cls.__data['irM']) if cls.__data['irM'] != 'None' else None
+            return int(cls.__data['irM'])
 
         @classmethod
         def right_ir(cls):
-            return int(cls.__data['irR']) if cls.__data['irR'] != 'None' else None
+            return int(cls.__data['irR'])
 
     class Motor(__Value):
         __rum = None
@@ -350,7 +350,8 @@ class RemoteControllerData(__RedisData):
         if speed is not None:
             cls.__speed = speed
 
-        cls.__command = command if command is not None else cls.__command
+        if command is not None:
+            cls.__command = command
 
     @classmethod
     @property
