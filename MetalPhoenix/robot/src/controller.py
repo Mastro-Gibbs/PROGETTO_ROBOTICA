@@ -7,10 +7,12 @@ from tools.utility import Logger, Compass, f_r_l_b_to_compass, negate_compass, \
     normalize_angle, round_v, Clockwise, detect_target, CFG
 from tools.tree import Tree, Node, DIRECTION, Type
 
-OR_MAX_ATTEMPT = CFG.robot_conf_data()["MAX_ATTEMPTS"]
-SAFE_DISTANCE = CFG.robot_conf_data()["SAFE_DIST"]
-LOGSEVERITY = CFG.logger_data()["SEVERITY"]
-INTELLIGENCE = CFG.robot_conf_data()["INTELLIGENCE"]
+robot_config_data = CFG.robot_conf_data()
+MAX_ROT_ATTEMPTS = robot_config_data["MAX_ROT_ATTEMPTS"]
+SAFE_DISTANCE = robot_config_data["SAFE_DIST"]
+SAFE_SIDE_DISTANCE = robot_config_data["SAFE_SIDE_DIST"]
+LOG_SEVERITY = CFG.logger_data()["SEVERITY"]
+INTELLIGENCE = robot_config_data["INTELLIGENCE"]
 
 
 class State(Enum):
@@ -19,7 +21,7 @@ class State(Enum):
     RUNNING = 1
     ROTATING = 2
     SENSING = 3
-    # BALANCING = 4 # TO DO
+    BALANCING = 4
 
 
 class Position(Enum):
@@ -35,6 +37,7 @@ class Command(Enum):
     RUN = 1
     ROTATE = 2
     GO_TO_JUNCTION = 3
+    BALANCE = 4
 
 
 class Mode(Enum):
@@ -55,7 +58,7 @@ class Controller:
 
         self.__class_logger = Logger(class_name="Controller", color="cyan")
         self.__class_logger.set_logfile(CFG.logger_data()["CLOGFILE"])
-        self.__class_logger.log(f"LOG SEVERITY: {str.upper(LOGSEVERITY)}\n", color="dkgreen")
+        self.__class_logger.log(f"LOG SEVERITY: {str.upper(LOG_SEVERITY)}\n", color="dkgreen")
         self.__class_logger.log("CONTROLLER LAUNCHED", color="green", italic=True)
 
         self._body = PhysicalBody()
@@ -68,6 +71,8 @@ class Controller:
         self.robot_config_data = CFG.robot_conf_data()
         self._speed = self.robot_config_data["SPEED"]
         self._rot_speed = self.robot_config_data["ROT_SPEED"]
+        self.priority_list = self.robot_config_data["PRIORITY_LIST"]
+        self._auto_balancing = self.robot_config_data["AUTO_BALANCING"]
 
         self._speed_m_on_sec = self._speed * 0.25 / (self._speed // 5)
         self.junction_sim_time = 0.25 / self._speed_m_on_sec  # Time it takes to position in the center of a junction
@@ -84,24 +89,27 @@ class Controller:
 
         self.target = 0
 
-        self.priority_list = CFG.robot_conf_data()["PRIORITY_LIST"]
-
         self.trajectory = list()
         self.performed_commands = list()
+        self.performed_com_actions = list(list())
         self.prev_action = None
+        self.prev_com_action = list()
         self.tree = Tree()
 
-        self._maze_solved = False
         self.attempts_to_unstuck = 0
+        self.cycle = 0
+        self.store = Store()
 
         """ DATA ANALYSIS """
-        self.maze_number = CFG.maze_data()["MAZE_NUMBER"]  # Each maze must have a number to be identified, change this number if the maze changes
+        # Each maze must have a number to be identified, change this number if the maze changes
+        self.maze_number = CFG.maze_data()["MAZE_NUMBER"]
         self.maze_name = "Maze" + "_" + str(self.maze_number) + "_" + \
                          (Compass.compass_list_to_concat_string(
                              self.priority_list) if INTELLIGENCE == "low" else "RANDOM")
         self.execution_time = 0
         self.number_of_nodes = 1
         self.number_of_dead_end = 0
+        self._maze_solved = False
 
     def virtual_destructor(self):
         self._body.virtual_destructor()
@@ -118,6 +126,7 @@ class Controller:
                                 self.performed_commands,
                                 self.trajectory,
                                 INTELLIGENCE,
+                                "on" if self._auto_balancing == "on" else "off",
                                 priority_list if INTELLIGENCE == "low" else "random"
                                 )
 
@@ -129,7 +138,8 @@ class Controller:
 
     def algorithm(self):
         """ Algorithm used to explore and solve the maze """
-        global LOGSEVERITY
+        global LOG_SEVERITY
+        self.cycle = self.cycle + 1
 
         self.__class_logger.log(" >>>>>> NEW ALGORITHM CYCLE <<<<<< ", "green", newline=True)
 
@@ -148,7 +158,7 @@ class Controller:
         command = com_action[0]
         action = com_action[1]
 
-        if Logger.is_loggable(LOGSEVERITY, "low"):
+        if Logger.is_loggable(LOG_SEVERITY, "low"):
             self.__class_logger.log(f"--MODE: {self._mode}")
             self.__class_logger.log(f"--ACTIONS: {com_actions}")
             self.__class_logger.log(f"--ACTION: {com_action}")
@@ -157,13 +167,13 @@ class Controller:
         # Update of the tree
         self.update_tree(actions, action)
 
-        if Logger.is_loggable(LOGSEVERITY, "low"):
+        if Logger.is_loggable(LOG_SEVERITY, "low"):
             self.__class_logger.log("--CURRENT TREE:", "gray")
             self.__class_logger.log(f"{self.tree.build_tree_dict()}", "gray", noheader=True)
             self.__class_logger.log(f"--CURRENT NODE: {self.tree.current}", "gray", newline=True)
             self.__class_logger.log(f"--Available actions: {com_actions}", "green")
 
-        if Logger.is_loggable(LOGSEVERITY, "mid"):
+        if Logger.is_loggable(LOG_SEVERITY, "mid"):
             self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})", "gray")
             self.__class_logger.log(f"--Performing action: {com_action}", "gray")
 
@@ -176,13 +186,17 @@ class Controller:
         # ACT
         performed = self.do_action(com_action)
 
-        if Logger.is_loggable(LOGSEVERITY, "mid"):
+        if Logger.is_loggable(LOG_SEVERITY, "mid"):
             self.__class_logger.log(f"--(STATE, POSITION): ({self._state}, {self._position})", "gray")
 
+        # Saving performed commands and actions
+        if self.prev_com_action != com_action:
+            self.performed_com_actions.append(com_action)
+            self.prev_com_action = com_action
+        # Saving trajectory
         if performed and self.prev_action != action:
             self.performed_commands.append(action)
-            if action in self.priority_list:
-                self.trajectory.append(action)
+            self.trajectory.append(action)
             self.prev_action = action
 
         return False
@@ -191,21 +205,21 @@ class Controller:
         """
          This method is used to update the tree of the maze accordingly to the actions and the current state
          of the robot.
-         The update is done if only if the robot is in SENSING mode and the actions and action_chosen type must be a Compass
-         or a list of Compass elements respectively.
+         The update is done if only the robot is in SENSING mode and the actions and action_chosen type must
+         be a Compass or a list of Compass elements respectively.
         """
 
         """ if not actions:
             print("UPDATE_TREE NO ACTIONS")
             exit(-1)
         """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         if not self._state == State.SENSING:
             return
 
         if self._mode == Mode.EXPLORING:
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
+            if Logger.is_loggable(LOG_SEVERITY, "mid"):
                 self.__class_logger.log("*** UPDATING TREE (MODE: EXPLORING) ***", "gray", newline=True)
 
             """ 
@@ -220,21 +234,21 @@ class Controller:
                     self.tree.append(node, DIRECTION.MID)
                     self.tree.regress()
                     self.number_of_nodes += 1
-                    if Logger.is_loggable(LOGSEVERITY, "mid"):
+                    if Logger.is_loggable(LOG_SEVERITY, "mid"):
                         self.__class_logger.log("ADDED MID", "dkgreen")
                 if dict_["LEFT"] == action:
                     node = Node("L_" + self.tree.generate_node_id(), action)
                     self.tree.append(node, DIRECTION.LEFT)
                     self.tree.regress()
                     self.number_of_nodes += 1
-                    if Logger.is_loggable(LOGSEVERITY, "mid"):
+                    if Logger.is_loggable(LOG_SEVERITY, "mid"):
                         self.__class_logger.log("ADDED LEFT", "dkgreen")
                 if dict_["RIGHT"] == action:
                     node = Node("R_" + self.tree.generate_node_id(), action)
                     self.tree.append(node, DIRECTION.RIGHT)
                     self.tree.regress()
                     self.number_of_nodes += 1
-                    if Logger.is_loggable(LOGSEVERITY, "mid"):
+                    if Logger.is_loggable(LOG_SEVERITY, "mid"):
                         self.__class_logger.log("ADDED RIGHT", "dkgreen")
 
             self.tree.current.set_type(Type.EXPLORED)
@@ -252,7 +266,7 @@ class Controller:
                 self.tree.set_current(self.tree.current.right)
 
         elif self._mode == Mode.ESCAPING:
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
+            if Logger.is_loggable(LOG_SEVERITY, "mid"):
                 self.__class_logger.log("*** UPDATING TREE (MODE: ESCAPING) ***", "gray", newline=True)
 
             """ 
@@ -266,7 +280,7 @@ class Controller:
             if self.tree.current.is_leaf:
                 self.tree.current.set_type(Type.DEAD_END)
                 self.number_of_dead_end += 1
-                if Logger.is_loggable(LOGSEVERITY, "low"):
+                if Logger.is_loggable(LOG_SEVERITY, "low"):
                     self.__class_logger.log("*** DEAD END NODE DETECTED ***", "green")
                     self.__class_logger.log(" >>>> REGRESSION <<<< ", "yellow", newline=True)
                     self.__class_logger.log(f" --CURRENT NODE: {self.tree.current}", "yellow")
@@ -283,7 +297,7 @@ class Controller:
                      or self.tree.current.mid is None):
                 self.tree.current.set_type(Type.DEAD_END)
                 self.number_of_dead_end += 1
-                if Logger.is_loggable(LOGSEVERITY, "low"):
+                if Logger.is_loggable(LOG_SEVERITY, "low"):
                     self.__class_logger.log("*** ALL CHILDREN ARE DEAD END NODES ***", "green")
                     self.__class_logger.log(" >>>> REGRESSION <<<< ", "yellow", newline=True)
                     self.__class_logger.log(f" --CURRENT NODE: {self.tree.current}", "yellow")
@@ -296,7 +310,7 @@ class Controller:
                 This is the case when the action chosen by DMP is an action that brings the robot
                 to an OBSERVED node and this node becomes the current node.
                 """
-                if Logger.is_loggable(LOGSEVERITY, "low"):
+                if Logger.is_loggable(LOG_SEVERITY, "low"):
                     self.__class_logger.log("No leaf or DEAD END children", "yellow+", italic=True)
 
                 if self.tree.current.has_left and self.tree.current.left.action == action_chosen:
@@ -306,7 +320,7 @@ class Controller:
                 elif self.tree.current.has_right and self.tree.current.right.action == action_chosen:
                     cur = self.tree.current.right
                 else:
-                    if Logger.is_loggable(LOGSEVERITY, "low"):
+                    if Logger.is_loggable(LOG_SEVERITY, "low"):
                         self.__class_logger.log("!!! ESCAPING ERROR UPDATING CURRENT !!!", "dkred", True, True)
                         self.__class_logger.log(" >>>>  EXITING  <<<< ", "red", italic=True)
                     self.virtual_destructor()
@@ -321,10 +335,11 @@ class Controller:
         The first is a list of actions (elements of Compass type), it is used only to update the tree.
         The second list, com_actions that is the abbreviation of command_actions,
         is a list of lists of two elements type: Command and Compass.
-        It contains a set of couples [command, action] that the robot can perform, but only one of these can be executed.
+        It contains a set of couples [command, action] that the robot can perform, but only one of these
+        can be executed.
         """
 
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         actions = list()
         com_actions = list(list())
@@ -334,29 +349,51 @@ class Controller:
         right = self.right_value
         ori = self.orientation
 
+        if self._auto_balancing == "on":
+            if self.left_value is not None and self.left_value < SAFE_SIDE_DISTANCE:
+                self.__class_logger.log("ALERT: WALL ON THE LEFT. VALUE: " +
+                                        str(self.left_value), "yellow", True, True)
+
+                self.save_current_state()
+                self._state = State.BALANCING
+                actions = None
+                com_actions.insert(0, [Command.BALANCE, None])
+
+            elif self.right_value is not None and self.right_value < SAFE_SIDE_DISTANCE:
+                self.__class_logger.log("ALERT: WALL ON THE RIGHT. VALUE: " +
+                                        str(self.left_value), "yellow", True, True)
+                self.save_current_state()
+                self._state = State.BALANCING
+                actions = None
+                com_actions.insert(0, [Command.BALANCE, None])
+
+            elif self._state == State.BALANCING:
+                self.load_saved_state()
+
         if self._state == State.STARTING and self._position == Position.UNKNOWN:
 
             if front is None:
-                # Ho il muro dietro (dato che nei vincoli non posso mettere il robot
-                # in una giunzione dove ci sono 4 direzioni/strade libere)
+                # Wall behind
+                # (since in the constraints I can't put the robot in a junction where there are
+                # 4 free directions/roads).
                 if (left is not None and right is not None) or (left is None and right is None):
                     self._state = State.STARTING
                     self._position = Position.INITIAL
                     com_actions.insert(0, [Command.START, None])
                 else:
-                    # Muro a sinistra
+                    # Wall on the left
                     if left is not None:
                         action = detect_target(detect_target(self.orientation) - 90)
                         com_actions.insert(0, [Command.ROTATE, action])
-                        print("MURO A SINISTRA")
+                        self.__class_logger.log("WALL ON THE LEFT", "yellow", True, True)
 
-                    # Muro a destra
+                    # Wall on the right
                     elif right is not None:
                         action = detect_target(detect_target(self.orientation) + 90)
                         com_actions.insert(0, [Command.ROTATE, action])
-                        print("MURO A DESTRA")
+                        self.__class_logger.log("WALL ON THE RIGHT", "yellow", True, True)
 
-            # Faccio 180° per avere il muro dietro
+            # The robot now has to rotate of 180° to have the wall behind
             elif front is not None:
                 if left is None or right is None:
                     action = negate_compass(detect_target(self.orientation))
@@ -367,7 +404,7 @@ class Controller:
                     com_actions.insert(0, [Command.ROTATE, action])
                     self.attempts_to_unstuck = 1
 
-        # In questo caso ho sempre il muro dietro
+        # In this case the robot has always the wall behind
         elif self._state == State.STARTING and self._position == Position.INITIAL:
 
             if front is None:
@@ -410,7 +447,7 @@ class Controller:
             self._state = State.SENSING
 
             if self._mode == Mode.EXPLORING:
-                if Logger.is_loggable(LOGSEVERITY, "mid"):
+                if Logger.is_loggable(LOG_SEVERITY, "mid"):
                     self.__class_logger.log("Control policy EXPLORING", "gray")
 
                 if front is None:
@@ -434,7 +471,7 @@ class Controller:
                     com_actions.insert(0, [Command.ROTATE, action])
 
             elif self._mode == Mode.ESCAPING:
-                if Logger.is_loggable(LOGSEVERITY, "mid"):
+                if Logger.is_loggable(LOG_SEVERITY, "mid"):
                     self.__class_logger.log("Control policy ESCAPING", "gray")
 
                 if self.tree.current.left is not None and self.tree.current.left.type == Type.OBSERVED:
@@ -475,7 +512,7 @@ class Controller:
 
                 if not actions:
                     if (self.tree.current.left is None or self.tree.current.left.type == Type.DEAD_END) and \
-                        (self.tree.current.mid is None or self.tree.current.mid.type == Type.DEAD_END) and \
+                            (self.tree.current.mid is None or self.tree.current.mid.type == Type.DEAD_END) and \
                             (self.tree.current.right is None or self.tree.current.right.type == Type.DEAD_END) and \
                             self.tree.current.action is None:
                         self.__class_logger.log("NO OBSERVED NO EXPLORED NO ACTIONS", "dkred", True, True)
@@ -490,9 +527,10 @@ class Controller:
 
         elif self._state == State.RUNNING:
 
-            # Switch da ESCAPING A EXPLORING, messo qui perché se sto in RUNNING l'albero non viene aggiornato
-            # in update_tree (per aggiornarlo lo stato deve essere in SENSING).
-            # Evito così che vengano aggiunti dei nodi duplicati non voluti.
+            # Switch from ESCAPING to EXPLORING.
+            # Put here because if the robot is in RUNNING mode then the tree cannot be updated in update_tree()
+            # (to update the tree it must be in SENSING mode);
+            # This prevents unwanted duplicate nodes from being added.
 
             if self._mode == Mode.ESCAPING and self.tree.current.type == Type.OBSERVED:
                 self._mode = Mode.EXPLORING
@@ -523,7 +561,7 @@ class Controller:
 
         if INTELLIGENCE == "mid" and self._state == State.SENSING:
             self.priority_list = random.sample(self.priority_list, 4)
-            if Logger.is_loggable(LOGSEVERITY, "low"):
+            if Logger.is_loggable(LOG_SEVERITY, "low"):
                 self.__class_logger.log(f"--PRIORITY LIST (RANDOM): {self.priority_list}")
         elif INTELLIGENCE == "high":
             ...
@@ -536,16 +574,16 @@ class Controller:
 
     def do_action(self, com_action):
         """
-         Accordingly to the action chosen by Decision Making Policy this method translates the action and send
+         Accordingly to the action chosen by 'Decision Making Policy' this method translates the action and send
          a specific command to the PhysicalBody that has to perform, changing also the Robot state
         """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
-        if Logger.is_loggable(LOGSEVERITY, "high"):
+        if Logger.is_loggable(LOG_SEVERITY, "high"):
             self.__class_logger.log(" ~~~ [ACTION TIME] ~~~ ", "gray", True, True)
 
         if com_action[0] == Command.START:
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
+            if Logger.is_loggable(LOG_SEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND START ** ", "gray")
 
             self._body.stop()
@@ -554,7 +592,7 @@ class Controller:
 
         # Stop
         elif com_action[0] == Command.STOP:
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
+            if Logger.is_loggable(LOG_SEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND STOP ** ", "gray")
 
             self._body.stop()
@@ -564,7 +602,7 @@ class Controller:
 
         # Go on
         elif com_action[0] == Command.RUN:
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
+            if Logger.is_loggable(LOG_SEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND RUN ** ", "gray")
 
             self._body.move_forward(self._speed)
@@ -574,7 +612,7 @@ class Controller:
 
         # Go to Junction
         elif com_action[0] == Command.GO_TO_JUNCTION:
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
+            if Logger.is_loggable(LOG_SEVERITY, "mid"):
                 self.__class_logger.log(" ** JOINING THE JUNCTION ** ", "gray")
 
             start_time = time.time()
@@ -589,7 +627,7 @@ class Controller:
             self._state = State.SENSING
             self._position = Position.JUNCTION
 
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
+            if Logger.is_loggable(LOG_SEVERITY, "mid"):
                 self.__class_logger.log(" ** STATE SENSING ARISE ** ", "gray")
 
             time.sleep(0.5)
@@ -597,7 +635,7 @@ class Controller:
             return True
 
         elif com_action[0] == Command.ROTATE:
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
+            if Logger.is_loggable(LOG_SEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND ROTATE ** ", "gray")
 
             self._state = State.ROTATING
@@ -605,6 +643,33 @@ class Controller:
             self.rotate_to_final_g(self._rot_speed, com_action[1])
             self._body.stop()
 
+            return True
+
+        elif com_action[0] == Command.BALANCE:
+            print("BALANCING")
+            self._body.stop()
+            action = None
+            sign = None
+
+            if self.left_value is not None and self.left_value < SAFE_SIDE_DISTANCE:
+                action = detect_target(detect_target(self.orientation) + 90)
+                sign = -1
+            elif self.right_value is not None and self.right_value < SAFE_SIDE_DISTANCE:
+                action = detect_target(detect_target(self.orientation) - 90)
+                sign = +1
+
+            self.rotate_to_final_g(self._rot_speed, action)
+
+            while self._body.get_proxF() < SAFE_SIDE_DISTANCE:
+                self._body.move_backward(5)
+                print("Front value:" + str(self._body.get_proxF()))
+            self._body.stop()
+
+            action = detect_target(detect_target(self._body.get_orientation_deg()) + 90 * sign)
+            self.rotate_to_final_g(self._rot_speed, action)
+            self._body.stop()
+            print("BALANCED")
+            time.sleep(3)
             return True
 
         else:
@@ -617,6 +682,12 @@ class Controller:
     def intelligent_priority_list(self):
         ...
         print(self.priority_list)
+
+    def save_current_state(self):
+        self.store.store(self._state, self._position, self._mode)
+
+    def load_saved_state(self):
+        self._state, self._position, self._mode = self.store.load()
 
     def rotate_to_final_g(self, vel, final_g):
         """ Rotate function that rotates the robot until it reaches final_g """
@@ -640,7 +711,7 @@ class Controller:
         of attempts (Critical case)
         """
 
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         degrees = abs(degrees)
         it = 0
@@ -654,8 +725,8 @@ class Controller:
             ok, it = self.adjust_orientation(final_g)
 
         # CRITICAL CASE
-        if it == OR_MAX_ATTEMPT:
-            if Logger.is_loggable(LOGSEVERITY, "low"):
+        if it == MAX_ROT_ATTEMPTS:
+            if Logger.is_loggable(LOG_SEVERITY, "low"):
                 self.__class_logger.log(" ** MAX ATTEMPTS REACHED ** ", "dkred", True, True)
                 self.__class_logger.log(" >>>>  EXITING  <<<< ", "dkred", italic=True)
             self.virtual_destructor()
@@ -714,9 +785,9 @@ class Controller:
         1) The final_g is 180 or -180 (first if)
         2) Otherwise other intervals (second if)
         """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
-        if Logger.is_loggable(LOGSEVERITY, "mid"):
+        if Logger.is_loggable(LOG_SEVERITY, "mid"):
             self.__class_logger.log(" ** ORIENTATION CHECKING ** ", "gray", True, True)
 
         curr_g = self._body.get_orientation_deg()
@@ -726,25 +797,25 @@ class Controller:
             limit_g_dx = 180 - delta
             limit_g_sx = - 180 + delta
             if curr_g < limit_g_sx or curr_g > limit_g_dx:
-                if Logger.is_loggable(LOGSEVERITY, "mid"):
+                if Logger.is_loggable(LOG_SEVERITY, "mid"):
                     self.__class_logger.log(" ~~ perfect ~~ ", "green")
                 ok = True
             else:
-                if Logger.is_loggable(LOGSEVERITY, "mid"):
+                if Logger.is_loggable(LOG_SEVERITY, "mid"):
                     self.__class_logger.log(" !! bad orientation !! ", "red")
         else:
             limit_g_dx = final_g - delta
             limit_g_sx = final_g + delta
             if limit_g_dx <= curr_g <= limit_g_sx:
-                if Logger.is_loggable(LOGSEVERITY, "mid"):
+                if Logger.is_loggable(LOG_SEVERITY, "mid"):
                     self.__class_logger.log(" ~~ perfect ~~ ", "green")
 
                 ok = True
             else:
-                if Logger.is_loggable(LOGSEVERITY, "mid"):
+                if Logger.is_loggable(LOG_SEVERITY, "mid"):
                     self.__class_logger.log(" !! bad orientation !! ", "red")
 
-        if Logger.is_loggable(LOGSEVERITY, "mid"):
+        if Logger.is_loggable(LOG_SEVERITY, "mid"):
             self.__class_logger.log(
                 f" >> curr state of the sensors: "
                 f"[{round_v(limit_g_sx)}, {round_v(limit_g_dx)}], curr_g: {round_v(curr_g)}", "gray")
@@ -759,9 +830,9 @@ class Controller:
         i) If the robot is able to orient himself correctly than the outcome is positive
         ii) If the robot fails, there is an error in adjusting the orientation and attempts stop
         """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
-        if Logger.is_loggable(LOGSEVERITY, "mid"):
+        if Logger.is_loggable(LOG_SEVERITY, "mid"):
             self.__class_logger.log(" ** ADJUSTING ORIENTATION ** ", "gray", True, True)
 
         self._body.stop()
@@ -769,13 +840,13 @@ class Controller:
         ok = False
         it = 0
 
-        while not ok and it < OR_MAX_ATTEMPT:
+        while not ok and it < MAX_ROT_ATTEMPTS:
             curr_g = self._body.get_orientation_deg()
 
             degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
 
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log(f" --ATTEMPT: {it + 1} / {OR_MAX_ATTEMPT}", "gray")
+            if Logger.is_loggable(LOG_SEVERITY, "mid"):
+                self.__class_logger.log(f" --ATTEMPT: {it + 1} / {MAX_ROT_ATTEMPTS}", "gray")
                 self.__class_logger.log(
                     f"[Degrees_to_do, curr_g, final_g] = [{round_v(degrees)}, {round_v(curr_g)}, {round_v(final_g)}]",
                     "gray")
@@ -820,9 +891,9 @@ class Controller:
 
     def best_angle_and_rotation_way(self, init_g, final_g):
         """ Computes the best (minimum) angle between init_g and final_g and how you need to rotate """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
-        if Logger.is_loggable(LOGSEVERITY, "mid"):
+        if Logger.is_loggable(LOG_SEVERITY, "mid"):
             self.__class_logger.log(" ** BEST ANGLE COMPUTATION ** ", "gray", True, True)
 
         if init_g == final_g:
@@ -840,12 +911,12 @@ class Controller:
             smallest = second_angle
 
         if smallest < 0:
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
+            if Logger.is_loggable(LOG_SEVERITY, "mid"):
                 self.__class_logger.log(f" >> Rotate clockwise (RIGHT) of {abs(round_v(smallest))}°", "gray")
 
             c = Clockwise.RIGHT
         else:
-            if Logger.is_loggable(LOGSEVERITY, "mid"):
+            if Logger.is_loggable(LOG_SEVERITY, "mid"):
                 self.__class_logger.log(f" >> Rotate anti-clockwise (LEFT) of {abs(round_v(smallest))}°", "gray")
 
             c = Clockwise.LEFT
@@ -858,7 +929,7 @@ class Controller:
         The exit of the maze is identified using the gate
         It updates the last node of the tree as FINAL node
         """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         if self._body.get_gate():
             self._maze_solved = True
@@ -877,18 +948,38 @@ class Controller:
 
         return False
 
-    def update_cfg(self):
+    def load_cfg_values(self):
         """
-        Updates the values of the config file since it can be modified also during the execution of the algorithm
+        It loads the values of the config file since it can be modified also during the execution of the algorithm
         """
-        global OR_MAX_ATTEMPT
+        global MAX_ROT_ATTEMPTS
         global SAFE_DISTANCE
-        global LOGSEVERITY
+        global SAFE_SIDE_DISTANCE
+        global LOG_SEVERITY
+        global INTELLIGENCE
 
         self._speed = CFG.robot_conf_data()["SPEED"]
         self._rot_speed = CFG.robot_conf_data()["ROT_SPEED"]
-        OR_MAX_ATTEMPT = CFG.robot_conf_data()["MAX_ATTEMPTS"]
+        self._auto_balancing = self.robot_config_data["AUTO_BALANCING"]
+        MAX_ROT_ATTEMPTS = CFG.robot_conf_data()["MAX_ROT_ATTEMPTS"]
         SAFE_DISTANCE = CFG.robot_conf_data()["SAFE_DIST"]
-        LOGSEVERITY = CFG.logger_data()["SEVERITY"]
+        SAFE_SIDE_DISTANCE = CFG.robot_conf_data()["SAFE_SIDE_DIST"]
+        LOG_SEVERITY = CFG.logger_data()["SEVERITY"]
+        INTELLIGENCE = CFG.robot_conf_data()["INTELLIGENCE"]
 
-        PhysicalBody.update_cfg()
+        PhysicalBody.load_cfg_values()
+
+
+class Store:
+    def __init__(self):
+        self.state = None
+        self.position = None
+        self.mode = None
+
+    def store(self, state, position, mode):
+        self.state = state
+        self.position = position
+        self.mode = mode
+
+    def load(self):
+        return self.state, self.position, self.mode

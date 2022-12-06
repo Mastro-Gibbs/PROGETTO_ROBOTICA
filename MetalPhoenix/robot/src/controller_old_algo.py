@@ -7,9 +7,9 @@ from tools.utility import Logger, Compass, f_r_l_b_to_compass, negate_compass, \
     normalize_angle, round_v, Clockwise, detect_target, CFG
 from tools.tree import Tree, Node, DIRECTION, Type
 
-OR_MAX_ATTEMPT = CFG.robot_conf_data()["MAX_ATTEMPTS"]
+MAX_ROT_ATTEMPTS = CFG.robot_conf_data()["MAX_ATTEMPTS"]
 SAFE_DISTANCE = CFG.robot_conf_data()["SAFE_DIST"]
-LOGSEVERITY = CFG.logger_data()["SEVERITY"]
+LOG_SEVERITY = CFG.logger_data()["SEVERITY"]
 INTELLIGENCE = CFG.robot_conf_data()["INTELLIGENCE"]
 
 
@@ -52,7 +52,7 @@ class Controller:
 
         self.__class_logger = Logger(class_name="Controller", color="cyan")
         self.__class_logger.set_logfile(CFG.logger_data()["CLOGFILE"])
-        self.__class_logger.log(f"LOG SEVERITY: {str.upper(LOGSEVERITY)}\n", color="dkgreen")
+        self.__class_logger.log(f"LOG SEVERITY: {str.upper(LOG_SEVERITY)}\n", color="dkgreen")
         self.__class_logger.log("CONTROLLER LAUNCHED", color="green", italic=True)
 
         self._body = PhysicalBody()
@@ -100,7 +100,7 @@ class Controller:
 
     def algorithm(self):
         """ Algorithm used to explore and solve the maze """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         self.__class_logger.log(" >>>>>> NEW ALGORITHM CYCLE <<<<<< ", "green", newline=True)
 
@@ -177,7 +177,7 @@ class Controller:
             print("UPDATE_TREE NO ACTIONS")
             exit(-1)
         """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         if not self._state == State.SENSING:
             return
@@ -306,7 +306,7 @@ class Controller:
         Accordingly to the values of the sensors, the state of the robot and the tree of the maze
         it returns a set of actions that the robot can perform but only one of these can be executed effectively
         """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         actions = list()
 
@@ -440,7 +440,7 @@ class Controller:
          Accordingly to the action chosen by Decision Making Policy this method translates the action and send
          a specific command to the PhysicalBody that has to perform, changing also the Robot state
         """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "high"):
             self.__class_logger.log(" ~~~ [ACTION TIME] ~~~ ", "gray", True, True)
@@ -535,7 +535,7 @@ class Controller:
         of attempts (Critical case)
         """
 
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         degrees = abs(degrees)
         it = 0
@@ -549,7 +549,7 @@ class Controller:
             ok, it = self.adjust_orientation(final_g)
 
         # CRITICAL CASE
-        if it == OR_MAX_ATTEMPT:
+        if it == MAX_ROT_ATTEMPTS:
             if Logger.is_loggable(LOGSEVERITY, "low"):
                 self.__class_logger.log(" ** MAX ATTEMPTS REACHED ** ", "dkred", True, True)
                 self.__class_logger.log(" >>>>  EXITING  <<<< ", "dkred", italic=True)
@@ -608,7 +608,7 @@ class Controller:
         1) The final_g is 180 or -180 (first if)
         2) Otherwise other intervals (second if)
         """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(" ** ORIENTATION CHECKING ** ", "gray", True, True)
@@ -653,7 +653,7 @@ class Controller:
         i) If the robot is able to orient himself correctly than the outcome is positive
         ii) If the robot fails, there is an error in adjusting the orientation and attempts stop
         """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(" ** ADJUSTING ORIENTATION ** ", "gray", True, True)
@@ -663,13 +663,13 @@ class Controller:
         ok = False
         it = 0
 
-        while not ok and it < OR_MAX_ATTEMPT:
+        while not ok and it < MAX_ROT_ATTEMPTS:
             curr_g = self._body.get_orientation_deg()
 
             degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
 
             if Logger.is_loggable(LOGSEVERITY, "mid"):
-                self.__class_logger.log(f" --ATTEMPT: {it + 1} / {OR_MAX_ATTEMPT}", "gray")
+                self.__class_logger.log(f" --ATTEMPT: {it + 1} / {MAX_ROT_ATTEMPTS}", "gray")
                 self.__class_logger.log(
                     f"[Degrees_to_do, curr_g, final_g] = [{round_v(degrees)}, {round_v(curr_g)}, {round_v(final_g)}]",
                     "gray")
@@ -714,7 +714,7 @@ class Controller:
 
     def best_angle_and_rotation_way(self, init_g, final_g):
         """ Computes the best (minimum) angle between init_g and final_g and how you need to rotate """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         if Logger.is_loggable(LOGSEVERITY, "mid"):
             self.__class_logger.log(" ** BEST ANGLE COMPUTATION ** ", "gray", True, True)
@@ -752,7 +752,7 @@ class Controller:
         The exit of the maze is identified using the gate
         It updates the last node of the tree as FINAL node
         """
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         if self._body.get_gate():
 
@@ -776,9 +776,9 @@ class Controller:
         """
         Updates the values of the config file since it can be modified also during the execution of the algorithm
         """
-        global OR_MAX_ATTEMPT
+        global MAX_ROT_ATTEMPTS
         global SAFE_DISTANCE
-        global LOGSEVERITY
+        global LOG_SEVERITY
 
         self._speed = CFG.robot_conf_data()["SPEED"]
         self._rot_speed = CFG.robot_conf_data()["ROT_SPEED"]
@@ -786,6 +786,6 @@ class Controller:
         SAFE_DISTANCE = CFG.robot_conf_data()["SAFE_DIST"]
         LOGSEVERITY = CFG.logger_data()["SEVERITY"]
 
-        PhysicalBody.update_cfg()
+        PhysicalBody.load_cfg_values()
 
 

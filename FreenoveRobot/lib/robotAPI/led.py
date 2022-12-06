@@ -83,9 +83,9 @@ class Led:
 
     def car_arrow(self, clockwise):
         wait_s = 0.5
-        data = [1, 3, 5, 7] if clockwise == 0 else [0, 2, 4, 6]
+        data = [0,1,6,7] if clockwise == 0 else [2,3,4,5]
 
-        off    = self.LED_TYPR(self.ORDER, Color(255, 168, 0))
+        off    = self.LED_TYPR(self.ORDER, Color(255, 100, 0))
         orange = self.LED_TYPR(self.ORDER, Color(0, 0, 0))
 
         while True:

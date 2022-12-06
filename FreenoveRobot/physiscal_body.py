@@ -16,19 +16,51 @@ from lib.libMPU6050.MPUSensor import MPUSensor as MPU
 from lib.libMPU6050.MPUSensor import MPUSensorException
 
 
+from lib.librd.redisdata import BodyData
+
+
 class PhysicalBody:
     def __init__(self) -> None:
+        pass
+
+
+    def virtual_destructor(self) -> None:
         """
+            This method realizes the virtualization of the destroyer, 
+            invokes the equivalent for mpu6050, which takes care of 
+            ending the thread that is responsible for capturing 
+            the sensor information.
+
+            IT MUST BE INVOKED.
+        """
+        self.__wizard.bury()
+
+        if self.__arrow:
+            self.__arrow.bury()
+
+        if BodyData.Yaw.is_enabled():
+            self.__mpu6050.virtual_destructor()
+        self.__infrared.virtual_destructor()
+        self.__strip.colorWipe(Color(0,0,0), 10)
+
+    def begin(self) -> None:
+        """
+            This method invokes the equivalent for mpu6050 
+            which commands the thread to begin performing its task.
+
+            IT MUST BE INVOKED.
+
             Initialize sensors and actuators instances.
         """
         print('Initializing sensors...')
 
-        # orientation sensor instance (MPU6050)
-        try:
-            self.__mpu6050 = MPU(RC.MPU_SMBUS_ID, RC.MPU_DEBUG_MODE)
-        except MPUSensorException as exc:
-            print(exc.args[0], ' Exiting..')
-            exit(-1)
+        if BodyData.Yaw.is_enabled():
+            # orientation sensor instance (MPU6050)
+            try:
+                self.__mpu6050 = MPU(RC.MPU_SMBUS_ID, RC.MPU_DEBUG_MODE)
+            except MPUSensorException as exc:
+                print(exc.args[0], ' Exiting..')
+                exit(-1)
 
         # motor instance
         self.__motors = Motor()
@@ -52,30 +84,8 @@ class PhysicalBody:
 
         print('Sensors successfully initialized')
 
-
-    def virtual_destructor(self) -> None:
-        """
-            This method realizes the virtualization of the destroyer, 
-            invokes the equivalent for mpu6050, which takes care of 
-            ending the thread that is responsible for capturing 
-            the sensor information.
-
-            IT MUST BE INVOKED.
-        """
-        self.__wizard.bury()
-
-        self.__mpu6050.virtual_destructor()
-        self.__infrared.virtual_destructor()
-        self.__strip.colorWipe(Color(0,0,0), 10)
-
-    def begin(self) -> None:
-        """
-            This method invokes the equivalent for mpu6050 
-            which commands the thread to begin performing its task.
-
-            IT MUST BE INVOKED.
-        """
-        self.__mpu6050.begin()
+        if BodyData.Yaw.is_enabled():
+            self.__mpu6050.begin()
         self.__infrared.begin()
 
     def set_tuple_motor_model(self, data):
@@ -160,6 +170,8 @@ class PhysicalBody:
         self.__buzzer.stop()
 
     def blink_car_arrow(self, clockwise) -> None:
+        if self.__arrow is not None and self.__arrow.is_alive():
+            self.__arrow.bury()
         self.__arrow = RobotThread(target=self.__strip.car_arrow, name='led_arrow', args=(clockwise,))
         self.__arrow.start()
 

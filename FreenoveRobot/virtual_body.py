@@ -1,4 +1,5 @@
 import json
+import sys
 
 from time import sleep, time
 from sys import stdout
@@ -100,24 +101,36 @@ class VirtualBody:
         return success
 
     def begin(self) -> bool:
+        print("loop")
+        sys.stdout.flush()
+
+        if BodyData.Yaw.is_enabled():
+            self.calibrate_mpu()
+            self.__yaw_thread: RobotThread = RobotThread(target=self.__yaw_discover, name='yaw_thread')
+            self.__yaw_thread.start()
+
         self.__redis_runner: PubSubWorkerThread = self.__pubsub.run_in_thread(sleep_time=0.01)
-        self.__yaw_thread: RobotThread = RobotThread(target=self.__yaw_discover, name='yaw_thread')
         self.__infrared_thread: RobotThread = RobotThread(target=self.__infrared_discover, name='infrared_thread')
         self.__ultrasonic_thread: RobotThread = RobotThread(target=self.__ultrasonic_discover, name='ultrasonic_thread')
 
         self.__body.begin()
-        self.__yaw_thread.start()
         self.__infrared_thread.start()
         self.__ultrasonic_thread.start()
 
-        if self.__yaw_thread.is_alive() and self.__infrared_thread.is_alive() and \
-                self.__ultrasonic_thread.is_alive() and self.__redis_runner.is_alive():
-            return True
+        if BodyData.Yaw.is_enabled():
+            if self.__yaw_thread.is_alive() and self.__infrared_thread.is_alive() and \
+                    self.__ultrasonic_thread.is_alive() and self.__redis_runner.is_alive():
+                return True
+            else:
+                self.__yaw_thread.bury()
         else:
-            self.__redis_runner.stop()
-            self.__yaw_thread.bury()
-            self.__infrared_thread.bury()
-            self.__ultrasonic_thread.bury()
+            if self.__infrared_thread.is_alive() and \
+                    self.__ultrasonic_thread.is_alive() and self.__redis_runner.is_alive():
+                return True
+        
+        self.__redis_runner.stop()
+        self.__infrared_thread.bury()
+        self.__ultrasonic_thread.bury()
 
         return False
 
@@ -129,7 +142,9 @@ class VirtualBody:
         self.__body.virtual_destructor()
         self.__redis_runner.stop()
 
-        self.__yaw_thread.bury()
+        if BodyData.Yaw.is_enabled():
+            self.__yaw_thread.bury()
+
         self.__infrared_thread.bury()
         self.__ultrasonic_thread.bury()
 
@@ -151,9 +166,9 @@ class VirtualBody:
             BodyData.Led.on_arrow(int(data['arrow']), int(data['cw']))
 
             if BodyData.Led.status():
-                if BodyData.Led.arrow:          # LED ON, ARROW ON
-                    self.__body.blink_car_arrow(clockwise=BodyData.Led.direction)
-                elif not BodyData.Led.arrow:    # LED ON, ARROW OFF
+                if BodyData.Led.arrow():          # LED ON, ARROW ON
+                    self.__body.blink_car_arrow(clockwise=BodyData.Led.direction())
+                elif not BodyData.Led.arrow():    # LED ON, ARROW OFF
                     self.__body.magic_rainbow(True)
             else:                               # LED OFF
                 self.__body.interrupt_led()
@@ -161,8 +176,8 @@ class VirtualBody:
         elif _key == BodyData.Key.Motor:
             BodyData.Motor.on_values(_value)
 
-            if BodyData.Motor.changed:
-                self.__body.set_tuple_motor_model(BodyData.Motor.values)
+            if BodyData.Motor.changed():
+                self.__body.set_tuple_motor_model(BodyData.Motor.values())
 
     def __on_remote(self, msg):
         _key = msg['data']
@@ -172,7 +187,7 @@ class VirtualBody:
             data = json.loads(_value)
             rcData.on_values(data['rc_cmd'], data['rc_spd'])
 
-            if rcData.is_valid:
+            if rcData.is_valid():
                 self.__body.set_tuple_motor_model(rcData.get_motor())
 
     def __yaw_discover(self):
@@ -181,8 +196,8 @@ class VirtualBody:
 
             BodyData.Yaw.on_value(_yaw)
 
-            if BodyData.Yaw.changed:
-                self.__redis.set(BodyData.Key.MPU, BodyData.Yaw.value)
+            if BodyData.Yaw.changed():
+                self.__redis.set(BodyData.Key.MPU, BodyData.Yaw.value())
                 self.__redis.publish(BodyData.Topic.Body, BodyData.Key.MPU)
 
             sleep(0.005)
@@ -195,8 +210,8 @@ class VirtualBody:
 
             BodyData.Infrared.on_values(_irL, _irM, _irR)
 
-            if BodyData.Infrared.changed:
-                self.__redis.set(BodyData.Key.Ultrasonic, BodyData.Infrared.values)
+            if BodyData.Infrared.changed():
+                self.__redis.set(BodyData.Key.Ultrasonic, BodyData.Infrared.values())
                 self.__redis.publish(BodyData.Topic.Body, BodyData.Key.Ultrasonic)
 
             if _irL and _irM and _irR:
@@ -212,8 +227,8 @@ class VirtualBody:
 
             BodyData.Ultrasonic.on_values(_proxL, _proxF, _proxR)
 
-            if BodyData.Ultrasonic.changed:
-                self.__redis.set(BodyData.Key.Ultrasonic, BodyData.Ultrasonic.values)
+            if BodyData.Ultrasonic.changed():
+                self.__redis.set(BodyData.Key.Ultrasonic, BodyData.Ultrasonic.values())
                 self.__redis.publish(BodyData.Topic.Body, BodyData.Key.Ultrasonic)
 
             sleep(0.005)
@@ -223,22 +238,3 @@ class VirtualBody:
         sleep(0.5)
 
 
-if __name__ == "__main__":
-    virtual_body = None
-    try:
-        virtual_body = VirtualBody()
-        virtual_body.calibrate_mpu()
-        sleep(5)
-        while not virtual_body.begin():
-            print('Missing component, retrying, delay 5 seconds')
-            sleep(5)
-
-        print('\nVirtualBody ready\nIgnore possible buried threads messages')
-        virtual_body.loop()
-    except KeyboardInterrupt:
-        pass
-    except BodyException as be:
-        print(be.args[0])
-    finally:
-        if virtual_body:
-            virtual_body.stop()

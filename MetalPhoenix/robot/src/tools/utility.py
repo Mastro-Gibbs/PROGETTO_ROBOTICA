@@ -17,6 +17,7 @@ class Compass(float, Enum):
     EST = 0.0
     OVEST = 180.0
 
+    @staticmethod
     def string_to_compass(cmp: str):
         if 'NORD' == cmp or 'N' == cmp:
             return Compass.NORD
@@ -27,6 +28,7 @@ class Compass(float, Enum):
         elif 'OVEST' == cmp or 'O' == cmp:
             return Compass.OVEST
 
+    @staticmethod
     def compass_to_string(cmp):
         if cmp == Compass.NORD:
             return "NORD"
@@ -37,6 +39,7 @@ class Compass(float, Enum):
         if cmp == Compass.SUD:
             return "SUD"
 
+    @staticmethod
     def compass_list_to_string_comma_sep(compass_list):
         string_list = Compass.compass_to_string(compass_list[0]) + ", " + \
                       Compass.compass_to_string(compass_list[1]) + ", " + \
@@ -44,6 +47,7 @@ class Compass(float, Enum):
                       Compass.compass_to_string(compass_list[3])
         return string_list
 
+    @staticmethod
     def compass_list_to_concat_string(compass_list: list) -> str:
         compass_string = ""
         for cmp in compass_list:
@@ -309,9 +313,11 @@ class CFG:
             "SPEED": float(psr["ROBOT"]["speed"]),
             "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
             "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
-            "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
+            "SAFE_SIDE_DIST": float(psr["ROBOT"]["safe_side_dist"]),
+            "MAX_ROT_ATTEMPTS": int(psr["ROBOT"]["max_rot_attempts"]),
             "PRIORITY_LIST": priority_list,
-            "INTELLIGENCE": psr["ROBOT"]["intelligence"]
+            "INTELLIGENCE": psr["ROBOT"]["intelligence"],
+            "AUTO_BALANCING": psr["ROBOT"]["auto_balancing"]
         }
 
     @staticmethod
@@ -321,7 +327,7 @@ class CFG:
     @staticmethod
     def write_data_analysis(maze_name, maze_solved, execution_time, tree_dict,
                             number_of_nodes, number_of_dead_end, performed_commands,
-                            trajectory, intelligence, priority_list):
+                            trajectory, intelligence, auto_balancing, priority_list):
         config = configparser.ConfigParser()
         path = "../resources/data/"
         file_name = "data_analysis.conf"
@@ -350,6 +356,7 @@ class CFG:
             "maze_solved": maze_solved,
             "execution_time_sec": execution_time,
             "intelligence": intelligence,
+            "auto_balancing": auto_balancing,
             "priority_list": priority_list,
             "number_of_nodes": number_of_nodes,
             "number_of_dead_end": number_of_dead_end,
@@ -394,3 +401,6 @@ class CFG:
         return {
             "MAZE_NUMBER": psr["MAZE"]["maze_number"],
         }
+
+
+
