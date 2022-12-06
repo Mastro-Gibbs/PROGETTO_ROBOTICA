@@ -94,7 +94,7 @@ def normalize_angle(ang: float, type_t: int):
     return bang
 
 
-def detect_target(begin: float) -> Compass | None:
+def detect_target(begin: float) -> Compass:
     """
     Detect nearest angle [0, 90, -90, 180] from 'begin' aka current angle.
 
@@ -119,7 +119,7 @@ def detect_target(begin: float) -> Compass | None:
     return target
 
 
-def f_r_l_b_to_compass(curr_ori: float) -> {}:
+def f_r_l_b_to_compass(curr_ori: float) -> dict:
     """
     Front Right Left Back to compass.
     It returns a dict according to the robot orientation where:
@@ -372,13 +372,22 @@ class CFG:
 
             "RC_ENABLED": bool(int(psr["REDIS"]["rc_enabled"]))
         }
+    
+    @staticmethod
+    def cfg_sensors() -> dict:
+        psr = configparser.ConfigParser()
+        psr.read('data/config.conf')
+        return {
+            "YAW_ENABLED": bool(int(psr["SENSORS"]["yaw_enabled"]))
+        }
 
     @staticmethod
     def maze_data() -> dict:
         psr = configparser.ConfigParser()
-        psr.read('../resources/data/config.conf')
+        psr.read('data/config.conf')
         return {
-            "MAZE_NUMBER": psr["MAZE"]["maze_number"],
+            "MAZE_NUMBER": psr["MAZE"]["maze_number"]
         }
 
-__CFG__: dict = CFG.cfg_redis_data()
+__REDIS_CFG__: dict = CFG.cfg_redis_data()
+__SENSOR_CFG__: dict = CFG.cfg_sensors()

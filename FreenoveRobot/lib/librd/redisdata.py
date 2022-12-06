@@ -1,26 +1,26 @@
 import json
 
-from lib.libctrl.utility import __CFG__, Clockwise
+from lib.libctrl.utility import __REDIS_CFG__, __SENSOR_CFG__, Clockwise
 
 
 class __RedisData:
     class Connection:
-        Host = __CFG__['HOST']
-        Port = __CFG__["PORT"]
+        Host = __REDIS_CFG__['HOST']
+        Port = __REDIS_CFG__["PORT"]
 
     class Topic:
-        Body = __CFG__["BODY_TOPIC"]
-        Remote = __CFG__["REMOTE_CONTROLLER_TOPIC"]
-        Controller = __CFG__["CTRL_TOPIC"]
+        Body = __REDIS_CFG__["BODY_TOPIC"]
+        Remote = __REDIS_CFG__["REMOTE_CONTROLLER_TOPIC"]
+        Controller = __REDIS_CFG__["CTRL_TOPIC"]
 
     class Key:
-        RC = __CFG__["RC_KEY"]
-        MPU = __CFG__["MPU_KEY"]
-        Led = __CFG__["LED_KEY"]
-        Motor = __CFG__["MOTORS_KEY"]
-        Buzzer = __CFG__["BUZZER_KEY"]
-        Infrared = __CFG__["INFRARED_KEY"]
-        Ultrasonic = __CFG__["ULTRASONIC_KEY"]
+        RC = __REDIS_CFG__["RC_KEY"]
+        MPU = __REDIS_CFG__["MPU_KEY"]
+        Led = __REDIS_CFG__["LED_KEY"]
+        Motor = __REDIS_CFG__["MOTORS_KEY"]
+        Buzzer = __REDIS_CFG__["BUZZER_KEY"]
+        Infrared = __REDIS_CFG__["INFRARED_KEY"]
+        Ultrasonic = __REDIS_CFG__["ULTRASONIC_KEY"]
 
     class Command:
         Led = 'Led'
@@ -34,7 +34,6 @@ class BodyData(__RedisData):
         __value = False
 
         @classmethod
-        @property
         def changed(cls):
             return cls.__status
 
@@ -75,7 +74,6 @@ class BodyData(__RedisData):
                 super().change(True)
 
         @classmethod
-        @property
         def values(cls):
             super().change(False)
 
@@ -97,7 +95,6 @@ class BodyData(__RedisData):
                 super().change(True)
 
         @classmethod
-        @property
         def values(cls):
             data = dict()
             data['proxL'] = cls.__proxL
@@ -124,7 +121,6 @@ class BodyData(__RedisData):
                 super().change(True)
 
         @classmethod
-        @property
         def values(cls):
             data = dict()
             data['irL'] = cls.__irL
@@ -136,7 +132,12 @@ class BodyData(__RedisData):
             return json.dumps(data, indent=0)
 
     class Yaw(__Value):
+        __enabled: bool = __SENSOR_CFG__["YAW_ENABLED"]
         __yaw = None
+
+        @classmethod
+        def is_enabled(cls):
+            return cls.__enabled
 
         @classmethod
         def on_value(cls, yaw):
@@ -147,7 +148,6 @@ class BodyData(__RedisData):
                 super().change(True)
 
         @classmethod
-        @property
         def value(cls):
             data = dict()
             data['Zaxis'] = cls.__yaw
@@ -178,12 +178,10 @@ class BodyData(__RedisData):
             return json.dumps(data, indent=0)
 
         @classmethod
-        @property
         def arrow(cls):
             return int(cls.__arrow)
 
         @classmethod
-        @property
         def direction(cls):
             return int(cls.__clockwise)
 
@@ -329,7 +327,7 @@ class ControllerData(__RedisData):
 
 
 class RemoteControllerData(__RedisData):
-    __enabled = __CFG__['RC_ENABLED']
+    __enabled = __REDIS_CFG__['RC_ENABLED']
 
     __speed = 600
     __command = None
@@ -366,7 +364,6 @@ class RemoteControllerData(__RedisData):
         return json.dumps(data, indent=0)
 
     @classmethod
-    @property
     def is_valid(cls):
         return True if cls.__command is not None and cls.__command != cls.__dn else False
 
