@@ -88,7 +88,7 @@ class RemoteController:
         self.__runner.allow()
 
     def dismiss(self):
-        self.__runner.allow()
+        self.__runner.dismiss()
 
     def stop(self):
         if self.__runner is not None:
