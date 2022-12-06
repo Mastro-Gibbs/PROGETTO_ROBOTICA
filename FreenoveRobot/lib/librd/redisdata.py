@@ -161,7 +161,7 @@ class BodyData(__RedisData):
         __clockwise = None
 
         @classmethod
-        def on_arrow(cls, arrow: int, cw: int):
+        def on_arrow(cls, arrow: int, cw):
             cls.__arrow = arrow
             cls.__clockwise = cw
 
@@ -170,7 +170,7 @@ class BodyData(__RedisData):
             data: dict = dict()
             data['status'] = cls.status()
             data['arrow']  = cls.__arrow
-            data['cw']     = cls.__clockwise if cls.__clockwise is not None else None
+            data['cw'] = cls.__clockwise
 
             cls.__arrow = False
             cls.__clockwise = None
@@ -226,8 +226,6 @@ class ControllerData(__RedisData):
 
             if int(cls.__data['irL']) and int(cls.__data['irM']) and int(cls.__data['irR']):
                 cls.__goal = True
-
-            print(cls.__data)
 
         @classmethod
         def front(cls):
@@ -303,14 +301,14 @@ class ControllerData(__RedisData):
         @classmethod
         def on_arrow(cls, arrow: bool, cw: Clockwise):
             cls.__arrow = int(arrow)
-            cls.__clockwise = cw.value
+            cls.__clockwise = cw.value if cw is not None else None
 
         @classmethod
         def leds(cls):
             data: dict = dict()
             data['status'] = cls.status()
             data['arrow']  = cls.__arrow
-            data['cw']     = cls.__clockwise if cls.__clockwise is not None else None
+            data['cw']     = cls.__clockwise
 
             cls.__arrow = 0
             cls.__clockwise = None
@@ -352,7 +350,7 @@ class RemoteControllerData(__RedisData):
         if speed is not None:
             cls.__speed = speed
 
-        cls.__command = command
+        cls.__command = command if command is not None else cls.__command
 
     @classmethod
     @property

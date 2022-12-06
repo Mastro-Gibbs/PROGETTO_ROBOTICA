@@ -163,7 +163,7 @@ class VirtualBody:
         elif _key == BodyData.Key.Led:
             data = json.loads(_value)
             BodyData.Led.set(int(data['status']))
-            BodyData.Led.on_arrow(int(data['arrow']), int(data['cw']))
+            BodyData.Led.on_arrow(int(data['arrow']), data['cw'])
 
             if BodyData.Led.status():
                 if BodyData.Led.arrow():          # LED ON, ARROW ON
