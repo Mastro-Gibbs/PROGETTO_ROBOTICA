@@ -31,6 +31,11 @@ class Position(Enum):
     JUNCTION = 3
 
 
+class Mode(Enum):
+    EXPLORING = 0
+    ESCAPING = 1
+
+
 class Command(Enum):
     START = -1
     STOP = 0
@@ -38,11 +43,6 @@ class Command(Enum):
     ROTATE = 2
     GO_TO_JUNCTION = 3
     BALANCE = 4
-
-
-class Mode(Enum):
-    EXPLORING = 0
-    ESCAPING = 1
 
 
 """
@@ -104,8 +104,8 @@ class Controller:
         # Each maze must have a number to be identified, change this number if the maze changes
         self.maze_number = CFG.maze_data()["MAZE_NUMBER"]
         self.maze_name = "Maze" + "_" + str(self.maze_number) + "_" + \
-                         (Compass.compass_list_to_concat_string(
-                             self.priority_list) if INTELLIGENCE == "low" else "RANDOM")
+                         (Compass.compass_list_to_concat_string(self.priority_list) if INTELLIGENCE == "low"
+                          else "RANDOM")
         self.execution_time = 0
         self.number_of_nodes = 1
         self.number_of_dead_end = 0
@@ -119,7 +119,7 @@ class Controller:
         priority_list = Compass.compass_list_to_string_comma_sep(self.priority_list)
         CFG.write_data_analysis(self.maze_name,
                                 self._maze_solved,
-                                self.execution_time,
+                                round_v(self.execution_time),
                                 self.tree.build_tree_dict(),
                                 self.number_of_nodes,
                                 self.number_of_dead_end,
@@ -676,12 +676,6 @@ class Controller:
             self.__class_logger.log("ERROR: ACTION NOT RECOGNIZED", "red")
             self.virtual_destructor()
             exit(-1)
-
-    """ INTELLIGENCE """
-
-    def intelligent_priority_list(self):
-        ...
-        print(self.priority_list)
 
     def save_current_state(self):
         self.store.store(self._state, self._position, self._mode)
