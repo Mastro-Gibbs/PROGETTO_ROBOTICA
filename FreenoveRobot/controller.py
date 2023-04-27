@@ -49,7 +49,7 @@ class Controller:
 
     def __init__(self):
         self.__logger = Logger('Controller', Color.CYAN)
-        self.__logger.set_logfile(CFG.logger_data()["LOGPATH"])
+        self.__logger.set_logfile(CFG.logger_data()["CLOGFILE"])
 
         try:
             self.__redis_message_handler = None
@@ -93,7 +93,11 @@ class Controller:
         self.number_of_nodes = 1
         self.number_of_dead_end = 0
 
-    def virtual_destructor(self) -> None:
+    def stop(self) -> None:
+        self.__execute_motor(Command.STOP)
+        self.__new_led(False, True, None, True)
+        self.__new_buzzer(False, True)
+
         self.__logger.log('Controller Stopped!', Color.GREEN, newline=True, italic=True, underline=True)
         self.__redis_message_handler.stop()
         self.__redis.close()
@@ -103,8 +107,8 @@ class Controller:
 
     def begin(self) -> None:
         self.__logger.log('Controller fully initialized', Color.GREEN, newline=True, italic=True)
-        self.__new_motor_values(0, 0, 0, 0, emit=True)
         self.__redis_message_handler: PubSubWorkerThread = self.__pubsub.run_in_thread(sleep_time=0.01)
+        self.__new_motor_values(0, 0, 0, 0, emit=True)
 
         if self.__remote is not None:
             self.__remote.begin()
@@ -251,17 +255,28 @@ class Controller:
     # ***************************************************************************************** #
 
     def __on_remote(self, msg):
-        _key = msg['data']
-        _value = self.__redis.get(_key)
+        if RemoteControllerData.is_enabled:
+            _key = msg['data']
+            _value = self.__redis.get(_key)
 
-        if _key == RemoteControllerData.Key.RC:
-            data = json.loads(_value)
-            RemoteControllerData.on_values(data['rc_cmd'], data['rc_spd'])
+            if _key == RemoteControllerData.Key.RC:
+                data = json.loads(_value)
+                RemoteControllerData.on_values(data['rc_cmd'], data['rc_spd'])
+
+            if RemoteControllerData.is_engaged and RemoteControllerData.is_done:
+                self.__new_buzzer(True, True)
+                time.sleep(0.3)
+                self.__new_buzzer(False, True)
+
+                self.__new_led(False, True, None, True)
+
+                self.__remote.dismiss()
+                RemoteControllerData.engaged(False)
 
     # callback receiver
     def __on_message(self, msg):
         _key = msg['data']
-        _message: dict = json.loads(self.__redis.get(_key))
+        _message = self.__redis.get(_key)
 
         ControllerData.Machine.on_values(_message)
 
@@ -313,6 +328,31 @@ class Controller:
     #                                                                                           #
     #                                                                                           #
     # *********************************** END REDIS SECTION *********************************** #
+
+
+
+
+
+    # *************************************** RC SECTION ************************************** #
+    #                                                                                           #
+    #                                                                                           #
+    #                                                                                           #
+    #                                                                                           #
+    # ***************************************************************************************** #
+
+    def remote_wakeup(self, c: Clockwise) -> None:
+        self.__new_buzzer(True, True)
+        time.sleep(0.3)
+        self.__new_buzzer(False, True)
+
+        self.__new_led(True, True, c, True)
+
+        RemoteControllerData.engaged(True)
+        self.__remote.allow()
+
+    #                                                                                           #
+    #                                                                                           #
+    # ************************************ END RC SECTION ************************************* #
 
 
 
@@ -374,7 +414,7 @@ class Controller:
             if com_action is None:
                 self.__logger.log("NO ACTION AVAILABLE!", Color.DARKRED, newline=True)
                 self.__logger.log(" >>>>  EXITING  <<<< ", Color.DARKRED, italic=True)
-                self.virtual_destructor()
+                self.stop()
                 exit(-1)
 
             # ACT
@@ -587,7 +627,7 @@ class Controller:
                 elif left is not None and right is not None:
                     if self.attempts_to_unstuck == 1:
                         self.__logger.log("Robot in stuck. Cannot solve the maze.", Color.RED, True, True)
-                        self.virtual_destructor()
+                        self.stop()
                         exit(-1)
 
             com_actions.insert(0, [Command.START, None])
@@ -677,7 +717,7 @@ class Controller:
                             self.__maze_tree.current.action is None:
                         self.__logger.log("NO OBSERVED NO EXPLORED NO ACTIONS", Color.DARKRED, True, True)
                         self.__logger.log(" >>>>  EXITING  <<<< ", Color.DARKRED, italic=True)
-                        self.virtual_destructor()
+                        self.stop()
                         exit(-1)
 
                     # Coming back, regressing

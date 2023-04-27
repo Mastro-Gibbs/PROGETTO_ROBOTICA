@@ -330,6 +330,8 @@ class RemoteControllerData(__RedisData):
     __speed = 600
     __command = None
 
+    __engaged = False
+
     __fw = 'FORWARD'
     __bw = 'BACKWARD'
 
@@ -344,6 +346,20 @@ class RemoteControllerData(__RedisData):
     @property
     def is_enabled(cls):
         return cls.__enabled
+
+    @classmethod
+    @property
+    def is_engaged(cls):
+        return cls.__engaged
+
+    @classmethod
+    def engaged(cls, b: bool):
+        cls.__engaged = b
+
+    @classmethod
+    @property
+    def is_done(cls):
+        return True if cls.__command == cls.__dn else False
 
     @classmethod
     def on_values(cls, command, speed):

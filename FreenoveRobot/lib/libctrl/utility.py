@@ -258,7 +258,7 @@ class CFG:
     @staticmethod
     def robot_conf_data() -> dict:
         psr = configparser.ConfigParser()
-        psr.read('../resources/data/config.conf')
+        psr.read('data/config.conf')
 
         priority_list = psr["ROBOT"]["priority_list"]
         priority_list = priority_list.split(', ')
@@ -267,14 +267,18 @@ class CFG:
         for elem in priority_list:
             priority_list[i] = Compass.string_to_compass(elem)
             i += 1
-
         return {
             "SPEED": float(psr["ROBOT"]["speed"]),
             "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
             "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
             "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
             "PRIORITY_LIST": priority_list,
-            "INTELLIGENCE": psr["ROBOT"]["intelligence"]
+            "INTELLIGENCE": psr["ROBOT"]["intelligence"],
+            "CLOGFILE": psr["LOGGER"]["controllerlog"],
+            "BLOGFILE": psr["LOGGER"]["bodylog"],
+            "ALOGFILE": psr["LOGGER"]["agentlog"],
+            "EXT": psr["LOGGER"]["ext"],
+            "SEVERITY": psr["LOGGER"]["severity"]
         }
 
     @staticmethod
@@ -332,7 +336,7 @@ class CFG:
     @staticmethod
     def physical_data() -> dict:
         psr = configparser.ConfigParser()
-        psr.read('../resources/data/config.conf')
+        psr.read('data/config.conf')
         return {
             "IP": psr["COPPELIA"]["ip"],
             "PORT": int(psr["COPPELIA"]["port"])
@@ -341,13 +345,13 @@ class CFG:
     @staticmethod
     def logger_data() -> dict:
         psr = configparser.ConfigParser()
-        psr.read('../resources/data/config.conf')
+        psr.read('data/config.conf')
         return {
-            "CLOGFILE": psr["UTILITY"]["controllerlog"],
-            "BLOGFILE": psr["UTILITY"]["bodylog"],
-            "ALOGFILE": psr["UTILITY"]["agentlog"],
-            "EXT": psr["UTILITY"]["ext"],
-            "SEVERITY": psr["UTILITY"]["severity"]
+            "CLOGFILE": psr["LOGGER"]["controllerlog"],
+            "BLOGFILE": psr["LOGGER"]["bodylog"],
+            "ALOGFILE": psr["LOGGER"]["agentlog"],
+            "EXT": psr["LOGGER"]["ext"],
+            "SEVERITY": psr["LOGGER"]["severity"]
         }
 
     @staticmethod
@@ -372,7 +376,7 @@ class CFG:
 
             "RC_ENABLED": bool(int(psr["REDIS"]["rc_enabled"]))
         }
-    
+
     @staticmethod
     def cfg_sensors() -> dict:
         psr = configparser.ConfigParser()

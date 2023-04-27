@@ -21,7 +21,7 @@ class Agent:
         self.__controller = Controller()
 
         self.__logger = Logger('Agent', Color.YELLOW)
-        self.__logger.set_logfile(CFG.logger_data()["LOGPATH"])
+        self.__logger.set_logfile(CFG.logger_data()["ALOGFILE"])
 
 
     def begin(self) -> None:
@@ -51,7 +51,7 @@ class Agent:
         if self.__controller.goal_reached():
             self.__controller.ending_animation()
         
-        self.__controller.virtual_destructor()
+        self.__controller.stop()
 
 
 if __name__ == '__main__':
