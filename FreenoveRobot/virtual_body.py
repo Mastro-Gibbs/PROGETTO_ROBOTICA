@@ -39,12 +39,12 @@ class VirtualBody:
             self.__redis = Redis(host=BodyData.Connection.Host, port=BodyData.Connection.Port, decode_responses=True)
             self.__pubsub = self.__redis.pubsub()
             self.__pubsub.psubscribe(**{BodyData.Topic.Controller: self.__on_message})
-            self.__pubsub.psubscribe(**{BodyData.Topic.Remote:     self.__on_remote})
+            self.__pubsub.psubscribe(**{BodyData.Topic.Remote: self.__on_remote})
         except RedisConnError or OSError or ConnectionRefusedError:
             raise BodyException(f'Unable to connect to redis server at: '
                                 f'{BodyData.Connection.Host}:{BodyData.Connection.Port}')
 
-    def calibrate_mpu(self) -> bool:
+    def __calibrate_mpu(self) -> bool:
         print('\nWelcome to robot calibration!\n')
         print('Move the robot very slowly, making small swings left and right')
 
@@ -101,11 +101,8 @@ class VirtualBody:
         return success
 
     def begin(self) -> bool:
-        print("loop")
-        sys.stdout.flush()
-
         if BodyData.Yaw.is_enabled():
-            self.calibrate_mpu()
+            self.__calibrate_mpu()
             self.__yaw_thread: RobotThread = RobotThread(target=self.__yaw_discover, name='yaw_thread')
             self.__yaw_thread.start()
 
@@ -127,7 +124,7 @@ class VirtualBody:
             if self.__infrared_thread.is_alive() and \
                     self.__ultrasonic_thread.is_alive() and self.__redis_runner.is_alive():
                 return True
-        
+
         self.__redis_runner.stop()
         self.__infrared_thread.bury()
         self.__ultrasonic_thread.bury()
@@ -166,11 +163,11 @@ class VirtualBody:
             BodyData.Led.on_arrow(int(data['arrow']), data['cw'])
 
             if BodyData.Led.status():
-                if BodyData.Led.arrow():          # LED ON, ARROW ON
+                if BodyData.Led.arrow():  # LED ON, ARROW ON
                     self.__body.blink_car_arrow(clockwise=BodyData.Led.direction())
-                elif not BodyData.Led.arrow():    # LED ON, ARROW OFF
+                elif not BodyData.Led.arrow():  # LED ON, ARROW OFF
                     self.__body.magic_rainbow(True)
-            else:                               # LED OFF
+            else:  # LED OFF
                 self.__body.interrupt_led()
 
         elif _key == BodyData.Key.Motor:
@@ -237,4 +234,20 @@ class VirtualBody:
     def __dummy_function():
         sleep(0.5)
 
+
+if __name__ == "__main__":
+    vb: VirtualBody = VirtualBody()
+
+    while not vb.begin():
+        print('Missing component, retrying, delay 5 seconds')
+        sleep(5)
+
+    try:
+        vb.loop()
+    except KeyboardInterrupt or Exception:
+        pass
+    except BodyException as be:
+        print(be.args[0])
+    finally:
+        vb.stop()
 

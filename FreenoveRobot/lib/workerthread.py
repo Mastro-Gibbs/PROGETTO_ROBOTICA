@@ -14,7 +14,7 @@ class RobotThread(Thread):
 
     def bury(self):
         tid = self.__tid()
-        if tid != None:
+        if tid is not None:
             exctype = SystemExit
             
             if not inspect.isclass(exctype):
