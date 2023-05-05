@@ -397,6 +397,7 @@ class CFG:
             "REMOTE_CONTROLLER_TOPIC": psr['REDIS']['rc_topic'],
 
             "SELF_KEY": psr["REDIS"]["self_key"],
+            "BTN_KEY": psr["REDIS"]["btn_key"],
             "RC_KEY": psr["REDIS"]["rc_key"],
             "LED_KEY": psr["REDIS"]["led_key"],
             "MPU_KEY": psr["REDIS"]["mpu_key"],

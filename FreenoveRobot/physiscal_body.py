@@ -8,6 +8,7 @@
 from lib.robotAPI.motor import Motor, MOTORSCommand
 from lib.robotAPI.ultrasonic import Ultrasonic
 from lib.robotAPI.infrared import Infrared
+from lib.robotAPI.button import Button
 from lib.robotAPI.led import Led, Color
 from lib.robotAPI.buzzer import Buzzer
 from lib.workerthread import RobotThread
@@ -43,7 +44,7 @@ class PhysicalBody:
         self.__infrared.virtual_destructor()
         self.__strip.colorWipe(Color(0,0,0), 10)
 
-    def begin(self) -> None:
+    def begin(self, button_callback) -> None:
         """
             This method invokes the equivalent for mpu6050 
             which commands the thread to begin performing its task.
@@ -75,6 +76,8 @@ class PhysicalBody:
 
         # buzzer instance
         self.__buzzer = Buzzer(RC.BUZZER_PIN)
+
+        self.__button = Button(RC.BUTTON_PIN, button_callback)
 
         # led strip instance
         self.__strip = Led()

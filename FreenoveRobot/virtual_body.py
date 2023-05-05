@@ -110,7 +110,7 @@ class VirtualBody:
         self.__infrared_thread: RobotThread = RobotThread(target=self.__infrared_discover, name='infrared_thread')
         self.__ultrasonic_thread: RobotThread = RobotThread(target=self.__ultrasonic_discover, name='ultrasonic_thread')
 
-        self.__body.begin()
+        self.__body.begin(self.on_ready_btn)
         self.__infrared_thread.start()
         self.__ultrasonic_thread.start()
 
@@ -233,6 +233,10 @@ class VirtualBody:
                 self.__redis.publish(BodyData.Topic.Body, BodyData.Key.Ultrasonic)
 
             sleep(0.005)
+
+    def on_ready_btn(self):
+        self.__redis.set(BodyData.Key.Btn, json.dumps({'ready': 1}, indent=0))
+        self.__redis.publish(BodyData.Topic.Body, BodyData.Key.Btn)
 
     @staticmethod
     def __dummy_function():

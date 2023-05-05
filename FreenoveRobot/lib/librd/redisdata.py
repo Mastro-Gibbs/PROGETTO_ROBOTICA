@@ -14,6 +14,7 @@ class __RedisData:
         Controller = __REDIS_CFG__["CTRL_TOPIC"]
 
     class Key:
+        Btn = __REDIS_CFG__["BTN_KEY"]
         SELF = __REDIS_CFG__["SELF_KEY"]
         RC = __REDIS_CFG__["RC_KEY"]
         MPU = __REDIS_CFG__["MPU_KEY"]
@@ -222,6 +223,7 @@ class ControllerData(__RedisData):
         __data['proxR'] = 0
         __data['Zaxis'] = None
         __data['virtB'] = 0
+        __data['ready'] = 0
         __goal = False
 
         @classmethod
@@ -268,6 +270,10 @@ class ControllerData(__RedisData):
         @classmethod
         def connection(cls) -> bool:
             return bool(cls.__data['virtB'])
+
+        @classmethod
+        def ready(cls) -> bool:
+            return bool(cls.__data['ready'])
 
 
     class Motor(__Value):

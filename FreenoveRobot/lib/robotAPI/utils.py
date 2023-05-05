@@ -25,6 +25,8 @@ def deprecated(func):
 
 
 class ROBOTAPIConstants(IntEnum):
+    BUTTON_PIN = 0,
+
     FRONT_ECHO_PIN = 22,
     FRONT_TRIGGER_PIN = 27,
 

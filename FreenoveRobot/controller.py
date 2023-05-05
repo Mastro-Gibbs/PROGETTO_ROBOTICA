@@ -752,7 +752,7 @@ class Controller:
     # DONE
     @staticmethod
     def __virt_body_ready() -> bool:
-        return ControllerData.Machine.connection()
+        return ControllerData.Machine.connection() and ControllerData.Machine.ready()
 
     #                                                                                                    #
     #                                                                                                    #
