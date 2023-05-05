@@ -14,6 +14,7 @@ class __RedisData:
         Controller = __REDIS_CFG__["CTRL_TOPIC"]
 
     class Key:
+        SELF = __REDIS_CFG__["SELF_KEY"]
         RC = __REDIS_CFG__["RC_KEY"]
         MPU = __REDIS_CFG__["MPU_KEY"]
         Led = __REDIS_CFG__["LED_KEY"]
@@ -220,6 +221,7 @@ class ControllerData(__RedisData):
         __data['proxF'] = 0
         __data['proxR'] = 0
         __data['Zaxis'] = None
+        __data['virtB'] = 0
         __goal = False
 
         @classmethod
@@ -233,15 +235,15 @@ class ControllerData(__RedisData):
 
         @classmethod
         def front(cls):
-            return int(cls.__data['proxF'])
+            return int(cls.__data['proxF']) if int(cls.__data['proxF']) > 25 else None
 
         @classmethod
         def left(cls):
-            return int(cls.__data['proxL'])
+            return int(cls.__data['proxL']) if int(cls.__data['proxL']) > 25 else None
 
         @classmethod
         def right(cls):
-            return int(cls.__data['proxR'])
+            return int(cls.__data['proxR']) if int(cls.__data['proxR']) > 25 else None
 
         @classmethod
         def goal(cls):
@@ -262,6 +264,11 @@ class ControllerData(__RedisData):
         @classmethod
         def right_ir(cls):
             return int(cls.__data['irR'])
+
+        @classmethod
+        def connection(cls) -> bool:
+            return bool(cls.__data['virtB'])
+
 
     class Motor(__Value):
         __rum = None

@@ -12,7 +12,7 @@ class Machine:
     __speed = __MACHINE_CONF__["SPEED"]
     __rot_speed = __MACHINE_CONF__["ROT_SPEED"]
 
-    __auto_balancing = __MACHINE_CONF__["AUTO_BALANCING"]
+    __junction_time = __MACHINE_CONF__["JUNCTION_TIME"]
 
     __priority_list = __MACHINE_CONF__['PRIORITY_LIST']
 
@@ -37,8 +37,8 @@ class Machine:
         return self.__rot_speed
 
     @property
-    def autobalance(self):
-        return self.__auto_balancing
+    def junction_time(self):
+        return self.__junction_time
 
     @property
     def priority(self):
@@ -64,9 +64,9 @@ class Machine:
     def rot_speed(self, value):
         self.__rot_speed = value
 
-    @autobalance.setter
-    def autobalance(self, value):
-        self.__auto_balancing = value
+    @junction_time.setter
+    def junction_time(self, value):
+        self.__junction_time = value
 
     @priority.setter
     def priority(self, value):
@@ -78,4 +78,4 @@ class Machine:
         self.speed = self.__MACHINE_CONF__["SPEED"]
         self.rot_speed = self.__MACHINE_CONF__["ROT_SPEED"]
         self.priority = self.__MACHINE_CONF__['PRIORITY_LIST']
-        self.autobalance = self.__MACHINE_CONF__["AUTO_BALANCING"]
+        self.junction_time = self.__MACHINE_CONF__["JUNCTION_TIME"]

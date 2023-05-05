@@ -117,12 +117,16 @@ class VirtualBody:
         if BodyData.Yaw.is_enabled():
             if self.__yaw_thread.is_alive() and self.__infrared_thread.is_alive() and \
                     self.__ultrasonic_thread.is_alive() and self.__redis_runner.is_alive():
+                self.__redis.set(BodyData.Key.SELF, json.dumps({'virtB': 1}, indent=0))
+                self.__redis.publish(BodyData.Topic.Body, BodyData.Key.SELF)
                 return True
             else:
                 self.__yaw_thread.bury()
         else:
             if self.__infrared_thread.is_alive() and \
                     self.__ultrasonic_thread.is_alive() and self.__redis_runner.is_alive():
+                self.__redis.set(BodyData.Key.SELF, json.dumps({'virtB': 1}, indent=0))
+                self.__redis.publish(BodyData.Topic.Body, BodyData.Key.SELF)
                 return True
 
         self.__redis_runner.stop()

@@ -10,9 +10,9 @@ from lib.librd.redisdata import ControllerData, RemoteControllerData
 from lib.libctrl.utility import Clockwise
 from lib.libctrl.utility import f_r_l_b_to_compass
 from lib.libctrl.utility import negate_compass, detect_target
-from lib.libctrl.utility import Logger, CFG
+from lib.libctrl.utility import Logger, CFG, Severity as LogSeverity
 from lib.libctrl.utility import round_v, normalize_angle
-from lib.libctrl.utility import make
+from lib.libctrl.utility import make, Compass
 
 from lib.libctrl.tree import Node, Type, DIRECTION
 
@@ -22,6 +22,7 @@ from lib.libctrl.enums import Color, STDOUTDecor
 from cluster.maze import Maze
 from cluster.machine import Machine
 from cluster.rotation_factory import RotationFactory
+from cluster.action import CommandAction
 
 from redis import Redis
 from redis.client import PubSubWorkerThread
@@ -43,6 +44,7 @@ class Controller:
     _SAFE_DISTANCE = _CONTROLLER_DATA['SAFE_DIST']
     _ROTATION_MAX_ATTEMPTS = _CONTROLLER_DATA['MAX_ATTEMPTS']
 
+
     # ***************************** INSTANCE MANAGEMENT SECTION ******************************* #
     #  FILL IT                                                                                  #
     #                                                                                           #
@@ -52,15 +54,14 @@ class Controller:
     # done
     def __init__(self):
         self.__logger = Logger('Controller', self._LOGGER_DATA["SEVERITY"], Color.CYAN)
-        self.__logger.set_logfile(CFG.logger_data()["CLOGFILE"])
+        self.__logger.set_logfile(self._LOGGER_DATA["CLOGFILE"])
 
         try:
             self.__redis_message_handler = None
-            self.__redis = Redis(host=ControllerData.Connection.Host, port=ControllerData.Connection.Port,
-                                 decode_responses=True)
+            self.__redis = Redis(host=ControllerData.Connection.Host, port=ControllerData.Connection.Port, decode_responses=True)
             self.__redis.flushall()
             self.__pubsub = self.__redis.pubsub()
-            self.__pubsub.psubscribe(**{ControllerData.Topic.Body: self.__on_message})
+            self.__pubsub.psubscribe(**{ControllerData.Topic.Body:   self.__on_message})
             self.__pubsub.psubscribe(**{ControllerData.Topic.Remote: self.__on_remote})
         except RedisConnError or OSError or ConnectionRefusedError:
             raise ControllerException(f'Unable to connect to redis server at: '
@@ -70,6 +71,8 @@ class Controller:
         self.__rotation_factory: RotationFactory = RotationFactory()
         self.__machine: Machine = Machine()
         self.__maze: Maze = Maze()
+
+        self.__cmd_action = CommandAction()
 
         self.__prev_action = None
 
@@ -114,10 +117,13 @@ class Controller:
     # done
     def factory(self) -> RotationFactory:
         return self.__rotation_factory
-
     #                                                                                           #
     #                                                                                           #
     # **************************** END INSTANCE MANAGEMENT SECTION **************************** #
+
+
+
+
 
     # ************************************* MISC SECTION ************************************** #
     #  FILL IT                                                                                  #
@@ -149,8 +155,10 @@ class Controller:
     # Updater controller configuration
     def update_config(self) -> None:
         self._CONTROLLER_DATA = CFG.robot_conf_data()
+        self._LOGGER_DATA = CFG.logger_data()
 
         self.__machine.update()
+        self.__logger.set_severity(self._LOGGER_DATA["SEVERITY"])
 
         self._ROTATION_MAX_ATTEMPTS = self._CONTROLLER_DATA["MAX_ATTEMPTS"]
         self._SAFE_DISTANCE = self._CONTROLLER_DATA["SAFE_DIST"]
@@ -160,7 +168,8 @@ class Controller:
     def __do_action(self, com_action):
         action = com_action[0]
 
-        self.__logger.log(f'Sending action "{action}" to VirtualBody..', Color.GREEN)
+        if self.__logger.is_loggable(LogSeverity.MID):
+            self.__logger.log(f'Sending action "{action}" to VirtualBody..', Color.GREEN)
 
         if action == Command.START:
             self.__execute_motor(Command.STOP)
@@ -196,7 +205,7 @@ class Controller:
             while not time_expired and (ControllerData.Machine.front() is None
                                         or ControllerData.Machine.front() > self._SAFE_DISTANCE):
                 self.__execute_motor(Command.RUN)
-                if time.time() - start_time >= self.__machine.junction_time:
+                if time.time() - start_time >= self.__junction_sim_time:
                     time_expired = True
 
             self.__execute_motor(Command.STOP)
@@ -206,7 +215,8 @@ class Controller:
             time.sleep(0.5)
 
         elif action == Command.ROTATE:
-            self.__logger.log(" ** COMMAND ROTATE ** ", Color.GRAY)
+            if self.__logger.is_loggable(LogSeverity.MID):
+                self.__logger.log(" ** COMMAND ROTATE ** ", Color.GRAY)
 
             self.__machine.state = State.ROTATING
             self.__execute_motor(Command.STOP)
@@ -215,13 +225,10 @@ class Controller:
 
             return True
 
-        else:
-            print("ERROR: ACTION NOT RECOGNIZED")
-            exit(-1)
-
     #                                                                                           #
     #                                                                                           #
     # ********************************** END MISC SECTION ************************************* #
+
 
     # ************************************* REDIS SECTION ************************************* #
     #                                       DONE                                                #
@@ -317,6 +324,10 @@ class Controller:
     #                                                                                           #
     # *********************************** END REDIS SECTION *********************************** #
 
+
+
+
+
     # *************************************** RC SECTION ************************************** #
     #                                         DONE                                              #
     #                                                                                           #
@@ -339,6 +350,10 @@ class Controller:
     #                                                                                           #
     # ************************************ END RC SECTION ************************************* #
 
+
+
+
+
     # ************************************* PURE ALGORITHM SECTION ************************************* #
     #                                                                                                    #
     # Tree step.                                                                                         #
@@ -352,7 +367,7 @@ class Controller:
     # TODO
     # Algorithm entry
     def algorithm(self) -> bool:
-        if self.__virt_body_ready():
+        if self.__is_algorithm_unlocked():  # TODO
 
             if self._ITERATION == 0:
                 print()
@@ -360,8 +375,6 @@ class Controller:
             if self.goal_reached():
                 return True
 
-            self.__logger.log(f'New algorithm iteration -> #{self._ITERATION}', Color.YELLOW, newline=True,
-                              underline=True)
             self._ITERATION += 1
 
             # THINK
@@ -370,22 +383,24 @@ class Controller:
             command = com_action[0]
             action = com_action[1]
 
-            self.__logger.log(f"--MODE: {self.__machine.mode}")
-            self.__logger.log(f"--ACTIONS: {com_actions}")
-            self.__logger.log(f"--ACTION: {com_action}")
-            self.__logger.log(f"--CURRENT NODE: {self.__maze.tree.current}")
+            if self.__logger.is_loggable(LogSeverity.LOW):
+                self.__logger.log(f"--MODE: {self.__machine.mode}")
+                self.__logger.log(f"--ACTIONS: {com_actions}")
+                self.__logger.log(f"--ACTION: {com_action}")
+                self.__logger.log(f"--CURRENT NODE: {self.__maze.tree.current}")
 
             # tree update
             self.__update_tree(actions, action)
 
-            self.__logger.log("--CURRENT TREE:", Color.GRAY)
-            self.__logger.log(f"{self.__maze.tree.build_tree_dict()}", Color.GRAY, noheader=True)
-            self.__logger.log(f"--CURRENT NODE: {self.__maze.tree.current}", Color.GRAY, newline=True)
-            self.__logger.log(f"--Available actions: {com_actions}", Color.GREEN)
+            if self.__logger.is_loggable(LogSeverity.LOW):
+                self.__logger.log("--CURRENT TREE:", Color.GRAY)
+                self.__logger.log(f"{self.__maze.tree.build_tree_dict()}", Color.GRAY, noheader=True)
+                self.__logger.log(f"--CURRENT NODE: {self.__maze.tree.current}", Color.GRAY, newline=True)
+                self.__logger.log(f"--Available actions: {com_actions}", Color.GREEN)
 
-            self.__logger.log(f"--(STATE, POSITION): ({self.__machine.state}, {self.__machine.position})",
-                              Color.GRAY)
-            self.__logger.log(f"--Performing action: {com_action}", Color.GRAY)
+            if self.__logger.is_loggable(LogSeverity.MID):
+                self.__logger.log(f"--(STATE, POSITION): ({self.__machine.state}, {self.__machine.position})", Color.GRAY)
+                self.__logger.log(f"--Performing action: {com_action}", Color.GRAY)
 
             if com_action is None:
                 self.__logger.log("NO ACTION AVAILABLE!", Color.DARKRED, newline=True)
@@ -396,8 +411,8 @@ class Controller:
             # ACT
             performed = self.__do_action(com_action)
 
-            self.__logger.log(f"--(STATE, POSITION): ({self.__machine.state}, {self.__machine.position})",
-                              Color.GRAY)
+            if self.__logger.is_loggable(LogSeverity.MID):
+                self.__logger.log(f"--(STATE, POSITION): ({self.__machine.state}, {self.__machine.position})", Color.GRAY)
 
             if performed and self.__prev_action != action:
                 self.__maze.performed_commands.append(action)
@@ -410,7 +425,7 @@ class Controller:
         else:
             _curr_time = time.time()
             self.__logger.log('Algorithm locked, waiting for VirtualBody..' + Color.WHITE.value +
-                              f' (time spent: {round(float(_curr_time - self._INIT_TIME), 1)}s)' +
+                              f' (time spent: {round(float(_curr_time-self._INIT_TIME), 1)}s)' +
                               STDOUTDecor.DEFAULT.value, Color.RED, italic=True, _stdout=True)
             time.sleep(0.1)
 
@@ -421,7 +436,8 @@ class Controller:
             return
 
         if self.__machine.mode == Mode.EXPLORING:
-            self.__logger.log("*** UPDATING TREE (MODE: EXPLORING) ***", Color.GRAY, newline=True)
+            if self.__logger.is_loggable(LogSeverity.MID):
+                self.__logger.log("*** UPDATING TREE (MODE: EXPLORING) ***", Color.GRAY, newline=True)
 
             """ 
             Different actions returned by Control Policy.
@@ -435,19 +451,22 @@ class Controller:
                     self.__maze.tree.append(node, DIRECTION.MID)
                     self.__maze.tree.regress()
                     self.__maze.incr_node_count()
-                    self.__logger.log("ADDED MID", Color.DARKGREEN)
+                    if self.__logger.is_loggable(LogSeverity.MID):
+                        self.__logger.log("ADDED MID", Color.DARKGREEN)
                 if dict_["LEFT"] == action:
                     node = Node("L_" + self.__maze.tree.generate_node_id(), action)
                     self.__maze.tree.append(node, DIRECTION.LEFT)
                     self.__maze.tree.regress()
                     self.__maze.incr_node_count()
-                    self.__logger.log("ADDED LEFT", Color.DARKGREEN)
+                    if self.__logger.is_loggable(LogSeverity.MID):
+                        self.__logger.log("ADDED LEFT", Color.DARKGREEN)
                 if dict_["RIGHT"] == action:
                     node = Node("R_" + self.__maze.tree.generate_node_id(), action)
                     self.__maze.tree.append(node, DIRECTION.RIGHT)
                     self.__maze.tree.regress()
                     self.__maze.incr_node_count()
-                    self.__logger.log("ADDED RIGHT", Color.DARKGREEN)
+                    if self.__logger.is_loggable(LogSeverity.MID):
+                        self.__logger.log("ADDED RIGHT", Color.DARKGREEN)
 
             self.__maze.tree.current.set_type(Type.EXPLORED)
 
@@ -464,7 +483,8 @@ class Controller:
                 self.__maze.tree.set_current(self.__maze.tree.current.right)
 
         elif self.__machine.mode == Mode.ESCAPING:
-            self.__logger.log("*** UPDATING TREE (MODE: ESCAPING) ***", Color.GRAY, newline=True)
+            if self.__logger.is_loggable(LogSeverity.MID):
+                self.__logger.log("*** UPDATING TREE (MODE: ESCAPING) ***", Color.GRAY, newline=True)
 
             """ 
             In this section it is updated the type property of the current node accordingly if
@@ -477,10 +497,11 @@ class Controller:
             if self.__maze.tree.current.is_leaf:
                 self.__maze.tree.current.set_type(Type.DEAD_END)
                 self.__maze.incr_node_count()
-                self.__logger.log("*** DEAD END NODE DETECTED ***", Color.GREEN)
-                self.__logger.log(" >>>> REGRESSION <<<< ", Color.YELLOW, newline=True)
-                self.__logger.log(f" --CURRENT NODE: {self.__maze.tree.current}", Color.YELLOW)
-                self.__logger.log(f" --PARENT NODE: {self.__maze.tree.current.parent}", Color.YELLOW)
+                if self.__logger.is_loggable(LogSeverity.LOW):
+                    self.__logger.log("*** DEAD END NODE DETECTED ***", Color.GREEN)
+                    self.__logger.log(" >>>> REGRESSION <<<< ", Color.YELLOW, newline=True)
+                    self.__logger.log(f" --CURRENT NODE: {self.__maze.tree.current}", Color.YELLOW)
+                    self.__logger.log(f" --PARENT NODE: {self.__maze.tree.current.parent}", Color.YELLOW)
 
                 cur = self.__maze.tree.current.parent
 
@@ -493,10 +514,11 @@ class Controller:
                      or self.__maze.tree.current.mid is None):
                 self.__maze.tree.current.set_type(Type.DEAD_END)
                 self.__maze.incr_dead_end()
-                self.__logger.log("*** ALL CHILDREN ARE DEAD END NODES ***", Color.GREEN)
-                self.__logger.log(" >>>> REGRESSION <<<< ", Color.YELLOW, newline=True)
-                self.__logger.log(f" --CURRENT NODE: {self.__maze.tree.current}", Color.YELLOW)
-                self.__logger.log(f" --PARENT NODE: {self.__maze.tree.current.parent}", Color.YELLOW)
+                if self.__logger.is_loggable(LogSeverity.LOW):
+                    self.__logger.log("*** ALL CHILDREN ARE DEAD END NODES ***", Color.GREEN)
+                    self.__logger.log(" >>>> REGRESSION <<<< ", Color.YELLOW, newline=True)
+                    self.__logger.log(f" --CURRENT NODE: {self.__maze.tree.current}", Color.YELLOW)
+                    self.__logger.log(f" --PARENT NODE: {self.__maze.tree.current.parent}", Color.YELLOW)
 
                 cur = self.__maze.tree.current.parent
 
@@ -505,7 +527,8 @@ class Controller:
                 This is the case when the action chosen by DMP is an action that brings the robot
                 to an OBSERVED node and this node becomes the current node.
                 """
-                self.__logger.log("No leaf or DEAD END children", Color.YELLOW, italic=True)
+                if self.__logger.is_loggable(LogSeverity.LOW):
+                    self.__logger.log("No leaf or DEAD END children", Color.YELLOW, italic=True)
 
                 if self.__maze.tree.current.has_left and self.__maze.tree.current.left.action == action_chosen:
                     cur = self.__maze.tree.current.left
@@ -514,8 +537,9 @@ class Controller:
                 elif self.__maze.tree.current.has_right and self.__maze.tree.current.right.action == action_chosen:
                     cur = self.__maze.tree.current.right
                 else:
-                    self.__logger.log("!!! ESCAPING ERROR UPDATING CURRENT !!!", Color.DARKRED, True, True)
-                    self.__logger.log(" >>>>  EXITING  <<<< ", Color.RED, italic=True)
+                    if self.__logger.is_loggable(LogSeverity.LOW):
+                        self.__logger.log("!!! ESCAPING ERROR UPDATING CURRENT !!!", Color.DARKRED, True, True)
+                        self.__logger.log(" >>>>  EXITING  <<<< ", Color.RED, italic=True)
                     self.stop()
                     exit(-1)
 
@@ -541,14 +565,15 @@ class Controller:
         right = ControllerData.Machine.right()
         ori = self.__rotation_factory.value
 
+        # caso iniziale
         if self.__machine.state == State.STARTING and self.__machine.position == Position.UNKNOWN:
+            self.__machine.position = Position.INITIAL
 
+            # non posso andare avanti, ne dietro ovviamente! -> destra e/o sinistra!
             if front is None:
-                # Ho il muro dietro (dato che nei vincoli non posso mettere il robot
-                # in una giunzione dove ci sono 4 direzioni/strade libere)
-                if (left is not None and right is not None) or (left is None and right is None):
-                    self.__machine.state = State.STARTING
-                    self.__machine.position = Position.INITIAL
+                if left is not None and right is not None:
+                    self.__cmd_action.command = Command.START
+                    self.__cmd_action.action = list(Compass.)
                     com_actions.insert(0, [Command.START, None])
                 else:
                     # Muro a sinistra
@@ -617,7 +642,8 @@ class Controller:
             self.__machine.state = State.SENSING
 
             if self.__machine.mode == Mode.EXPLORING:
-                self.__logger.log("Control policy EXPLORING", Color.GRAY)
+                if self.__logger.is_loggable(LogSeverity.MID):
+                    self.__logger.log("Control policy EXPLORING", Color.GRAY)
 
                 if front is None:
                     action = f_r_l_b_to_compass(ori)["FRONT"]
@@ -640,7 +666,8 @@ class Controller:
                     self.__machine.state = State.SENSING
 
             elif self.__machine.mode == Mode.ESCAPING:
-                self.__logger.log("Control policy ESCAPING", Color.GRAY)
+                if self.__logger.is_loggable(LogSeverity.MID):
+                    self.__logger.log("Control policy ESCAPING", Color.GRAY)
 
                 if self.__maze.tree.current.left is not None and self.__maze.tree.current.left.type == Type.OBSERVED:
                     action = self.__maze.tree.current.left.action
@@ -679,12 +706,9 @@ class Controller:
                 """
 
                 if not actions:
-                    if (
-                            self.__maze.tree.current.left is None or self.__maze.tree.current.left.type == Type.DEAD_END) and \
-                            (
-                                    self.__maze.tree.current.mid is None or self.__maze.tree.current.mid.type == Type.DEAD_END) and \
-                            (
-                                    self.__maze.tree.current.right is None or self.__maze.tree.current.right.type == Type.DEAD_END) and \
+                    if (self.__maze.tree.current.left is None or self.__maze.tree.current.left.type == Type.DEAD_END) and \
+                            (self.__maze.tree.current.mid is None or self.__maze.tree.current.mid.type == Type.DEAD_END) and \
+                            (self.__maze.tree.current.right is None or self.__maze.tree.current.right.type == Type.DEAD_END) and \
                             self.__maze.tree.current.action is None:
                         self.__logger.log("NO OBSERVED NO EXPLORED NO ACTIONS", Color.DARKRED, True, True)
                         self.__logger.log(" >>>>  EXITING  <<<< ", Color.DARKRED, italic=True)
@@ -737,7 +761,8 @@ class Controller:
 
         if self._INTELLIGENCE == "mid" and self.__machine.state == State.SENSING:
             self.priority_list = random.sample(self.__machine.priority, 4)
-            self.__logger.log(f"--PRIORITY LIST (RANDOM): {self.priority_list}")
+            if self.__logger.is_loggable(LogSeverity.LOW):
+                self.__logger.log(f"--PRIORITY LIST (RANDOM): {self.priority_list}")
         elif self._INTELLIGENCE == "high":
             ...
 
@@ -748,16 +773,22 @@ class Controller:
                     return com_action
 
     # TODO
-    def __virt_body_ready(self) -> bool:
-        return ControllerData.Machine.connection()
+    def __is_algorithm_unlocked(self) -> bool:
+        if self.__rotation_factory.value:
+            return True
+        return False
 
     #                                                                                                    #
     #                                                                                                    #
     # ************************************ END PURE ALGORITHM SECTION ********************************** #
 
+
+
+
+
     # ************************************* ROTATION SECTION ************************************* #
     #                                                                                              #
-    # Main method: 'rotate'                                                                        #
+    #                                                                                              #
     #                                                                                              #
     # ******************************************************************************************** #
 
@@ -774,7 +805,7 @@ class Controller:
 
         init_g = self.__rotation_factory.value
         degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
-
+        
         self.__do_rotation(vel, c, degrees, final_g)
 
     # TODO
@@ -801,8 +832,9 @@ class Controller:
 
         # CRITICAL CASE
         if it == self._ROTATION_MAX_ATTEMPTS:
-            self.__logger.log(" ** MAX ATTEMPTS REACHED ** ", Color.DARKRED, True, True)
-            self.__logger.log(" >>>>  EXITING  <<<< ", Color.DARKRED, italic=True)
+            if self.__logger.is_loggable(LogSeverity.LOW):
+                self.__logger.log(" ** MAX ATTEMPTS REACHED ** ", Color.DARKRED, True, True)
+                self.__logger.log(" >>>>  EXITING  <<<< ", Color.DARKRED, italic=True)
             exit(-1)
 
     # TODO
@@ -871,7 +903,8 @@ class Controller:
         2) Otherwise other intervals (second if)
         """
 
-        self.__logger.log(" ** ORIENTATION CHECKING ** ", Color.GRAY, True, True)
+        if self.__logger.is_loggable(LogSeverity.MID):
+            self.__logger.log(" ** ORIENTATION CHECKING ** ", Color.GRAY, True, True)
 
         curr_g = self.__rotation_factory.value
 
@@ -880,23 +913,28 @@ class Controller:
             limit_g_dx = 180 - delta
             limit_g_sx = - 180 + delta
             if curr_g < limit_g_sx or curr_g > limit_g_dx:
-                self.__logger.log(" ~~ perfect ~~ ", Color.GREEN)
+                if self.__logger.is_loggable(LogSeverity.MID):
+                    self.__logger.log(" ~~ perfect ~~ ", Color.GREEN)
                 ok = True
             else:
-                self.__logger.log(" !! bad orientation !! ", Color.RED)
+                if self.__logger.is_loggable(LogSeverity.MID):
+                    self.__logger.log(" !! bad orientation !! ", Color.RED)
         else:
             limit_g_dx = final_g - delta
             limit_g_sx = final_g + delta
             if limit_g_dx <= curr_g <= limit_g_sx:
-                self.__logger.log(" ~~ perfect ~~ ", Color.GREEN)
+                if self.__logger.is_loggable(LogSeverity.MID):
+                    self.__logger.log(" ~~ perfect ~~ ", Color.GREEN)
 
                 ok = True
             else:
-                self.__logger.log(" !! bad orientation !! ", Color.RED)
+                if self.__logger.is_loggable(LogSeverity.MID):
+                    self.__logger.log(" !! bad orientation !! ", Color.RED)
 
-        self.__logger.log(
-            f" >> curr state of the sensors: "
-            f"[{round_v(limit_g_sx)}, {round_v(limit_g_dx)}], curr_g: {round_v(curr_g)}", Color.GRAY)
+        if self.__logger.is_loggable(LogSeverity.MID):
+            self.__logger.log(
+                f" >> curr state of the sensors: "
+                f"[{round_v(limit_g_sx)}, {round_v(limit_g_dx)}], curr_g: {round_v(curr_g)}", Color.GRAY)
 
         limit_range = [limit_g_sx, limit_g_dx]
         return ok, curr_g, limit_range
@@ -910,7 +948,8 @@ class Controller:
         ii) If the robot fails, there is an error in adjusting the orientation and attempts stop
         """
 
-        self.__logger.log(" ** ADJUSTING ORIENTATION ** ", Color.GRAY, True, True)
+        if self.__logger.is_loggable(LogSeverity.MID):
+            self.__logger.log(" ** ADJUSTING ORIENTATION ** ", Color.GRAY, True, True)
 
         self.__execute_motor(Command.STOP)
 
@@ -922,10 +961,11 @@ class Controller:
 
             degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
 
-            self.__logger.log(f" --ATTEMPT: {it + 1} / {self._ROTATION_MAX_ATTEMPTS}", Color.GRAY)
-            self.__logger.log(
-                f"[Degrees_to_do, curr_g, final_g] = [{round_v(degrees)}, {round_v(curr_g)}, {round_v(final_g)}]",
-                Color.GRAY)
+            if self.__logger.is_loggable(LogSeverity.MID):
+                self.__logger.log(f" --ATTEMPT: {it + 1} / {self._ROTATION_MAX_ATTEMPTS}", Color.GRAY)
+                self.__logger.log(
+                    f"[Degrees_to_do, curr_g, final_g] = [{round_v(degrees)}, {round_v(curr_g)}, {round_v(final_g)}]",
+                    Color.GRAY)
 
             if abs(degrees) < 6:
                 self.__rotate(0.25, c, abs(degrees))
@@ -967,11 +1007,12 @@ class Controller:
 
         return performed_degrees
 
-    # TODO
+    # DONE
     def best_angle_and_rotation_way(self, init_g, final_g):
         """ Computes the best (minimum) angle between init_g and final_g and how you need to rotate """
 
-        self.__logger.log(" ** BEST ANGLE COMPUTATION ** ", Color.GRAY, True, True)
+        if self.__logger.is_loggable(LogSeverity.MID):
+            self.__logger.log(" ** BEST ANGLE COMPUTATION ** ", Color.GRAY, True, True)
 
         if init_g == final_g:
             return 0
@@ -988,11 +1029,13 @@ class Controller:
             smallest = second_angle
 
         if smallest < 0:
-            self.__logger.log(f" >> Rotate clockwise (RIGHT) of {abs(round_v(smallest))}°", Color.GRAY)
+            if self.__logger.is_loggable(LogSeverity.MID):
+                self.__logger.log(f" >> Rotate clockwise (RIGHT) of {abs(round_v(smallest))}°", Color.GRAY)
 
             c = Clockwise.RIGHT
         else:
-            self.__logger.log(f" >> Rotate anti-clockwise (LEFT) of {abs(round_v(smallest))}°", Color.GRAY)
+            if self.__logger.is_loggable(LogSeverity.MID):
+                self.__logger.log(f" >> Rotate anti-clockwise (LEFT) of {abs(round_v(smallest))}°", Color.GRAY)
 
             c = Clockwise.LEFT
 

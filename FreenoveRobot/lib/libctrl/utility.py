@@ -141,6 +141,13 @@ def detect_target(begin: float) -> Compass:
     return target
 
 
+class FRLB(str, Enum):
+    FRONT = 'FRONT'
+    LEFT = 'LEFT'
+    RIGHT = 'RIGHT'
+    BACK = 'BACK'
+
+
 def f_r_l_b_to_compass(curr_ori: float) -> dict:
     """
     Front Right Left Back to compass.
@@ -149,13 +156,13 @@ def f_r_l_b_to_compass(curr_ori: float) -> dict:
     value: Est or Sud or Nord or West
     """
     if detect_target(curr_ori) == 0:  # EAST front
-        return {"FRONT": Compass.EST, "RIGHT": Compass.SUD, "LEFT": Compass.NORD, "BACK": Compass.OVEST}
+        return {FRLB.FRONT: Compass.EST, FRLB.RIGHT: Compass.SUD, FRLB.LEFT: Compass.NORD, FRLB.BACK: Compass.OVEST}
     elif detect_target(curr_ori) == 90:  # NORD front
-        return {"FRONT": Compass.NORD, "RIGHT": Compass.EST, "LEFT": Compass.OVEST, "BACK": Compass.SUD}
+        return {FRLB.FRONT: Compass.NORD, FRLB.RIGHT: Compass.EST, FRLB.LEFT: Compass.OVEST, FRLB.BACK: Compass.SUD}
     elif detect_target(curr_ori) == 180:  # WEST front
-        return {"FRONT": Compass.OVEST, "RIGHT": Compass.NORD, "LEFT": Compass.SUD, "BACK": Compass.EST}
+        return {FRLB.FRONT: Compass.OVEST, FRLB.RIGHT: Compass.NORD, FRLB.LEFT: Compass.SUD, FRLB.BACK: Compass.EST}
     else:  # SUD front
-        return {"FRONT": Compass.SUD, "RIGHT": Compass.OVEST, "LEFT": Compass.EST, "BACK": Compass.NORD}
+        return {FRLB.FRONT: Compass.SUD, FRLB.RIGHT: Compass.OVEST, FRLB.LEFT: Compass.EST, FRLB.BACK: Compass.NORD}
 
 
 def negate_compass(compass: float) -> Compass:
@@ -170,19 +177,19 @@ def negate_compass(compass: float) -> Compass:
         return Compass.EST
 
 
+class Severity(Enum):
+    HIGH = 4,
+    MID = 3,
+    LOW = 2,
+    NONE = 1
+
+
 class Logger:
     """
     Class to menage stdout log colors && log files.
     """
 
-    class LOGLEVEL(Enum):
-        CRITICAL = 5,
-        ERROR = 4,
-        WARNING = 3,
-        INFO = 2,
-        DEBUG = 1
-
-    def __init__(self, class_name: str, color: Color = Color.GRAY):
+    def __init__(self, class_name: str, severity: Severity, color: Color = Color.GRAY):
         """Constructor
 
         #PARAMS -> class_name: str. Name of the class.
@@ -195,6 +202,11 @@ class Logger:
         self.__class_name = class_name
 
         self.__file: str = None
+
+        self.__severity = severity
+
+    def set_severity(self, severity: Severity):
+        self.__severity = severity
 
     def set_logfile(self, path: str):
         self.__file = path + "_" + self.__class_name + sign + "." + CFG.logger_data()["EXT"]
@@ -257,16 +269,15 @@ class Logger:
 
             stdout.flush()
 
-    @staticmethod
-    def is_loggable(severity: str, comparator: str) -> bool:
-        if severity == "none":
+    def is_loggable(self, comparator: Severity) -> bool:
+        if comparator == Severity.NONE:
             return False
 
-        if severity == "high":
+        if self.__severity == Severity.HIGH:
             return True
-        elif severity == "mid" and comparator != "high":
+        elif self.__severity == Severity.MID and comparator != Severity.HIGH:
             return True
-        elif severity == "low" and (comparator == "low" or comparator == "none"):
+        elif self.__severity == Severity.LOW and (comparator == Severity.LOW or comparator == Severity.NONE):
             return True
 
         return False
@@ -296,8 +307,7 @@ class CFG:
             "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
             "PRIORITY_LIST": priority_list,
             "INTELLIGENCE": psr["ROBOT"]["intelligence"],
-            "SEVERITY": psr["LOGGER"]["severity"],
-            "AUTO_BALANCING": psr["ROBOT"]["auto_balancing"]
+            "JUNCTION_TIME": psr["ROBOT"]["junction_time"]
         }
 
     @staticmethod
@@ -386,6 +396,7 @@ class CFG:
             "CTRL_TOPIC": psr["REDIS"]["ctrl_topic"],
             "REMOTE_CONTROLLER_TOPIC": psr['REDIS']['rc_topic'],
 
+            "SELF_KEY": psr["REDIS"]["self_key"],
             "RC_KEY": psr["REDIS"]["rc_key"],
             "LED_KEY": psr["REDIS"]["led_key"],
             "MPU_KEY": psr["REDIS"]["mpu_key"],
@@ -412,6 +423,7 @@ class CFG:
         return {
             "MAZE_NUMBER": psr["MAZE"]["maze_number"]
         }
+
 
 __REDIS_CFG__: dict = CFG.cfg_redis_data()
 __SENSOR_CFG__: dict = CFG.cfg_sensors()

@@ -17,7 +17,6 @@ class Maze:
         __dead_end_nodes: int = 0
         __status: bool = False
         __priority = __MACHINE_CONF__['PRIORITY_LIST']
-        __auto_balancing = __MACHINE_CONF__["AUTO_BALANCING"]
         __intelligence = __MACHINE_CONF__["INTELLIGENCE"]
 
         def __init__(self, outer_instance):
@@ -78,14 +77,6 @@ class Maze:
         @priority.setter
         def priority(self, value):
             self.__priority = value
-
-        @property
-        def autobalancing(self):
-            return self.__auto_balancing
-
-        @autobalancing.setter
-        def autobalancing(self, value):
-            self.__auto_balancing = value
 
         @property
         def intelligence(self):

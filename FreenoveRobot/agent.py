@@ -9,6 +9,7 @@ from lib.libctrl.enums import Color
 CONFIG_FILE_HASHCODE: str = None
 CONFIG_FILE_OLDHASHCODE: str = CONFIG_FILE_HASHCODE
 
+
 class Agent:
     def __init__(self) -> None:
         global CONFIG_FILE_HASHCODE
@@ -20,7 +21,7 @@ class Agent:
 
         self.__controller = Controller()
 
-        self.__logger = Logger('Agent', Color.YELLOW)
+        self.__logger = Logger('Agent', CFG.logger_data()["SEVERITY"], Color.YELLOW)
         self.__logger.set_logfile(CFG.logger_data()["ALOGFILE"])
 
 
