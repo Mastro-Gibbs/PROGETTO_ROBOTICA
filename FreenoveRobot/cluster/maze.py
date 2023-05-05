@@ -1,5 +1,6 @@
 from lib.libctrl.tree import Tree
 from lib.libctrl.utility import Compass, CFG, round_v
+from cluster.analyzer import Analyzer
 
 
 class Maze:
@@ -16,7 +17,8 @@ class Maze:
         __nodes_count: int = 1
         __dead_end_nodes: int = 0
         __status: bool = False
-        __priority = __MACHINE_CONF__['PRIORITY_LIST']
+
+        __priority = Analyzer.analyze('data/data_analysis.conf')
         __intelligence = __MACHINE_CONF__["INTELLIGENCE"]
 
         def __init__(self, outer_instance):
@@ -88,7 +90,7 @@ class Maze:
 
         def write(self) -> None:
             priority_list = Compass.compass_list_to_string_comma_sep(self.__priority)
-            print(self.__name,
+            CFG.write_data(self.__name,
                   self.__status,
                   round_v(self.__time),
                   self.__outer_instance.tree.build_tree_dict(),
@@ -97,7 +99,6 @@ class Maze:
                   self.__outer_instance.performed_commands,
                   self.__outer_instance.trajectory,
                   self.__intelligence,
-                  "on" if self.__auto_balancing == "on" else "off",
                   priority_list if self.__intelligence == "low" else "random"
                   )
 

@@ -352,7 +352,7 @@ class Controller:
     # TODO
     # Algorithm entry
     def algorithm(self) -> bool:
-        if self.__virt_body_ready():
+        if Controller.__virt_body_ready():
 
             if self._ITERATION == 0:
                 print()
@@ -414,7 +414,7 @@ class Controller:
                               STDOUTDecor.DEFAULT.value, Color.RED, italic=True, _stdout=True)
             time.sleep(0.1)
 
-    # TODO
+    # DONE
     # Tree updater
     def __update_tree(self, actions, action_chosen) -> None:
         if not self.__machine.state == State.SENSING:
@@ -521,7 +521,7 @@ class Controller:
 
             self.__maze.tree.set_current(cur)
 
-    # TODO
+    # DONE
     # Action maker
     def __control_policy(self) -> tuple:
         """
@@ -555,13 +555,13 @@ class Controller:
                     if left is not None:
                         action = detect_target(detect_target(self.__rotation_factory.value) - 90)
                         com_actions.insert(0, [Command.ROTATE, action])
-                        print("MURO A SINISTRA")
+                        self.__logger.log('wall on left', Color.YELLOW, italic=True)
 
                     # Muro a destra
                     elif right is not None:
                         action = detect_target(detect_target(self.__rotation_factory.value) + 90)
                         com_actions.insert(0, [Command.ROTATE, action])
-                        print("MURO A DESTRA")
+                        self.__logger.log('wall on right', Color.YELLOW, italic=True)
 
             # Faccio 180° per avere il muro dietro
             elif front is not None:
@@ -728,7 +728,7 @@ class Controller:
 
         return actions, com_actions
 
-    # TODO
+    # DONE
     def __decision_making_policy(self, com_actions) -> list:
         """ Given a set of actions it decides what action the robot has to perform """
 
@@ -747,8 +747,9 @@ class Controller:
                 if direction == action:
                     return com_action
 
-    # TODO
-    def __virt_body_ready(self) -> bool:
+    # DONE
+    @staticmethod
+    def __virt_body_ready() -> bool:
         return ControllerData.Machine.connection()
 
     #                                                                                                    #
