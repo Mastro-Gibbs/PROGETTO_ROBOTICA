@@ -1,6 +1,7 @@
 import configparser
 import statistics
 
+from lib.libctrl.utility import Compass
 
 class Analyzer:
     def __init__(self, path) -> None:
@@ -37,4 +38,4 @@ class Analyzer:
 
         priorities = list(__data[key]['priority_list'] for key in list(__data.keys()))
 
-        return statistics.mode(priorities)
+        return list(Compass.string_to_compass(elem) for elem in statistics.mode(priorities).split(', '))

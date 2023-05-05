@@ -99,6 +99,8 @@ class Controller:
 
     # done
     def stop(self) -> None:
+        self.__maze.analisys()
+
         self.__execute_motor(Command.STOP)
         self.__new_led(False, True, None, True)
         self.__new_buzzer(False, True)

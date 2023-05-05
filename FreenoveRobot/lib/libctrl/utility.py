@@ -305,6 +305,7 @@ class CFG:
             "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
             "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
             "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
+            "AUTO_PRIORITY_LIST": int(psr["ROBOT"]["AUTO_PRIORITY_LIST"]),
             "PRIORITY_LIST": priority_list,
             "INTELLIGENCE": psr["ROBOT"]["intelligence"],
             "JUNCTION_TIME": psr["ROBOT"]["junction_time"]
@@ -319,7 +320,7 @@ class CFG:
                             number_of_nodes, number_of_dead_end, performed_commands,
                             trajectory, intelligence, priority_list):
         config = configparser.ConfigParser()
-        path = "../resources/data/"
+        path = "data/"
         file_name = "data_analysis.conf"
         conf_file = path + file_name
 

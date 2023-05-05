@@ -18,7 +18,10 @@ class Maze:
         __dead_end_nodes: int = 0
         __status: bool = False
 
-        __priority = Analyzer.analyze('data/data_analysis.conf')
+        __priority = __MACHINE_CONF__["PRIORITY_LIST"] \
+            if __MACHINE_CONF__["AUTO_PRIORITY_LIST"] != 0 \
+            else Analyzer.analyze('data/data_analysis.conf')
+
         __intelligence = __MACHINE_CONF__["INTELLIGENCE"]
 
         def __init__(self, outer_instance):
@@ -89,18 +92,19 @@ class Maze:
             self.__intelligence = value
 
         def write(self) -> None:
-            priority_list = Compass.compass_list_to_string_comma_sep(self.__priority)
-            CFG.write_data(self.__name,
-                  self.__status,
-                  round_v(self.__time),
-                  self.__outer_instance.tree.build_tree_dict(),
-                  self.__nodes_count,
-                  self.__dead_end_nodes,
-                  self.__outer_instance.performed_commands,
-                  self.__outer_instance.trajectory,
-                  self.__intelligence,
-                  priority_list if self.__intelligence == "low" else "random"
-                  )
+            if round_v(self.__time) != 0.0:
+                pl = Compass.compass_list_to_string_comma_sep(self.__priority)
+                CFG.write_data_analysis(self.__name,
+                                        self.__status,
+                                        round_v(self.__time),
+                                        self.__outer_instance.tree.build_tree_dict(),
+                                        self.__nodes_count,
+                                        self.__dead_end_nodes,
+                                        self.__outer_instance.performed_commands,
+                                        self.__outer_instance.trajectory,
+                                        self.__intelligence,
+                                        ', '.join(pl)
+                                        )
 
     def __init__(self):
         self.__inner = Maze.Ananlysis(self)
@@ -125,4 +129,3 @@ class Maze:
 
     def incr_dead_end(self):
         self.__inner.dead_end_nodes += 1
-
