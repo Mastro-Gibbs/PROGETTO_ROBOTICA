@@ -37,10 +37,10 @@ class make:
 
 
 class Compass(float, Enum):
-    NORD = 90.0
-    SUD = -90.0
-    EST = 0.0
-    OVEST = 180.0
+    NORD = 0.0
+    SUD = 180.0
+    EST = 90.0
+    OVEST = -90.0
 
     @staticmethod
     def string_to_compass(cmp: str):
@@ -130,13 +130,13 @@ def detect_target(begin: float) -> Compass:
         return None
 
     if -45.0 < begin <= 45.0:
-        target = Compass.EST
-    elif 45.0 < begin <= 135.0:
         target = Compass.NORD
+    elif 45.0 < begin <= 135.0:
+        target = Compass.EST
     elif 135.0 < begin <= 180 or -180 <= begin <= -135.0:
-        target = Compass.OVEST
-    else:
         target = Compass.SUD
+    else:
+        target = Compass.OVEST
 
     return target
 
@@ -212,7 +212,8 @@ class Logger:
         self.__file = path + "_" + self.__class_name + sign + "." + CFG.logger_data()["EXT"]
 
     def log(self, msg, color: Color = Color.GREEN, newline: bool = False, italic: bool = False,
-            underline: bool = False, blink: bool = False, noheader: bool = False, _stdout: bool = True):
+            underline: bool = False, blink: bool = False, noheader: bool = False, _stdout: bool = True,
+            rewritable: bool = False):
 
         """
             Log on file, if it was set; Log on stdout everytime! 
@@ -261,11 +262,17 @@ class Logger:
             out += color.value + f"{msg}" + STDOUTDecor.DEFAULT.value
 
             if noheader:
-                print(out)
+                if rewritable:
+                    print(out, end='\r')
+                else:
+                    print(out)
 
             else:
-                print(self.__class, end=Color.WHITE.value + ' ---> ' + STDOUTDecor.DEFAULT.value)
-                print(out)
+                if rewritable:
+                    print(self.__class + Color.WHITE.value + ' ---> ' + STDOUTDecor.DEFAULT.value + out, end='\r')
+                else:
+                    print(self.__class, end=Color.WHITE.value + ' ---> ' + STDOUTDecor.DEFAULT.value)
+                    print(out)
 
             stdout.flush()
 

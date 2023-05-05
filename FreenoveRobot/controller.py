@@ -357,7 +357,7 @@ class Controller:
         if Controller.__virt_body_ready():
 
             if self._ITERATION == 0:
-                print()
+                print('\n')
 
             if self.goal_reached():
                 return True
@@ -413,7 +413,7 @@ class Controller:
             _curr_time = time.time()
             self.__logger.log('Algorithm locked, waiting for VirtualBody..' + Color.WHITE.value +
                               f' (time spent: {round(float(_curr_time - self._INIT_TIME), 1)}s)' +
-                              STDOUTDecor.DEFAULT.value, Color.RED, italic=True, _stdout=True)
+                              STDOUTDecor.DEFAULT.value, Color.RED, italic=True, _stdout=True, rewritable=True)
             time.sleep(0.1)
 
     # DONE
@@ -555,13 +555,13 @@ class Controller:
                 else:
                     # Muro a sinistra
                     if left is not None:
-                        action = detect_target(detect_target(self.__rotation_factory.value) - 90)
+                        action = detect_target(self.__rotation_factory.value)
                         com_actions.insert(0, [Command.ROTATE, action])
                         self.__logger.log('wall on left', Color.YELLOW, italic=True)
 
                     # Muro a destra
                     elif right is not None:
-                        action = detect_target(detect_target(self.__rotation_factory.value) + 90)
+                        action = detect_target(self.__rotation_factory.value)
                         com_actions.insert(0, [Command.ROTATE, action])
                         self.__logger.log('wall on right', Color.YELLOW, italic=True)
 
@@ -612,7 +612,7 @@ class Controller:
 
             else:
                 actions.insert(0, self.__maze.performed_commands[len(self.__maze.performed_commands) - 1])
-                com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.orientation())])
+                com_actions.insert(0, [Command.RUN, detect_target(self.__rotation_factory.value)])
 
         elif self.__machine.state == State.STOPPED or self.__machine.state == State.SENSING:
 
@@ -647,38 +647,24 @@ class Controller:
                 if self.__maze.tree.current.left is not None and self.__maze.tree.current.left.type == Type.OBSERVED:
                     action = self.__maze.tree.current.left.action
                     actions.insert(0, action)
-                    if action == detect_target(ControllerData.Machine.orientation()):
+                    if action == detect_target(self.__rotation_factory.value):
                         com_actions.insert(0, [Command.RUN, action])
                     else:
                         com_actions.insert(0, [Command.ROTATE, action])
                 if self.__maze.tree.current.mid is not None and self.__maze.tree.current.mid.type == Type.OBSERVED:
                     action = self.__maze.tree.current.mid.action
                     actions.insert(0, action)
-                    if action == detect_target(ControllerData.Machine.orientation()):
+                    if action == detect_target(self.__rotation_factory.value):
                         com_actions.insert(0, [Command.RUN, action])
                     else:
                         com_actions.insert(0, [Command.ROTATE, action])
                 if self.__maze.tree.current.right is not None and self.__maze.tree.current.right.type == Type.OBSERVED:
                     action = self.__maze.tree.current.right.action
                     actions.insert(0, action)
-                    if action == detect_target(ControllerData.Machine.orientation()):
+                    if action == detect_target(self.__rotation_factory.value):
                         com_actions.insert(0, [Command.RUN, action])
                     else:
                         com_actions.insert(0, [Command.ROTATE, action])
-
-                """ 
-                # If there are no OBSERVED nodes
-                if not actions:
-                    if self.__maze.tree.current.left is not None and self.__maze.tree.current.left.type == Type.EXPLORED:
-                        action = self.__maze.tree.current.left.action
-                        actions.insert(0, action)
-                    if self.__maze.tree.current.mid is not None and self.__maze.tree.current.mid.type == Type.EXPLORED:
-                        action = self.__maze.tree.current.mid.action
-                        actions.insert(0, action)
-                    if self.__maze.tree.current.right is not None and self.__maze.tree.current.right.type == Type.EXPLORED:
-                        action = self.__maze.tree.current.right.action
-                        actions.insert(0, action)
-                """
 
                 if not actions:
                     if (
@@ -710,10 +696,10 @@ class Controller:
             if self.__machine.position == Position.CORRIDOR:
                 if left is None or right is None:
                     # actions.insert(0, Command.GO_TO_JUNCTION)
-                    com_actions.insert(0, [Command.GO_TO_JUNCTION, detect_target(ControllerData.Machine.orientation())])
+                    com_actions.insert(0, [Command.GO_TO_JUNCTION, detect_target(self.__rotation_factory.value)])
                 elif front is None or front > self._SAFE_DISTANCE:
                     # actions.insert(0, Command.RUN)
-                    com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.orientation())])
+                    com_actions.insert(0, [Command.RUN, detect_target(self.__rotation_factory.value)])
                 elif front <= self._SAFE_DISTANCE:
                     # actions.insert(0, Command.STOP)
                     com_actions.insert(0, [Command.STOP, None])
@@ -723,7 +709,7 @@ class Controller:
                     self.__machine.position = Position.CORRIDOR
                 if front is None or front > self._SAFE_DISTANCE:
                     # actions.insert(0, Command.RUN)
-                    com_actions.insert(0, [Command.RUN, detect_target(ControllerData.Machine.orientation())])
+                    com_actions.insert(0, [Command.RUN, detect_target(self.__rotation_factory.value)])
                 elif front <= self._SAFE_DISTANCE:
                     # actions.insert(0, Command.STOP)
                     com_actions.insert(0, [Command.STOP, None])
@@ -737,13 +723,7 @@ class Controller:
         if len(com_actions) == 1:
             return com_actions[0]
 
-        if self._INTELLIGENCE == "mid" and self.__machine.state == State.SENSING:
-            self.priority_list = random.sample(self.__machine.priority, 4)
-            self.__logger.log(f"--PRIORITY LIST (RANDOM): {self.priority_list}")
-        elif self._INTELLIGENCE == "high":
-            ...
-
-        for direction in self.priority_list:  # [ S, N, O, E ]
+        for direction in self.__machine.priority:  # [ S, N, O, E ]
             for com_action in com_actions:  # [[Command.ROTATE, Compass.NORD], [...], [...] ]
                 action = com_action[1]
                 if direction == action:
