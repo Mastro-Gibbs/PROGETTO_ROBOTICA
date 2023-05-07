@@ -99,7 +99,7 @@ class Controller:
 
     # done
     def stop(self) -> None:
-        self.__maze.analisys()
+        self.__maze.analysis()
 
         self.__execute_motor(Command.STOP)
         self.__new_led(False, True, None, True)
@@ -984,3 +984,5 @@ class Controller:
     #                                                                                              #
     #                                                                                              #
     # *********************************** END ROTATION SECTION *********************************** #
+
+

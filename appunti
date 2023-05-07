@@ -1,0 +1,16 @@
+[VIRT]
+autobalancing
+
+
+
+[REAL]
+remote_controller
+rotation_factory
+redis
+
+
+
+
+
+[FREENOVE]
+Compass in inglese

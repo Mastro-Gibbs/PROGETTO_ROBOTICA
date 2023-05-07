@@ -8,7 +8,7 @@ class Maze:
     __trajectory: list = list()
     __performed_coms: list = list()
 
-    class Ananlysis:
+    class Analysis:
         __MACHINE_CONF__ = CFG.robot_conf_data()
 
         __ID: int = 0
@@ -107,7 +107,7 @@ class Maze:
                                         )
 
     def __init__(self):
-        self.__inner = Maze.Ananlysis(self)
+        self.__inner = Maze.Analysis(self)
 
     @property
     def tree(self) -> Tree:
@@ -121,7 +121,7 @@ class Maze:
     def performed_commands(self) -> list:
         return self.__performed_coms
 
-    def analisys(self) -> None:
+    def analysis(self) -> None:
         self.__inner.write()
 
     def incr_node_count(self):

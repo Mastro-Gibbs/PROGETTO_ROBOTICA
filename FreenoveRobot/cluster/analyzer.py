@@ -3,8 +3,9 @@ import statistics
 
 from lib.libctrl.utility import Compass
 
+
 class Analyzer:
-    def __init__(self, path) -> None:
+    def __init__(self) -> None:
         ...
 
     @staticmethod
