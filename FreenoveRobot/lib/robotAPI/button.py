@@ -8,4 +8,4 @@ class Button:
 
         GPIO.setup(pin_no, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-        GPIO.add_event_detect(10, GPIO.RISING, callback=_callback)
+        GPIO.add_event_detect(pin_no, GPIO.RISING, callback=_callback)
