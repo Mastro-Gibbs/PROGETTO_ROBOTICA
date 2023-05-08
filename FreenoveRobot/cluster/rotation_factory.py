@@ -1,30 +1,34 @@
-from lib.libctrl.utility import Clockwise
+from lib.libctrl.utility import FRLB
 
 
 class RotationFactory:
     __callback = None
     __ori_callback = None
 
+    __val: float = 0.0
+    
     __table: dict = {
-        0: {
-            Clockwise.RIGHT: 90,
-            Clockwise.LEFT: -90,
+        0.0: {
+            90.0: FRLB.RIGHT,
+            -90.0: FRLB.LEFT,
+            180.0: FRLB.BACK,
         },
-        90: {
-            Clockwise.RIGHT: 180,
-            Clockwise.LEFT: 0,
+        90.0: {
+            180.0: FRLB.RIGHT,
+            0.0: FRLB.LEFT,
+            -90.0: FRLB.BACK,
         },
-        -90: {
-            Clockwise.RIGHT: 0,
-            Clockwise.LEFT: 180,
+        -90.0: {
+            0.0: FRLB.RIGHT,
+            180.0: FRLB.LEFT,
+            90.0: FRLB.BACK,
         },
-        180: {
-            Clockwise.RIGHT: -90,
-            Clockwise.LEFT: 90,
+        180.0: {
+            -90.0: FRLB.RIGHT,
+            90.0: FRLB.LEFT,
+            0.0: FRLB.BACK
         }
     }
-
-    __val: int = 0
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -40,14 +44,14 @@ class RotationFactory:
     def rotate(self, args: tuple) -> None:
         self.__callback(args)
 
-    def compute(self, cw: Clockwise) -> int:
-        turn: dict = self.__table[self.__val]
-        self.__val: int = turn[cw]
+    def compute(self, ori: float) -> FRLB:
+        entry = self.__table[self.__val]
+        self.__val: float = ori
 
-        return self.__val
+        return entry[self.__val]
 
     @property
-    def value(self) -> int:
+    def value(self) -> float:
         if self.__ori_callback is not None:
             return self.__ori_callback()
 

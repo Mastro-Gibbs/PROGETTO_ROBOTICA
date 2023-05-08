@@ -12,7 +12,7 @@ from lib.libctrl.utility import f_r_l_b_to_compass
 from lib.libctrl.utility import negate_compass, detect_target
 from lib.libctrl.utility import Logger, CFG
 from lib.libctrl.utility import round_v, normalize_angle
-from lib.libctrl.utility import make
+from lib.libctrl.utility import make, FRLB
 
 from lib.libctrl.tree import Node, Type, DIRECTION
 
@@ -301,8 +301,8 @@ class Controller:
             self.__send_command(ControllerData.Command.Motor)
 
     # DONE
-    def __new_led(self, status: bool, arrow: bool = False, clockwise: Clockwise = None, emit: bool = False):
-        ControllerData.Led.on_arrow(arrow, clockwise)
+    def __new_led(self, status: bool, arrow: bool = False, frlb: FRLB = None, emit: bool = False):
+        ControllerData.Led.on_arrow(arrow, frlb)
         ControllerData.Led.set(status)
 
         if emit:
@@ -327,12 +327,12 @@ class Controller:
     # ***************************************************************************************** #
 
     # DONE
-    def wakeup_remote(self, c: Clockwise) -> None:
+    def wakeup_remote(self, frlb: FRLB) -> None:
         self.__new_buzzer(True, True)
         time.sleep(0.3)
         self.__new_buzzer(False, True)
 
-        self.__new_led(True, True, c, True)
+        self.__new_led(True, True, frlb, True)
 
         RemoteControllerData.engaged(True)
         self.__remote.allow()
@@ -746,9 +746,12 @@ class Controller:
 
     # DONE
     def remote_rotate(self, args: tuple):
-        c: Clockwise = args[0]
-        self.wakeup_remote(c)
-        self.__rotation_factory.compute(c)
+        vel, final_g = args
+
+        frlb: FRLB = self.__rotation_factory.compute(final_g)
+
+        self.wakeup_remote(frlb)
+
 
     # TODO
     def mpu_rotate(self, args: tuple):

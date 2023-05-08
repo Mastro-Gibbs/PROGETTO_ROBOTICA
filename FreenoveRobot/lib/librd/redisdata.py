@@ -1,6 +1,6 @@
 import json
 
-from lib.libctrl.utility import __REDIS_CFG__, __SENSOR_CFG__, Clockwise
+from lib.libctrl.utility import __REDIS_CFG__, __SENSOR_CFG__, FRLB
 
 
 class __RedisData:
@@ -160,22 +160,22 @@ class BodyData(__RedisData):
 
     class Led(__Value):
         __arrow = 0
-        __clockwise = None
+        __frlb = None
 
         @classmethod
-        def on_arrow(cls, arrow: int, cw):
+        def on_arrow(cls, arrow: int, frlb):
             cls.__arrow = arrow
-            cls.__clockwise = cw
+            cls.__frlb = frlb
 
         @classmethod
         def leds(cls):
             data: dict = dict()
             data['status'] = cls.status()
             data['arrow']  = cls.__arrow
-            data['cw'] = cls.__clockwise
+            data['frlb'] = cls.__frlb
 
             cls.__arrow = False
-            cls.__clockwise = None
+            cls.__frlb = None
 
             return json.dumps(data, indent=0)
 
@@ -185,7 +185,7 @@ class BodyData(__RedisData):
 
         @classmethod
         def direction(cls):
-            return int(cls.__clockwise)
+            return cls.__frlb
 
 
 class ControllerData(__RedisData):
@@ -309,22 +309,22 @@ class ControllerData(__RedisData):
 
     class Led(__Value):
         __arrow = 0
-        __clockwise = None
+        __frlb = None
 
         @classmethod
-        def on_arrow(cls, arrow: bool, cw: Clockwise):
+        def on_arrow(cls, arrow: bool, frlb: FRLB):
             cls.__arrow = int(arrow)
-            cls.__clockwise = cw.value if cw is not None else None
+            cls.__frlb = frlb.value if frlb is not None else None
 
         @classmethod
         def leds(cls):
             data: dict = dict()
             data['status'] = cls.status()
             data['arrow']  = cls.__arrow
-            data['cw']     = cls.__clockwise
+            data['frlb']   = cls.__frlb
 
             cls.__arrow = 0
-            cls.__clockwise = None
+            cls.__frlb = None
 
             return json.dumps(data, indent=0)
 

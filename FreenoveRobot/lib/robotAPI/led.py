@@ -81,9 +81,15 @@ class Led:
             time.sleep(wait_ms/1000.0)
         self.colorWipe(Color(0, 0, 0), 10)
 
-    def car_arrow(self, clockwise):
-        wait_s = 0.5
-        data = [0,1,6,7] if clockwise == 0 else [2,3,4,5]
+    def car_arrow(self, frlb):
+        wait_s = 0.3
+
+        if frlb == 'LEFT':
+            data = [2, 3, 4]
+        elif frlb == 'RIGHT':
+            data = [0, 1, 6]
+        else:
+            data = [5, 7]
 
         off    = self.LED_TYPR(self.ORDER, Color(255, 100, 0))
         orange = self.LED_TYPR(self.ORDER, Color(0, 0, 0))

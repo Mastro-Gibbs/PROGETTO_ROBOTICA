@@ -172,10 +172,10 @@ class PhysicalBody:
         """
         self.__buzzer.stop()
 
-    def blink_car_arrow(self, clockwise) -> None:
+    def blink_car_arrow(self, frlb) -> None:
         if self.__arrow is not None and self.__arrow.is_alive():
             self.__arrow.bury()
-        self.__arrow = RobotThread(target=self.__strip.car_arrow, name='led_arrow', args=(clockwise,))
+        self.__arrow = RobotThread(target=self.__strip.car_arrow, name='led_arrow', args=(frlb,))
         self.__arrow.start()
 
     def magic_rainbow(self, mode: bool = False) -> None:
