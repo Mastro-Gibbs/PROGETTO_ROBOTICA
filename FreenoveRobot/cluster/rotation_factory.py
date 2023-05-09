@@ -5,28 +5,28 @@ class RotationFactory:
     __callback = None
     __ori_callback = None
 
-    __val: float = 0.0
+    __val: int = 0
     
     __table: dict = {
-        0.0: {
-            90.0: FRLB.RIGHT,
-            -90.0: FRLB.LEFT,
-            180.0: FRLB.BACK,
+        0: {
+            90: FRLB.RIGHT,
+            -90: FRLB.LEFT,
+            180: FRLB.BACK,
         },
-        90.0: {
-            180.0: FRLB.RIGHT,
-            0.0: FRLB.LEFT,
-            -90.0: FRLB.BACK,
+        90: {
+            180: FRLB.RIGHT,
+            0: FRLB.LEFT,
+            -90: FRLB.BACK,
         },
-        -90.0: {
-            0.0: FRLB.RIGHT,
-            180.0: FRLB.LEFT,
-            90.0: FRLB.BACK,
+        -90: {
+            0: FRLB.RIGHT,
+            180: FRLB.LEFT,
+            90: FRLB.BACK,
         },
-        180.0: {
-            -90.0: FRLB.RIGHT,
-            90.0: FRLB.LEFT,
-            0.0: FRLB.BACK
+        180: {
+            -90: FRLB.RIGHT,
+            90: FRLB.LEFT,
+            0: FRLB.BACK
         }
     }
 
@@ -44,9 +44,9 @@ class RotationFactory:
     def rotate(self, args: tuple) -> None:
         self.__callback(args)
 
-    def compute(self, ori: float) -> FRLB:
+    def compute(self, ori: int) -> FRLB:
         entry = self.__table[self.__val]
-        self.__val: float = ori
+        self.__val: int = ori
 
         return entry[self.__val]
 
@@ -55,4 +55,4 @@ class RotationFactory:
         if self.__ori_callback is not None:
             return self.__ori_callback()
 
-        return self.__val
+        return float(self.__val)

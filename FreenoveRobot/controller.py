@@ -145,7 +145,7 @@ class Controller:
                 self.__new_buzzer(status=False, emit=True)
                 time.sleep(0.25)
 
-        self.__new_led(status=False, emit=True)
+        self.__new_led(False, True, None, True)
 
     # done
     # Updater controller configuration
@@ -169,8 +169,8 @@ class Controller:
 
             self.__new_led(status=True, emit=True)
             self.__new_buzzer(status=True, emit=True)
-            time.sleep(1)
-            self.__new_led(status=False, emit=True)
+            time.sleep(0.5)
+            self.__new_led(False, True, None, True)
             self.__new_buzzer(status=False, emit=True)
 
             return True
@@ -257,6 +257,7 @@ class Controller:
 
                 self.__remote.dismiss()
                 RemoteControllerData.engaged(False)
+                ControllerData.Machine.set_ready(1)
 
     # DONE
     # callback receiver
@@ -336,6 +337,7 @@ class Controller:
 
         RemoteControllerData.engaged(True)
         self.__remote.allow()
+        ControllerData.Machine.set_ready(0)
 
     #                                                                                           #
     #                                                                                           #
@@ -354,7 +356,8 @@ class Controller:
     # TODO
     # Algorithm entry
     def algorithm(self) -> bool:
-        if Controller.__virt_body_ready():
+        if self.virt_body_ready():
+            self._INIT_TIME = time.time()
 
             if self._ITERATION == 0:
                 print('\n')
@@ -372,22 +375,13 @@ class Controller:
             command = com_action[0]
             action = com_action[1]
 
-            self.__logger.log(f"--MODE: {self.__machine.mode}")
-            self.__logger.log(f"--ACTIONS: {com_actions}")
-            self.__logger.log(f"--ACTION: {com_action}")
-            self.__logger.log(f"--CURRENT NODE: {self.__maze.tree.current}")
+            self.__logger.log(f'current orientation: {self.__rotation_factory.value}', Color.YELLOW)
+
+            if command == Command.ROTATE:
+                self.__logger.log(f'rotation orientation: {action.value}', Color.YELLOW)
 
             # tree update
             self.__update_tree(actions, action)
-
-            self.__logger.log("--CURRENT TREE:", Color.GRAY)
-            self.__logger.log(f"{self.__maze.tree.build_tree_dict()}", Color.GRAY, noheader=True)
-            self.__logger.log(f"--CURRENT NODE: {self.__maze.tree.current}", Color.GRAY, newline=True)
-            self.__logger.log(f"--Available actions: {com_actions}", Color.GREEN)
-
-            self.__logger.log(f"--(STATE, POSITION): ({self.__machine.state}, {self.__machine.position})",
-                              Color.GRAY)
-            self.__logger.log(f"--Performing action: {com_action}", Color.GRAY)
 
             if com_action is None:
                 self.__logger.log("NO ACTION AVAILABLE!", Color.DARKRED, newline=True)
@@ -398,14 +392,13 @@ class Controller:
             # ACT
             performed = self.__do_action(com_action)
 
-            self.__logger.log(f"--(STATE, POSITION): ({self.__machine.state}, {self.__machine.position})",
-                              Color.GRAY)
-
             if performed and self.__prev_action != action:
                 self.__maze.performed_commands.append(action)
-                if action in self.priority_list:
+                if action in self.__machine.priority:
                     self.__maze.trajectory.append(action)
                 self.__prev_action = action
+
+            time.sleep(1)
 
             return False
 
@@ -555,13 +548,13 @@ class Controller:
                 else:
                     # Muro a sinistra
                     if left is not None:
-                        action = detect_target(self.__rotation_factory.value)
+                        action = detect_target(detect_target(self.__rotation_factory.value) - 90)
                         com_actions.insert(0, [Command.ROTATE, action])
                         self.__logger.log('wall on left', Color.YELLOW, italic=True)
 
                     # Muro a destra
                     elif right is not None:
-                        action = detect_target(self.__rotation_factory.value)
+                        action = detect_target(detect_target(self.__rotation_factory.value) + 90)
                         com_actions.insert(0, [Command.ROTATE, action])
                         self.__logger.log('wall on right', Color.YELLOW, italic=True)
 
@@ -731,7 +724,7 @@ class Controller:
 
     # DONE
     @staticmethod
-    def __virt_body_ready() -> bool:
+    def virt_body_ready() -> bool:
         return ControllerData.Machine.connection() and ControllerData.Machine.ready()
 
     #                                                                                                    #
@@ -748,7 +741,7 @@ class Controller:
     def remote_rotate(self, args: tuple):
         vel, final_g = args
 
-        frlb: FRLB = self.__rotation_factory.compute(final_g)
+        frlb: FRLB = self.__rotation_factory.compute(int(final_g.value))
 
         self.wakeup_remote(frlb)
 

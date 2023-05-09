@@ -126,8 +126,6 @@ def detect_target(begin: float) -> Compass:
 
     #RETURN: float. Nearest angle.
     """
-    if begin is None:
-        return None
 
     if -45.0 < begin <= 45.0:
         target = Compass.NORD
@@ -308,14 +306,14 @@ class CFG:
             priority_list[i] = Compass.string_to_compass(elem)
             i += 1
         return {
-            "SPEED": float(psr["ROBOT"]["speed"]),
-            "ROT_SPEED": float(psr["ROBOT"]["rot_speed"]),
+            "SPEED": int(psr["ROBOT"]["speed"]),
+            "ROT_SPEED": int(psr["ROBOT"]["rot_speed"]),
             "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
             "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
             "AUTO_PRIORITY_LIST": int(psr["ROBOT"]["AUTO_PRIORITY_LIST"]),
             "PRIORITY_LIST": priority_list,
             "INTELLIGENCE": psr["ROBOT"]["intelligence"],
-            "JUNCTION_TIME": psr["ROBOT"]["junction_time"]
+            "JUNCTION_TIME": float(psr["ROBOT"]["junction_time"])
         }
 
     @staticmethod
