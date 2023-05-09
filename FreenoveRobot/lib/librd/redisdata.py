@@ -1,7 +1,12 @@
 import json
 
-from lib.libctrl.utility import __REDIS_CFG__, __SENSOR_CFG__, FRLB
+from lib.libctrl.utility import __REDIS_CFG__, __SENSOR_CFG__, FRLB, CFG
 
+def maxify(value) -> int:
+    if value > 150:
+        return 150
+    else:
+        return value
 
 class __RedisData:
     class Connection:
@@ -91,9 +96,9 @@ class BodyData(__RedisData):
             if cls.__proxL == proxL and cls.__proxF == proxF and cls.__proxR == proxR:
                 super().change(False)
             else:
-                cls.__proxL = proxL
-                cls.__proxF = proxF
-                cls.__proxR = proxR
+                cls.__proxL = maxify(proxL)
+                cls.__proxF = maxify(proxF)
+                cls.__proxR = maxify(proxR)
                 super().change(True)
 
         @classmethod
@@ -226,6 +231,8 @@ class ControllerData(__RedisData):
         __data['ready'] = 0
         __goal = False
 
+        __safe = CFG.robot_conf_data()['SAFE_DIST']
+
         @classmethod
         def on_values(cls, data):
             data = json.loads(data)
@@ -237,15 +244,15 @@ class ControllerData(__RedisData):
 
         @classmethod
         def front(cls):
-            return int(cls.__data['proxF']) if int(cls.__data['proxF']) > 25 else None
+            return int(cls.__data['proxF']) if int(cls.__data['proxF']) > cls.__safe else None
 
         @classmethod
         def left(cls):
-            return int(cls.__data['proxL']) if int(cls.__data['proxL']) > 25 else None
+            return int(cls.__data['proxL']) if int(cls.__data['proxL']) > cls.__safe else None
 
         @classmethod
         def right(cls):
-            return int(cls.__data['proxR']) if int(cls.__data['proxR']) > 25 else None
+            return int(cls.__data['proxR']) if int(cls.__data['proxR']) > cls.__safe else None
 
         @classmethod
         def goal(cls):
@@ -274,6 +281,10 @@ class ControllerData(__RedisData):
         @classmethod
         def ready(cls) -> bool:
             return bool(cls.__data['ready'])
+
+        @classmethod
+        def set_ready(cls, value: int) -> bool:
+            cls.__data['ready'] = value
 
 
     class Motor(__Value):
