@@ -100,7 +100,7 @@ class VirtualBody:
 
         return success
 
-    def begin(self) -> bool:
+    def begin(self, callback) -> bool:
         if BodyData.Yaw.is_enabled():
             self.__calibrate_mpu()
             self.__yaw_thread: RobotThread = RobotThread(target=self.__yaw_discover, name='yaw_thread')
@@ -110,7 +110,7 @@ class VirtualBody:
         self.__infrared_thread: RobotThread = RobotThread(target=self.__infrared_discover, name='infrared_thread')
         self.__ultrasonic_thread: RobotThread = RobotThread(target=self.__ultrasonic_discover, name='ultrasonic_thread')
 
-        self.__body.begin(self.on_ready_btn)
+        self.__body.begin(callback)
         self.__infrared_thread.start()
         self.__ultrasonic_thread.start()
 
@@ -168,7 +168,7 @@ class VirtualBody:
 
             if BodyData.Led.status():
                 if BodyData.Led.arrow():  # LED ON, ARROW ON
-                    self.__body.blink_car_arrow(clockwise=BodyData.Led.direction())
+                    self.__body.blink_car_arrow(frlb=BodyData.Led.direction())
                 elif not BodyData.Led.arrow():  # LED ON, ARROW OFF
                     self.__body.magic_rainbow(True)
             else:  # LED OFF
@@ -243,10 +243,14 @@ class VirtualBody:
         sleep(0.5)
 
 
+
 if __name__ == "__main__":
     vb: VirtualBody = VirtualBody()
 
-    while not vb.begin():
+    def on_pb_pressed(*args):
+        vb.on_ready_btn()
+
+    while not vb.begin(on_pb_pressed):
         print('Missing component, retrying, delay 5 seconds')
         sleep(5)
 

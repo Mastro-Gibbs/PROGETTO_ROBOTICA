@@ -85,11 +85,11 @@ class Led:
         wait_s = 0.3
 
         if frlb == 'LEFT':
-            data = [2, 3, 4]
+            data = [3, 4, 5]
         elif frlb == 'RIGHT':
-            data = [0, 1, 6]
+            data = [0, 6, 7]
         else:
-            data = [5, 7]
+            data = [1, 2]
 
         off    = self.LED_TYPR(self.ORDER, Color(255, 100, 0))
         orange = self.LED_TYPR(self.ORDER, Color(0, 0, 0))

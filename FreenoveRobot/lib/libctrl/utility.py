@@ -20,7 +20,7 @@ class make:
         return tuple(args)
 
     @staticmethod
-    def dict(*args) -> dict | None:
+    def dict(*args) -> dict:
         length = len(args)
 
         if length % 2 != 0:
