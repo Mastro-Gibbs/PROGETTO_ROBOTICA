@@ -91,7 +91,7 @@ class Maze:
         def intelligence(self, value):
             self.__intelligence = value
 
-        def write(self) -> None:
+        def write(self) -> bool:
             if round_v(self.__time) != 0.0:
                 pl = Compass.compass_list_to_string_comma_sep(self.__priority)
                 CFG.write_data_analysis(self.__name,
@@ -105,6 +105,8 @@ class Maze:
                                         self.__intelligence,
                                         ', '.join(pl)
                                         )
+                return True
+            return False
 
     def __init__(self):
         self.__inner = Maze.Analysis(self)
@@ -121,8 +123,8 @@ class Maze:
     def performed_commands(self) -> list:
         return self.__performed_coms
 
-    def analysis(self) -> None:
-        self.__inner.write()
+    def analysis(self) -> bool:
+        return self.__inner.write()
 
     def incr_node_count(self):
         self.__inner.nodes_count += 1

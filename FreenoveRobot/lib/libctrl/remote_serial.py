@@ -93,8 +93,9 @@ class RemoteController:
     def dismiss(self):
         self.__runner.dismiss()
 
-    def stop(self):
+    def stop(self) -> str:
         if self.__runner is not None:
-            self.__runner.bury()
+            _str = self.__runner.bury()
             self.__runner.close()
+            return _str
 

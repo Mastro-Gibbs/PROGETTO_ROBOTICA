@@ -9,10 +9,9 @@ class RobotThread(Thread):
         if self.is_alive():
             return ctypes.c_long(self.ident)
 
-        print(f'Thread {self.name} is not alive')
         return None
 
-    def bury(self):
+    def bury(self) -> str:
         tid = self.__tid()
         if tid is not None:
             exctype = SystemExit
@@ -23,11 +22,13 @@ class RobotThread(Thread):
             res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
 
             if res == 1:
-                print(f'Thread {self.name} burried')
+                return f'Thread {self.name} burried'
             elif res == 0:
                 raise ValueError("invalid thread id")
             elif res != 1:
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
                 raise SystemError("PyThreadState_SetAsyncExc failed")
-            
+
+        else:
+            return f'Thread {self.name} is not alive'
             

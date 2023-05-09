@@ -58,8 +58,8 @@ class State(Enum):
 class Position(Enum):
     UNKNOWN = 0
     INITIAL = 1
-    CORRIDOR = 2
-    JUNCTION = 3
+    EDGE = 2
+    NODE = 3
 
 
 class Command(Enum):

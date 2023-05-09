@@ -225,18 +225,7 @@ class Logger:
                 if noheader:
                     data_to_write = time + "[NOHEADER] -> " + msg + "\n"
                 else:
-                    if color == Color.DARKRED:
-                        data_to_write = time + " [" + self.__class_name + "]" + "[CRITICAL]"
-                    elif color == Color.RED:
-                        data_to_write = time + " [" + self.__class_name + "]" + "[ERROR]"
-                    elif color == Color.YELLOW:
-                        data_to_write = time + " [" + self.__class_name + "]" + "[WARNING]"
-                    elif color == Color.DARKGREEN or color == Color.GREEN:
-                        data_to_write = time + " [" + self.__class_name + "]" + "[INFO]"
-                    elif color == Color.GRAY:
-                        data_to_write = time + " [" + self.__class_name + "]" + "[DEBUG]"
-
-                    data_to_write += " -> " + msg + "\n"
+                    data_to_write = time + " [" + self.__class_name + "] -> " + msg + "\n"
 
                 if newline:
                     file.write("\n")
@@ -308,7 +297,8 @@ class CFG:
         return {
             "SPEED": int(psr["ROBOT"]["speed"]),
             "ROT_SPEED": int(psr["ROBOT"]["rot_speed"]),
-            "SAFE_DIST": float(psr["ROBOT"]["safe_dist"]),
+            "SAFE_DIST": int(psr["ROBOT"]["safe_dist"]),
+            "GATE_DIST": int(psr["ROBOT"]["gate_dist"]),
             "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
             "AUTO_PRIORITY_LIST": int(psr["ROBOT"]["AUTO_PRIORITY_LIST"]),
             "PRIORITY_LIST": priority_list,
