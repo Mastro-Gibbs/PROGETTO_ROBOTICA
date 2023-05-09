@@ -24,7 +24,7 @@ class make:
         length = len(args)
 
         if length % 2 != 0:
-            return None
+            length -= 1
 
         d: dict = dict()
         i = 0
@@ -153,14 +153,14 @@ def f_r_l_b_to_compass(curr_ori: float) -> dict:
     key: Front or Right or Left or Back
     value: Est or Sud or Nord or West
     """
-    if detect_target(curr_ori) == 0:  # EAST front
-        return {FRLB.FRONT: Compass.EST, FRLB.RIGHT: Compass.SUD, FRLB.LEFT: Compass.NORD, FRLB.BACK: Compass.OVEST}
-    elif detect_target(curr_ori) == 90:  # NORD front
+    if detect_target(curr_ori) == 0.0:  # EAST front
         return {FRLB.FRONT: Compass.NORD, FRLB.RIGHT: Compass.EST, FRLB.LEFT: Compass.OVEST, FRLB.BACK: Compass.SUD}
-    elif detect_target(curr_ori) == 180:  # WEST front
-        return {FRLB.FRONT: Compass.OVEST, FRLB.RIGHT: Compass.NORD, FRLB.LEFT: Compass.SUD, FRLB.BACK: Compass.EST}
-    else:  # SUD front
+    elif detect_target(curr_ori) == 90.0:  # NORD front
+        return {FRLB.FRONT: Compass.EST, FRLB.RIGHT: Compass.SUD, FRLB.LEFT: Compass.NORD, FRLB.BACK: Compass.OVEST}
+    elif detect_target(curr_ori) == 180.0:  # WEST front
         return {FRLB.FRONT: Compass.SUD, FRLB.RIGHT: Compass.OVEST, FRLB.LEFT: Compass.EST, FRLB.BACK: Compass.NORD}
+    else:  # SUD front
+        return {FRLB.FRONT: Compass.OVEST, FRLB.RIGHT: Compass.NORD, FRLB.LEFT: Compass.SUD, FRLB.BACK: Compass.EST}
 
 
 def negate_compass(compass: float) -> Compass:

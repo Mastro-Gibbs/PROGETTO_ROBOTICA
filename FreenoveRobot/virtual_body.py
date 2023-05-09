@@ -237,6 +237,8 @@ class VirtualBody:
     def on_ready_btn(self):
         self.__redis.set(BodyData.Key.Btn, json.dumps({'ready': 1}, indent=0))
         self.__redis.publish(BodyData.Topic.Body, BodyData.Key.Btn)
+        self.__redis.set(BodyData.Key.SELF, json.dumps({'virtB': 1}, indent=0))
+        self.__redis.publish(BodyData.Topic.Body, BodyData.Key.SELF)
 
     @staticmethod
     def __dummy_function():
