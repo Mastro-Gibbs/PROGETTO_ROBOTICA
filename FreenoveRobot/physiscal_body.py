@@ -5,7 +5,7 @@
     @last update: 9/5/22
 """
 
-from lib.robotAPI.motor import Motor, MOTORSCommand
+from lib.robotAPI.motor import Motor
 from lib.robotAPI.ultrasonic import Ultrasonic
 from lib.robotAPI.infrared import Infrared
 from lib.robotAPI.button import Button
@@ -68,6 +68,8 @@ class PhysicalBody:
 
         self.__strip.colorWipe(Color(0, 0, 0), 10)
 
+        logger.log('PhysicalBody arrested\n', LoggerColor.YELLOW)
+
     def begin(self, button_callback, logger: Logger) -> None:
         """
             This method invokes the equivalent for mpu6050 
@@ -92,7 +94,7 @@ class PhysicalBody:
 
         # motor instance
         self.__motors = Motor()
-        logger.log('Motors initialized', LoggerColor.GRAY)
+        logger.log('Motors      initialized', LoggerColor.GRAY)
 
         # ultrasonic instances
         self.__left_sensor = Ultrasonic(RC.LEFT_ECHO_PIN, RC.LEFT_TRIGGER_PIN)
@@ -103,18 +105,18 @@ class PhysicalBody:
 
         # infrared instance
         self.__infrared = Infrared()
-        logger.log('Infrared initialized', LoggerColor.GRAY)
+        logger.log('Infrared    initialized', LoggerColor.GRAY)
 
         # buzzer instance
         self.__buzzer = Buzzer(RC.BUZZER_PIN)
-        logger.log('Buzzer initialized', LoggerColor.GRAY)
+        logger.log('Buzzer      initialized', LoggerColor.GRAY)
 
         self.__button = Button(RC.BUTTON_PIN, button_callback)
-        logger.log('Button initialized', LoggerColor.GRAY)
+        logger.log('Button      initialized', LoggerColor.GRAY)
 
         # led strip instance
         self.__strip = Led()
-        logger.log('Leds initialized', LoggerColor.GRAY)
+        logger.log('Leds        initialized', LoggerColor.GRAY)
 
         self.__wizard = RobotThread(target=self.__strip.rainbowCycle, name='led_wizard',
                                     args=(RC.LED_ANIM_DELAY, RC.LED_ANIM_LOOPS,))
@@ -126,7 +128,7 @@ class PhysicalBody:
 
         self.__infrared.begin()
 
-        logger.log('Sensors successfully initialized', LoggerColor.YELLOW, newline=True)
+        logger.log('Sensors successfully initialized\n', LoggerColor.YELLOW, newline=True)
 
     def set_tuple_motor_model(self, data):
         rum, lum, rlm, llm = data

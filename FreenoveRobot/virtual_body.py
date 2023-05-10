@@ -136,7 +136,7 @@ class VirtualBody:
                     self.__ultrasonic_thread.is_alive() and self.__redis_runner.is_alive():
                 self.__redis.set(BodyData.Key.SELF, json.dumps({'virtB': 1}, indent=0))
                 self.__redis.publish(BodyData.Topic.Body, BodyData.Key.SELF)
-                self.__logger.log('VirtualBody initialized', Color.GRAY)
+                self.__logger.log('VirtualBody initialized\n', Color.YELLOW)
                 return True
             else:
                 msg = self.__yaw_thread.bury()
@@ -146,7 +146,7 @@ class VirtualBody:
                     self.__ultrasonic_thread.is_alive() and self.__redis_runner.is_alive():
                 self.__redis.set(BodyData.Key.SELF, json.dumps({'virtB': 1}, indent=0))
                 self.__redis.publish(BodyData.Topic.Body, BodyData.Key.SELF)
-                self.__logger.log('VirtualBody initialized', Color.GRAY)
+                self.__logger.log('VirtualBody initialized\n', Color.YELLOW)
                 return True
 
         self.__logger.log('VirtualBody initializing failed', Color.GRAY)
@@ -168,14 +168,14 @@ class VirtualBody:
             VirtualBody.__dummy_function()
 
     def stop(self) -> None:
-        self.__logger.log(f'Arresting physicalbody\n', Color.YELLOW, newline=True)
+        self.__logger.log(f'Arresting VirtualBody\n', Color.YELLOW, newline=True)
         self.__body.virtual_destructor(self.__logger)
         self.__logger.reset_context()
 
         self.__redis_runner.stop()
         self.__redis.close()
-        self.__logger.log(f'Redis thread:         buried', Color.GRAY)
-        self.__logger.log(f'Redis connection:     closed', Color.GRAY)
+        self.__logger.log(f'Redis thread:           buried', Color.GRAY)
+        self.__logger.log(f'Redis connection:       closed', Color.GRAY)
 
         if BodyData.Yaw.is_enabled():
             msg = self.__yaw_thread.bury()
@@ -186,11 +186,15 @@ class VirtualBody:
         msg = self.__ultrasonic_thread.bury()
         self.__logger.log(f'{msg}', Color.GRAY)
 
-        self.__logger.log(f'Physicalbody arrested\n', Color.YELLOW, newline=True)
+        self.__logger.log(f'VirtualBody arrested\n', Color.YELLOW, newline=True)
 
     def __on_message(self, msg):
         _key = msg['data']
         _value = self.__redis.get(_key)
+
+        _eval = _value.replace('\n', '')
+
+        self.__logger.log(f'Received data (Controller): {_key} -> {_eval}', Color.GRAY)
 
         if _key == BodyData.Key.Buzzer:
             status = int(_value)
@@ -222,6 +226,11 @@ class VirtualBody:
     def __on_remote(self, msg):
         _key = msg['data']
         _value = self.__redis.get(_key)
+
+        _eval = _value.replace('\n', '')
+
+        self.__logger.log(f'Received data (Remote): {_key} -> {_eval}', Color.GRAY)
+
 
         if _key == rcData.Key.RC:
             data = json.loads(_value)

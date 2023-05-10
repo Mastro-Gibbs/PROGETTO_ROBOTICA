@@ -195,6 +195,8 @@ class Logger:
 
         [AVAILABLE COLORS] => Color enum values
         """
+        self.__color = color
+
         self.__class = color.value + f"[{class_name}]" + STDOUTDecor.DEFAULT.value
 
         self.__class_name = class_name
@@ -208,9 +210,11 @@ class Logger:
     def switch_context(self, context) -> None:
         self.__context = self.__class_name
         self.__class_name = context
+        self.__class = self.__color.value + f"[{context}]" + STDOUTDecor.DEFAULT.value
 
     def reset_context(self) -> None:
         self.__class_name = self.__context
+        self.__class = self.__color.value + f"[{self.__context}]" + STDOUTDecor.DEFAULT.value
 
     def set_severity(self, severity: Severity):
         self.__severity = severity
