@@ -22,8 +22,6 @@ class Maze:
             if __MACHINE_CONF__["AUTO_PRIORITY_LIST"] != 0 \
             else Analyzer.analyze('data/data_analysis.conf')
 
-        __intelligence = __MACHINE_CONF__["INTELLIGENCE"]
-
         def __init__(self, outer_instance):
             self.__outer_instance = outer_instance
 
@@ -83,14 +81,6 @@ class Maze:
         def priority(self, value):
             self.__priority = value
 
-        @property
-        def intelligence(self):
-            return self.__intelligence
-
-        @intelligence.setter
-        def intelligence(self, value):
-            self.__intelligence = value
-
         def write(self) -> bool:
             if round_v(self.__time) != 0.0:
                 pl = Compass.compass_list_to_string_comma_sep(self.__priority)
@@ -102,7 +92,6 @@ class Maze:
                                         self.__dead_end_nodes,
                                         self.__outer_instance.performed_commands,
                                         self.__outer_instance.trajectory,
-                                        self.__intelligence,
                                         ', '.join(pl)
                                         )
                 return True

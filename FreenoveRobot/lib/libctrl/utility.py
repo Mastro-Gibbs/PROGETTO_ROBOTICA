@@ -311,18 +311,14 @@ class CFG:
             "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
             "AUTO_PRIORITY_LIST": int(psr["ROBOT"]["AUTO_PRIORITY_LIST"]),
             "PRIORITY_LIST": priority_list,
-            "INTELLIGENCE": psr["ROBOT"]["intelligence"],
             "JUNCTION_TIME": float(psr["ROBOT"]["junction_time"])
         }
 
-    @staticmethod
-    def read_data_analysis():
-        ...
 
     @staticmethod
     def write_data_analysis(maze_name, maze_solved, execution_time, tree_dict,
                             number_of_nodes, number_of_dead_end, performed_commands,
-                            trajectory, intelligence, priority_list):
+                            trajectory, priority_list):
         config = configparser.ConfigParser()
         path = "data/"
         file_name = "data_analysis.conf"
@@ -350,7 +346,6 @@ class CFG:
         config[section_name] = {
             "maze_solved": maze_solved,
             "execution_time_sec": execution_time,
-            "intelligence": intelligence,
             "priority_list": priority_list,
             "number_of_nodes": number_of_nodes,
             "number_of_dead_end": number_of_dead_end,
@@ -358,11 +353,6 @@ class CFG:
             "performed_commands": performed_commands,
             "trajectory": trajectory
         }
-
-        """
-            print("\nSezioni del file di config:")
-            print(config.sections())
-        """
 
         with open(conf_file, "w") as configfile:
             config.write(configfile)
