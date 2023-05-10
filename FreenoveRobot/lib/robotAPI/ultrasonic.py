@@ -1,6 +1,7 @@
 from time import time, sleep
 import RPi.GPIO as GPIO
 
+
 class Ultrasonic:
 
     def __init__(self, echo_pin: int, trigger_pin: int):
@@ -19,7 +20,7 @@ class Ultrasonic:
         sleep(0.005)
         GPIO.output(self.trigger_pin, False)
 
-    def wait_for_echo(self,value,timeout):
+    def wait_for_echo(self, value, timeout):
         count = timeout
 
         while GPIO.input(self.echo_pin) != value and count > 0:

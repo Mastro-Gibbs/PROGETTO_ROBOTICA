@@ -48,7 +48,7 @@ class Adc:
         COMMAND_SET = self.ADS7830_CMD | (
             (((channel << 2) | (channel >> 1)) & 0x07) << 4)
         self.bus.write_byte(self.ADDRESS, COMMAND_SET)
-        while(1):
+        while True:
             value1 = self.bus.read_byte(self.ADDRESS)
             value2 = self.bus.read_byte(self.ADDRESS)
             if value1 == value2:

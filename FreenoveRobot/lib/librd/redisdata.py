@@ -285,7 +285,7 @@ class ControllerData(__RedisData):
             return bool(cls.__data['ready'])
 
         @classmethod
-        def set_ready(cls, value: int) -> bool:
+        def set_ready(cls, value: int):
             cls.__data['ready'] = value
 
 

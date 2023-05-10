@@ -4,12 +4,13 @@ from time import sleep
 from lib.robotAPI.utils import ROBOTAPIConstants as RC
 from lib.workerthread import RobotThread
 
+
 class Infrared:
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(RC.IR_LEFT,GPIO.IN)
-        GPIO.setup(RC.IR_MID,GPIO.IN)
-        GPIO.setup(RC.IR_RIGHT,GPIO.IN)
+        GPIO.setup(RC.IR_LEFT, GPIO.IN)
+        GPIO.setup(RC.IR_MID, GPIO.IN)
+        GPIO.setup(RC.IR_RIGHT, GPIO.IN)
 
         self.__left_status: bool = False
         self.__mid_status: bool = False

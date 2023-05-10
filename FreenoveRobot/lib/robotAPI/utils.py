@@ -1,27 +1,4 @@
-import warnings
-import functools
-import inspect
-import ctypes as ct
 from enum import IntEnum
-from threading import Thread
-
-
-def deprecated(func):
-    """
-    This is a decorator which can be used to mark functions
-    as deprecated. It will result in a warning being emitted
-    when the function is used.
-    """
-
-    @functools.wraps(func)
-    def new_func(*args, **kwargs):
-        warnings.simplefilter('always', DeprecationWarning)  # turn off filter
-        warnings.warn("Call to deprecated function {}.".format(func.__name__),
-                      category=DeprecationWarning,
-                      stacklevel=2)
-        warnings.simplefilter('default', DeprecationWarning)  # reset filter
-        return func(*args, **kwargs)
-    return new_func
 
 
 class ROBOTAPIConstants(IntEnum):
@@ -43,13 +20,13 @@ class ROBOTAPIConstants(IntEnum):
     IR_MID = 15,
     IR_RIGHT = 23,
 
-    LED_COUNT = 8,        # Number of LED pixels.
-    LED_PIN = 18,         # GPIO pin connected to the pixels (18 uses PWM!).
-    LED_FREQ_HZ = 800000, # LED signal frequency in hertz (usually 800khz)
-    LED_DMA = 10,         # DMA channel to use for generating signal (try 10)
-    LED_BRIGHTNESS = 255, # Set to 0 for darkest and 255 for brightest
-    LED_INVERT = False,   # True to invert the signal (when using NPN transistor level shift)
-    LED_CHANNEL = 0,      # set to '1' for GPIOs 13, 19, 41, 45 or 53
+    LED_COUNT = 8,         # Number of LED pixels.
+    LED_PIN = 18,          # GPIO pin connected to the pixels (18 uses PWM!).
+    LED_FREQ_HZ = 800000,  # LED signal frequency in hertz (usually 800khz)
+    LED_DMA = 10,          # DMA channel to use for generating signal (try 10)
+    LED_BRIGHTNESS = 255,  # Set to 0 for darkest and 255 for brightest
+    LED_INVERT = False,    # True to invert the signal (when using NPN transistor level shift)
+    LED_CHANNEL = 0,       # set to '1' for GPIOs 13, 19, 41, 45 or 53
     LED_ANIM_DELAY = 20,
     LED_ANIM_LOOPS = 5,
 

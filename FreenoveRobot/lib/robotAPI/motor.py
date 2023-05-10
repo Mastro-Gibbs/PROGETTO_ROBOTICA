@@ -1,24 +1,10 @@
 from lib.robotAPI.PCA9685 import PCA9685
-from enum import Enum
 
-class MOTORSCommand(str, Enum):
-    RUN = 'MOTORS_RUN',
-    STOP = 'MOTORS_STOP',
-    ROTATEL = 'MOTORS_ROTATEL',
-    ROTATER = 'MOTORS_ROTATER'
 
 class Motor:
     def __init__(self):
         self.pwm = PCA9685(0x40, debug=True)
         self.pwm.setPWMFreq(50)
-
-    def justify(self, duty):
-        if duty > 4095:
-            duty = 4095
-        elif duty < -4095:
-            duty = -4095        
-        
-        return duty
         
     def left_upper_wheel(self, duty):
         if duty > 0:
@@ -63,31 +49,7 @@ class Motor:
         else:
             self.pwm.setMotorPwm(4, 4095)
             self.pwm.setMotorPwm(5, 4095)
-            
- 
-    def set_model(self, cmd: MOTORSCommand, speed: int = 0):
-        speed = self.justify(speed)
 
-        if cmd == MOTORSCommand.STOP:
-            self.left_upper_wheel(0)
-            self.left_lower_wheel(0)
-            self.right_upper_wheel(0)
-            self.right_lower_wheel(0)
-        elif cmd == MOTORSCommand.RUN:
-            self.left_upper_wheel(-speed)
-            self.left_lower_wheel(-speed)
-            self.right_upper_wheel(-speed)
-            self.right_lower_wheel(-speed)
-        elif cmd == MOTORSCommand.ROTATEL:
-            self.left_upper_wheel(speed)
-            self.left_lower_wheel(speed)
-            self.right_upper_wheel(-speed)
-            self.right_lower_wheel(-speed)
-        elif cmd == MOTORSCommand.ROTATER:
-            self.left_upper_wheel(-speed)
-            self.left_lower_wheel(-speed)
-            self.right_upper_wheel(speed)
-            self.right_lower_wheel(speed)
 
         
             

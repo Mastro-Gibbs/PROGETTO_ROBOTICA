@@ -14,8 +14,10 @@ class ConfigFileObserver:
 
     def __init__(self, path):
         self.__FILE_PATH = path
-        self.__CONFIG_FILE_HASHCODE = ''
-        self.__CONFIG_FILE_HASHCODE_OLD = self.__CONFIG_FILE_HASHCODE
+
+        with file_observer(self.__FILE_PATH, 'rb') as configfile:
+            self.__CONFIG_FILE_HASHCODE     = md5(configfile.read()).hexdigest()
+            self.__CONFIG_FILE_HASHCODE_OLD = self.__CONFIG_FILE_HASHCODE
 
     def observe(self):
         self.__CONFIG_FILE_HASHCODE_OLD = self.__CONFIG_FILE_HASHCODE
@@ -26,17 +28,16 @@ class ConfigFileObserver:
         return self
 
     @property
-    def changed(self):
+    def changed(self) -> bool:
         return self.__CONFIG_FILE_HASHCODE_OLD != self.__CONFIG_FILE_HASHCODE
 
 
 class Agent:
-    __cf_observer: ConfigFileObserver
+    __config_file_observer: ConfigFileObserver
     __LOGGER_DATA = CFG.logger_data()
 
     def __init__(self) -> None:
-        self.__cf_observer: ConfigFileObserver = ConfigFileObserver('data/config.conf')
-        self.__cf_observer.observe()
+        self.__config_file_observer: ConfigFileObserver = ConfigFileObserver('data/config.conf')
 
         self.__logger = Logger('Agent', self.__LOGGER_DATA["SEVERITY"], Color.GREEN)
         self.__logger.set_logfile(self.__LOGGER_DATA["ALOGFILE"])
@@ -51,7 +52,7 @@ class Agent:
     def loop(self, alt=None) -> None:
         while not self.__controller.algorithm():
 
-            if self.__cf_observer.observe().changed:
+            if self.__config_file_observer.observe().changed:
                 self.__logger.log('Config file changed', Color.GRAY)
                 self.__controller.update_config()
 

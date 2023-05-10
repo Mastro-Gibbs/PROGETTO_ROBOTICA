@@ -135,35 +135,6 @@ class PhysicalBody:
         self.__motors.right_upper_wheel(rum)
         self.__motors.right_lower_wheel(rlm)
 
-    def set_motor_model(self, cmd: str, rate: int = 0) -> None:
-        """
-            Set speed value for motors.
-
-            @param cmd: instance of Command -> {RUN, STOP, ROTATEL, ROTATER}
-            @param rate: percentage of desired speed between 0% and 100%
-        """
-
-        if rate > 100:
-            rate = 100
-        elif rate < 0:
-            rate = 0
-        
-        _vel = (rate * 4095) // 100
-
-        if cmd == MOTORSCommand.RUN.value:
-            _cmd = MOTORSCommand.RUN
-        elif cmd == MOTORSCommand.STOP.value:
-            _cmd = MOTORSCommand.STOP
-        elif cmd == MOTORSCommand.ROTATEL.value:
-            _cmd = MOTORSCommand.ROTATEL
-        elif cmd == MOTORSCommand.ROTATER.value:
-            _cmd = MOTORSCommand.ROTATER
-        else:
-            _cmd = None
-
-        if _cmd is not None:
-            self.__motors.set_model(_cmd, _vel)
-
     def read_distances(self) -> tuple:
         """
             Reads the values of the proximity sensors (centimeters), 
