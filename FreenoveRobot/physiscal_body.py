@@ -15,17 +15,32 @@ from lib.workerthread import RobotThread
 from lib.robotAPI.utils import ROBOTAPIConstants as RC
 from lib.libMPU6050.MPUSensor import MPUSensor as MPU
 from lib.libMPU6050.MPUSensor import MPUSensorException
-
+from lib.libctrl.utility import Logger
+from lib.libctrl.enums import Color as LoggerColor
 
 from lib.librd.redisdata import BodyData
 
 
+class PhysicalBodyException(Exception):
+    pass
+
+
 class PhysicalBody:
     def __init__(self) -> None:
-        pass
+        self.__arrow = None
+        self.__wizard = None
+        self.__strip = None
+        self.__button = None
+        self.__buzzer = None
+        self.__infrared = None
+        self.__right_sensor = None
+        self.__front_sensor = None
+        self.__left_sensor = None
+        self.__motors = None
+        self.__mpu6050 = None
 
 
-    def virtual_destructor(self) -> None:
+    def virtual_destructor(self, logger: Logger) -> None:
         """
             This method realizes the virtualization of the destroyer, 
             invokes the equivalent for mpu6050, which takes care of 
@@ -34,17 +49,26 @@ class PhysicalBody:
 
             IT MUST BE INVOKED.
         """
-        self.__wizard.bury()
+        logger.switch_context('PhysicalBody')
+        logger.log('Arresting sensors', LoggerColor.YELLOW)
+
+        msg = self.__wizard.bury()
+        logger.log(f'{msg}', LoggerColor.GRAY)
 
         if self.__arrow:
-            self.__arrow.bury()
+            msg = self.__arrow.bury()
+            logger.log(f'{msg}', LoggerColor.GRAY)
 
         if BodyData.Yaw.is_enabled():
-            self.__mpu6050.virtual_destructor()
-        self.__infrared.virtual_destructor()
-        self.__strip.colorWipe(Color(0,0,0), 10)
+            msg = self.__mpu6050.virtual_destructor()
+            logger.log(f'{msg}', LoggerColor.GRAY)
 
-    def begin(self, button_callback) -> None:
+        msg = self.__infrared.virtual_destructor()
+        logger.log(f'{msg}', LoggerColor.GRAY)
+
+        self.__strip.colorWipe(Color(0, 0, 0), 10)
+
+    def begin(self, button_callback, logger: Logger) -> None:
         """
             This method invokes the equivalent for mpu6050 
             which commands the thread to begin performing its task.
@@ -53,43 +77,56 @@ class PhysicalBody:
 
             Initialize sensors and actuators instances.
         """
-        print('Initializing sensors...')
+        logger.switch_context('PhysicalBody')
+        logger.log('Initializing sensors', LoggerColor.YELLOW)
 
         if BodyData.Yaw.is_enabled():
-            # orientation sensor instance (MPU6050)
+            logger.log('Initializing MPU6050', LoggerColor.GRAY)
             try:
                 self.__mpu6050 = MPU(RC.MPU_SMBUS_ID, RC.MPU_DEBUG_MODE)
+                logger.log('MPU6050 initialized', LoggerColor.GRAY)
             except MPUSensorException as exc:
-                print(exc.args[0], ' Exiting..')
-                exit(-1)
+                logger.log(f'MPU6050 raised: {exc.args[0]}', LoggerColor.RED)
+                raise PhysicalBodyException(exc.args[0])
+
 
         # motor instance
         self.__motors = Motor()
+        logger.log('Motors initialized', LoggerColor.GRAY)
 
         # ultrasonic instances
         self.__left_sensor = Ultrasonic(RC.LEFT_ECHO_PIN, RC.LEFT_TRIGGER_PIN)
         self.__front_sensor = Ultrasonic(RC.FRONT_ECHO_PIN, RC.FRONT_TRIGGER_PIN)
         self.__right_sensor = Ultrasonic(RC.RIGHT_ECHO_PIN, RC.RIGHT_TRIGGER_PIN)
 
+        logger.log('Ultrasonics initialized', LoggerColor.GRAY)
+
         # infrared instance
         self.__infrared = Infrared()
+        logger.log('Infrared initialized', LoggerColor.GRAY)
 
         # buzzer instance
         self.__buzzer = Buzzer(RC.BUZZER_PIN)
+        logger.log('Buzzer initialized', LoggerColor.GRAY)
 
         self.__button = Button(RC.BUTTON_PIN, button_callback)
+        logger.log('Button initialized', LoggerColor.GRAY)
 
         # led strip instance
         self.__strip = Led()
+        logger.log('Leds initialized', LoggerColor.GRAY)
+
         self.__wizard = RobotThread(target=self.__strip.rainbowCycle, name='led_wizard',
                                     args=(RC.LED_ANIM_DELAY, RC.LED_ANIM_LOOPS,))
-        self.__arrow = None
 
-        print('Sensors successfully initialized')
+        logger.log('Leds RobotThread initialized, context: __strip.rainbowCycle', LoggerColor.GRAY)
 
         if BodyData.Yaw.is_enabled():
             self.__mpu6050.begin()
+
         self.__infrared.begin()
+
+        logger.log('Sensors successfully initialized', LoggerColor.YELLOW, newline=True)
 
     def set_tuple_motor_model(self, data):
         rum, lum, rlm, llm = data

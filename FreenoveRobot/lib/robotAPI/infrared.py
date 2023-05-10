@@ -17,8 +17,8 @@ class Infrared:
 
         self.__discover = RobotThread(target=self.__detect, name='ir_discover')
 
-    def virtual_destructor(self):
-        self.__discover.bury()
+    def virtual_destructor(self) -> str:
+        return self.__discover.bury()
 
     def begin(self):
         if not self.__discover.is_alive():

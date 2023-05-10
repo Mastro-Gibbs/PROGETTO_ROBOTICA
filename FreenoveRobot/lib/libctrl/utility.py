@@ -199,9 +199,18 @@ class Logger:
 
         self.__class_name = class_name
 
-        self.__file: str = None
+        self.__file: str = ''
 
         self.__severity = severity
+
+        self.__context: str = ''
+
+    def switch_context(self, context) -> None:
+        self.__context = self.__class_name
+        self.__class_name = context
+
+    def reset_context(self) -> None:
+        self.__class_name = self.__context
 
     def set_severity(self, severity: Severity):
         self.__severity = severity

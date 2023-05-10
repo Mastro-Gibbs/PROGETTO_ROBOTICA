@@ -44,8 +44,8 @@ class MPUSensor:
         if not self.__discover.is_alive():
             self.__discover.start()
 
-    def virtual_destructor(self):
-        self.__discover.bury()
+    def virtual_destructor(self) -> str:
+        return self.__discover.bury()
 
     def __update_vals(self):
         global FIFO_buffer

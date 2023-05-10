@@ -53,7 +53,7 @@ class Controller:
     # done
     def __init__(self):
         self.__logger = Logger('Controller', self._LOGGER_DATA["SEVERITY"], Color.CYAN)
-        self.__logger.set_logfile(CFG.logger_data()["CLOGFILE"])
+        self.__logger.set_logfile(self._LOGGER_DATA["CLOGFILE"])
 
         try:
             self.__redis_message_handler = None
