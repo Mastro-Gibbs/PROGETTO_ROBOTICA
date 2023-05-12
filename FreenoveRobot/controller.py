@@ -39,7 +39,6 @@ class Controller:
     _LOGGER_DATA     = CFG.logger_data()
 
     _SAFE_DISTANCE = _CONTROLLER_DATA['SAFE_DIST']
-    _GATE_DISTANCE = _CONTROLLER_DATA['GATE_DIST']
     _ROTATION_MAX_ATTEMPTS = _CONTROLLER_DATA['MAX_ATTEMPTS']
 
     # ***************************** INSTANCE MANAGEMENT SECTION ******************************* #
@@ -108,7 +107,6 @@ class Controller:
 
         self.__logger.log(f'Declared constants', Color.YELLOW)
         self.__logger.log(f'Safe distance:        {self._SAFE_DISTANCE}', Color.GRAY)
-        self.__logger.log(f'Gate distance:        {self._GATE_DISTANCE}', Color.GRAY)
         self.__logger.log(f'Machine speed:        {self.__machine.speed}', Color.GRAY)
         self.__logger.log(f'Junction time:        {self.__machine.junction_time}', Color.GRAY)
         self.__logger.log(f'Machine rot speed:    {self.__machine.rot_speed}', Color.GRAY)
@@ -178,11 +176,9 @@ class Controller:
 
         self._ROTATION_MAX_ATTEMPTS = self._CONTROLLER_DATA["MAX_ATTEMPTS"]
         self._SAFE_DISTANCE         = self._CONTROLLER_DATA["SAFE_DIST"]
-        self._GATE_DISTANCE         = self._CONTROLLER_DATA["GATE_DIST"]
 
-        self.__logger.log(f'Updated constants', Color.YELLOW, newline=True)
+        self.__logger.log(f'Updated constants',   Color.YELLOW, newline=True)
         self.__logger.log(f'Safe distance:        {self._SAFE_DISTANCE}', Color.GRAY)
-        self.__logger.log(f'Gate distance:        {self._GATE_DISTANCE}', Color.GRAY)
         self.__logger.log(f'Machine speed:        {self.__machine.speed}', Color.GRAY)
         self.__logger.log(f'Junction time:        {self.__machine.junction_time}', Color.GRAY)
         self.__logger.log(f'Machine rot speed:    {self.__machine.rot_speed}', Color.GRAY)
@@ -214,15 +210,18 @@ class Controller:
 
         # Go to Junction
         elif action == Command.GO_TO_JUNCTION:
-            while ControllerData.Machine.left() <= self._GATE_DISTANCE and ControllerData.Machine.right() <= self._GATE_DISTANCE:
-                self.__execute_motor(Command.RUN)
-                time.sleep(0.005)
+            start_time = time.time()
+            time_expired = False
 
-            time.sleep(self.__machine.junction_time)
+            while not time_expired and (ControllerData.Machine.front() is None or
+                                        ControllerData.Machine.front() > self._SAFE_DISTANCE):
+                self.__execute_motor(Command.RUN)
+                if time.time() - start_time >= self.__machine.junction_time:
+                    time_expired = True
 
             self.__execute_motor(Command.STOP)
             self.__machine.state = State.SENSING
-            self.__machine.position = Position.NODE
+            self.__machine.position = Position.JUNCTION
 
 
         elif action == Command.ROTATE:
@@ -548,18 +547,18 @@ class Controller:
             if front is None:
                 if left is not None and right is not None:
                     self.__machine.state = State.SENSING
-                    self.__machine.position = Position.EDGE
+                    self.__machine.position = Position.CORRIDOR
                     self.attempts_to_unstuck = 0
 
                 elif left is None or right is None:
                     self.__machine.state = State.SENSING
-                    self.__machine.position = Position.NODE
+                    self.__machine.position = Position.JUNCTION
                     self.attempts_to_unstuck = 0
 
             elif front is not None:
                 if left is None or right is None:
                     self.__machine.state = State.SENSING
-                    self.__machine.position = Position.EDGE
+                    self.__machine.position = Position.CORRIDOR
                     self.attempts_to_unstuck = 0
 
                 elif left is not None and right is not None:
@@ -649,17 +648,17 @@ class Controller:
             if self.__machine.mode == Mode.ESCAPING and self.__maze.tree.current.type == Type.OBSERVED:
                 self.__machine.mode = Mode.EXPLORING
 
-            if self.__machine.position == Position.EDGE:
-                if (left is not None and left <= 20) or (right is not None and right <= 20):
+            if self.__machine.position == Position.CORRIDOR:
+                if left is None or right is None:
                     com_actions.insert(0, [Command.GO_TO_JUNCTION, detect_target(ori)])
                 elif front is None or front > self._SAFE_DISTANCE:
                     com_actions.insert(0, [Command.RUN, detect_target(ori)])
                 elif front <= self._SAFE_DISTANCE:
                     com_actions.insert(0, [Command.STOP, None])
 
-            elif self.__machine.position == Position.NODE:
+            elif self.__machine.position == Position.JUNCTION:
                 if left is not None and right is not None:
-                    self.__machine.position = Position.EDGE
+                    self.__machine.position = Position.CORRIDOR
                 if front is None or front > self._SAFE_DISTANCE:
                     com_actions.insert(0, [Command.RUN, detect_target(ori)])
                 elif front <= self._SAFE_DISTANCE:

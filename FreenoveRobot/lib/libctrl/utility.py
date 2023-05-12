@@ -311,7 +311,6 @@ class CFG:
             "SPEED": int(psr["ROBOT"]["speed"]),
             "ROT_SPEED": int(psr["ROBOT"]["rot_speed"]),
             "SAFE_DIST": int(psr["ROBOT"]["safe_dist"]),
-            "GATE_DIST": int(psr["ROBOT"]["gate_dist"]),
             "MAX_ATTEMPTS": int(psr["ROBOT"]["max_attempts"]),
             "AUTO_PRIORITY_LIST": int(psr["ROBOT"]["AUTO_PRIORITY_LIST"]),
             "PRIORITY_LIST": priority_list,

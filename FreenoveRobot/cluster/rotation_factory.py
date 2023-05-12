@@ -44,11 +44,11 @@ class RotationFactory:
     def rotate(self, args: tuple) -> None:
         self.__callback(args)
 
-    def compute(self, ori: int) -> FRLB:
+    def compute(self, target_g: int) -> FRLB:
         entry = self.__table[self.__val]
-        self.__val: int = ori
+        self.__val: int = target_g
 
-        return entry[self.__val]
+        return entry[target_g]
 
     @property
     def value(self) -> float:

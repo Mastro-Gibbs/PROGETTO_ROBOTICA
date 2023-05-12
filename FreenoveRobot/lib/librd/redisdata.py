@@ -233,7 +233,8 @@ class ControllerData(__RedisData):
 
         __safe = CFG.robot_conf_data()['SAFE_DIST']
 
-        __max  = 100
+        __max = 40
+        __min = 5
 
         @classmethod
         def on_values(cls, data):
@@ -246,15 +247,15 @@ class ControllerData(__RedisData):
 
         @classmethod
         def front(cls):
-            return int(cls.__data['proxF']) if int(cls.__data['proxF']) <= cls.__max else None
+            return int(cls.__data['proxF']) if cls.__min <= int(cls.__data['proxF']) <= cls.__max else None
 
         @classmethod
         def left(cls):
-            return int(cls.__data['proxL']) if int(cls.__data['proxL']) <= cls.__max else None
+            return int(cls.__data['proxL']) if cls.__min <= int(cls.__data['proxL']) <= cls.__max else None
 
         @classmethod
         def right(cls):
-            return int(cls.__data['proxR']) if int(cls.__data['proxR']) <= cls.__max else None
+            return int(cls.__data['proxR']) if cls.__min <= int(cls.__data['proxR']) <= cls.__max else None
 
         @classmethod
         def goal(cls):
