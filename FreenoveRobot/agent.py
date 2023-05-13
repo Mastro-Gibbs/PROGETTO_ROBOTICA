@@ -83,13 +83,8 @@ class Agent:
             if alt is not None:
                 alt()
 
-        self.stop()
-
     def stop(self) -> None:
         self.__logger.log('Arresting agent', Color.YELLOW, newline=True)
-
-        if self.__controller.goal_reached():
-            self.__controller.ending_animation()
 
         self.__controller.stop()
 
@@ -103,7 +98,7 @@ if __name__ == '__main__':
         agent = Agent()
 
         agent.begin()
-        agent.loop(alt=input)
+        agent.loop()
 
     except KeyboardInterrupt:
         pass

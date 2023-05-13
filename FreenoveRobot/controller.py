@@ -42,7 +42,7 @@ class Controller:
     _ROTATION_MAX_ATTEMPTS = _CONTROLLER_DATA['MAX_ATTEMPTS']
 
     # ***************************** INSTANCE MANAGEMENT SECTION ******************************* #
-    #  FILL IT                                                                                  #
+    #                                                                                           #
     #                                                                                           #
     #                                                                                           #
     # ***************************************************************************************** #
@@ -82,10 +82,10 @@ class Controller:
         self.__logger.log(f'Redis thread:         detached', Color.GRAY)
 
         self.__rotation_factory.attach_rotation_callback(
-            self.remote_rotate
+            self.__remote_rotate
             if RemoteControllerData.is_enabled
             else
-            self.mpu_rotate
+            self.__mpu_rotate
         )
 
         self.__logger.log(f'Rotation callback:    {"remote_rotate" if RemoteControllerData.is_enabled else "mpu_rotate"}', Color.GRAY)
@@ -137,35 +137,18 @@ class Controller:
 
         self.__logger.log('Controller arrested!', Color.RED, newline=True)
 
+        self.__ending_animation()
+
     #                                                                                           #
     #                                                                                           #
     # **************************** END INSTANCE MANAGEMENT SECTION **************************** #
 
+
     # ************************************* MISC SECTION ************************************** #
-    #  FILL IT                                                                                  #
+    #                                                                                           #
     #                                                                                           #
     #                                                                                           #
     # ***************************************************************************************** #
-
-    # done
-    # Check if maze was solved.
-    def goal_reached(self) -> bool:
-        return ControllerData.Machine.goal()
-
-    # done
-    # ending animation if maze were solved
-    def ending_animation(self) -> None:
-        if self.goal_reached():
-            self.__logger.log('Maze finished', Color.GREEN, newline=True, italic=True, blink=True)
-            self.__new_led(status=True, emit=True)
-
-            for i in range(0, 5, 1):
-                self.__new_buzzer(status=True, emit=True)
-                time.sleep(0.25)
-                self.__new_buzzer(status=False, emit=True)
-                time.sleep(0.25)
-
-        self.__new_led(False, True, None, True)
 
     # done
     # Updater controller configuration
@@ -184,18 +167,41 @@ class Controller:
         self.__logger.log(f'Machine rot speed:    {self.__machine.rot_speed}', Color.GRAY)
         self.__logger.log(f'Priority list:        {self.__machine.priority}\n', Color.GRAY)
 
-    # todo
+    # done
+    # Check if maze was solved.
+    def __goal_reached(self) -> bool:
+        return ControllerData.Machine.goal()
+
+    # done
+    # ending animation if maze were solved
+    def __ending_animation(self) -> None:
+        if self.__goal_reached():
+            self.__logger.log('Maze finished', Color.GREEN, newline=True, italic=True, blink=True)
+            self.__new_led(status=True, emit=True)
+
+            for i in range(0, 5, 1):
+                self.__new_buzzer(status=True, emit=True)
+                time.sleep(0.25)
+                self.__new_buzzer(status=False, emit=True)
+                time.sleep(0.25)
+
+        self.__new_led(False, True, None, True)
+
+    # done
     # Send main commands
     def __do_action(self, com_action):
         action = com_action[0]
 
         if action == Command.START:
             self.__execute_motor(Command.STOP)
-
-            self.__new_led(status=True, emit=True)
             self.__new_buzzer(status=True, emit=True)
-            time.sleep(0.5)
-            self.__new_led(False, True, None, True)
+            time.sleep(0.1)
+            self.__new_buzzer(status=False, emit=True)
+            self.__new_buzzer(status=True, emit=True)
+            time.sleep(0.1)
+            self.__new_buzzer(status=False, emit=True)
+            self.__new_buzzer(status=True, emit=True)
+            time.sleep(0.1)
             self.__new_buzzer(status=False, emit=True)
 
         # Stop
@@ -233,6 +239,8 @@ class Controller:
     #                                                                                           #
     #                                                                                           #
     # ********************************** END MISC SECTION ************************************* #
+
+
 
     # ************************************* REDIS SECTION ************************************* #
     #                                       DONE                                                #
@@ -329,6 +337,8 @@ class Controller:
     #                                                                                           #
     # *********************************** END REDIS SECTION *********************************** #
 
+
+
     # *************************************** RC SECTION ************************************** #
     #                                         DONE                                              #
     #                                                                                           #
@@ -352,6 +362,9 @@ class Controller:
     #                                                                                           #
     # ************************************ END RC SECTION ************************************* #
 
+
+
+
     # ************************************* PURE ALGORITHM SECTION ************************************* #
     #                                                                                                    #
     # Tree step.                                                                                         #
@@ -365,7 +378,7 @@ class Controller:
     # TODO
     # Algorithm entry
     def algorithm(self) -> bool:
-        if self.virt_body_ready():
+        if self.__virt_body_ready():
             self._INIT_TIME = time.time()
 
             self.__logger.log(f'New algorithm iteration -> #{self._ITERATION}', Color.GREEN, newline=True)
@@ -380,6 +393,7 @@ class Controller:
             self.__logger.log(f'Current front:        {ControllerData.Machine.front()}', Color.GRAY)
             self.__logger.log(f'Current right:        {ControllerData.Machine.right()}', Color.GRAY)
             self.__logger.log(f'Current orientation:  {self.__rotation_factory.value}', Color.GRAY)
+            self.__logger.log(f'Goal:                 {ControllerData.Machine.goal()}, IRL: {ControllerData.Machine.left_ir()}, IRM: {ControllerData.Machine.mid_ir()}, IRR: {ControllerData.Machine.right_ir()}', Color.GRAY)
             self.__logger.log(f'Detected actions:     {action}', Color.GRAY)
             self.__logger.log(f'Detected commands:    {observed_actions}', Color.GRAY)
             self.__logger.log(f'Selected command:     {selected_action}', Color.GRAY)
@@ -400,7 +414,7 @@ class Controller:
                     self.__maze.trajectory.append(action)
                 self.__prev_action = action
 
-            return self.goal_reached()
+            return self.__goal_reached()
 
         else:
             _curr_time = time.time()
@@ -408,6 +422,8 @@ class Controller:
                               f' (time spent: {round(float(_curr_time - self._INIT_TIME), 1)}s)' +
                               STDOUTDecor.DEFAULT.value, Color.RED, rewritable=True)
             time.sleep(0.1)
+
+            return False
 
     # DONE
     # Tree updater
@@ -681,34 +697,39 @@ class Controller:
 
     # DONE
     @staticmethod
-    def virt_body_ready() -> bool:
+    def __virt_body_ready() -> bool:
         return ControllerData.Machine.connection() and ControllerData.Machine.ready()
 
     #                                                                                                    #
     #                                                                                                    #
     # ************************************ END PURE ALGORITHM SECTION ********************************** #
 
+
     # ************************************* ROTATION SECTION ************************************* #
     #                                                                                              #
-    # Main method: 'rotate'                                                                        #
+    # @method __remote_rotate(args) wakeup remote, turn on leds, allow remote controller           #
+    # @args   (rotation_velocity, target)                                                          #
+    #                                                                                              #
+    # @method __mpu_rotate(args)    rotate with MPU6050 sensor, not stable                         #
+    # @args   (rotation_velocity, target)                                                          #
     #                                                                                              #
     # ******************************************************************************************** #
 
     # DONE
-    def remote_rotate(self, args: tuple):
+    def __remote_rotate(self, args: tuple):
         vel, final_g = args
 
         frlb: FRLB = self.__rotation_factory.compute(int(final_g.value))
 
         self.wakeup_remote(frlb)
 
-    # TODO
-    def mpu_rotate(self, args: tuple):
+    # UNSTABLE
+    def __mpu_rotate(self, args: tuple):
         """ Rotate function that rotates the robot until it reaches final_g """
         vel, final_g = args
 
         init_g = self.__rotation_factory.value
-        degrees, c = self.best_angle_and_rotation_way(init_g, final_g)
+        degrees, c = self.__best_angle_and_rotation_way(init_g, final_g)
 
         self.__do_rotation(vel, c, degrees, final_g)
 
@@ -729,10 +750,10 @@ class Controller:
 
         self.__rotate(vel, c, degrees)
 
-        ok, curr_g, limit_range = self.check_orientation(final_g)
+        ok, curr_g, limit_range = self.__check_orientation(final_g)
 
         if not ok:
-            ok, it = self.adjust_orientation(final_g)
+            ok, it = self.__adjust_orientation(final_g)
 
         # CRITICAL CASE
         if it == self._ROTATION_MAX_ATTEMPTS:
@@ -759,8 +780,6 @@ class Controller:
             curr_g = self.__rotation_factory.value
 
             if self.__remote is not None:
-                self.__new_led(status=True, arrow=True, clockwise=c, emit=True)
-
                 self.__new_buzzer(status=True, emit=True)
                 time.sleep(1)
                 self.__new_buzzer(status=False, emit=True)
@@ -768,14 +787,13 @@ class Controller:
                 while not RemoteControllerData.is_rotation_done:
                     time.sleep(0.01)
 
-                self.__new_led(status=False, emit=True)
             else:
                 if c == Clockwise.RIGHT:
                     self.__new_motor_values(vel, -vel, vel, -vel, True)
                 elif c == Clockwise.LEFT:
                     self.__new_motor_values(-vel, vel, -vel, vel, True)
 
-            performed_deg_temp = self.compute_performed_degrees(c, init_g, curr_g)
+            performed_deg_temp = self.__compute_performed_degrees(c, init_g, curr_g)
 
             """ 
             Check if there was an unintended move in the opposite direction. 
@@ -798,7 +816,7 @@ class Controller:
         return archived, init_g, performed_deg, degrees
 
     # TODO
-    def check_orientation(self, final_g, delta=2):
+    def __check_orientation(self, final_g, delta=2):
         """
         This method is used to check if the orientation of the robot is correct
         The orientation of the robot must reach a specific interval according to two cases:
@@ -837,7 +855,7 @@ class Controller:
         return ok, curr_g, limit_range
 
     # TODO
-    def adjust_orientation(self, final_g):
+    def __adjust_orientation(self, final_g):
         """
         This method is used to adjust the orientation of the robot
         There are a max number of attempts:
@@ -855,7 +873,7 @@ class Controller:
         while not ok and it < self._ROTATION_MAX_ATTEMPTS:
             curr_g = self.__rotation_factory.value
 
-            degrees, c = self.best_angle_and_rotation_way(curr_g, final_g)
+            degrees, c = self.__best_angle_and_rotation_way(curr_g, final_g)
 
             self.__logger.log(f" --ATTEMPT: {it + 1} / {self._ROTATION_MAX_ATTEMPTS}", Color.GRAY)
             self.__logger.log(
@@ -867,14 +885,14 @@ class Controller:
             else:
                 self.__rotate(45 * pi / 180, c, abs(degrees))
 
-            ok, curr_g, limit_range = self.check_orientation(final_g)
+            ok, curr_g, limit_range = self.__check_orientation(final_g)
             it += 1
 
         return ok, it
 
     # TODO
     @staticmethod
-    def compute_performed_degrees(c, init_g, curr_g):
+    def __compute_performed_degrees(c, init_g, curr_g):
         """
         Computes the angle between init_g and curr_g that the robot performed
         based on the direction of rotation
@@ -903,7 +921,7 @@ class Controller:
         return performed_degrees
 
     # TODO
-    def best_angle_and_rotation_way(self, init_g, final_g):
+    def __best_angle_and_rotation_way(self, init_g, final_g):
         """ Computes the best (minimum) angle between init_g and final_g and how you need to rotate """
 
         self.__logger.log(" ** BEST ANGLE COMPUTATION ** ", Color.GRAY, True, True)
