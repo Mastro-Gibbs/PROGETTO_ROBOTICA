@@ -3,7 +3,7 @@ import time
 
 from math import pi
 
-from lib.libctrl.remote_serial import RemoteController
+from lib.libctrl.remote_serial import RemoteController, RCException
 from lib.librd.redisdata import ControllerData, RemoteControllerData
 
 from lib.libctrl.utility import Clockwise
@@ -38,7 +38,6 @@ class Controller:
     _CONTROLLER_DATA = CFG.robot_conf_data()
     _LOGGER_DATA     = CFG.logger_data()
 
-    _SAFE_DISTANCE = _CONTROLLER_DATA['SAFE_DIST']
     _ROTATION_MAX_ATTEMPTS = _CONTROLLER_DATA['MAX_ATTEMPTS']
 
     # ***************************** INSTANCE MANAGEMENT SECTION ******************************* #
@@ -49,6 +48,8 @@ class Controller:
 
     # done
     def __init__(self):
+        self.__status: bool = False
+
         self.__logger = Logger('Controller', self._LOGGER_DATA["SEVERITY"], Color.CYAN)
         self.__logger.set_logfile(self._LOGGER_DATA["CLOGFILE"])
 
@@ -74,12 +75,7 @@ class Controller:
 
     # done
     def begin(self) -> None:
-        self.__logger.log('Initializing controller\n', Color.YELLOW)
-
-        self.__redis_message_handler: PubSubWorkerThread = self.__pubsub.run_in_thread(sleep_time=0.01)
-        self.__execute_motor(Command.STOP)
-
-        self.__logger.log(f'Redis thread:         detached', Color.GRAY)
+        self.__logger.log('Initializing\n', Color.YELLOW)
 
         self.__rotation_factory.attach_rotation_callback(
             self.__remote_rotate
@@ -88,7 +84,8 @@ class Controller:
             self.__mpu_rotate
         )
 
-        self.__logger.log(f'Rotation callback:    {"remote_rotate" if RemoteControllerData.is_enabled else "mpu_rotate"}', Color.GRAY)
+        self.__logger.log(
+            f'Rotation callback:    {"remote_rotate" if RemoteControllerData.is_enabled else "mpu_rotate"}', Color.GRAY)
 
         self.__rotation_factory.attach_orientation_callback(
             None
@@ -97,45 +94,58 @@ class Controller:
             ControllerData.Machine.orientation()
         )
 
-        self.__logger.log(f'Orientation callback: {"Built-in" if RemoteControllerData.is_enabled else "ControllerData.Machine.orientation()"}', Color.GRAY)
+        self.__logger.log(
+            f'Orientation callback: {"Built-in" if RemoteControllerData.is_enabled else "ControllerData.Machine.orientation()"}',
+            Color.GRAY)
 
         if RemoteControllerData.is_enabled:
-            self.__remote.begin()
-            self.__logger.log(f'Remote controller:    ready', Color.GRAY)
+            try:
+                self.__remote.begin()
+                self.__logger.log(f'Remote controller:    ready', Color.GRAY)
+            except RCException as rce:
+                raise ControllerException(rce.args[0])
 
-        self.__logger.log('Controller initialized\n', Color.GREEN, newline=True)
+        self.__redis_message_handler: PubSubWorkerThread = self.__pubsub.run_in_thread(sleep_time=0.01)
+        self.__execute_motor(Command.STOP)
+
+        self.__logger.log(f'Redis thread:         detached', Color.GRAY)
+
+        self.__logger.log('Initialized\n', Color.GREEN, newline=True)
 
         self.__logger.log(f'Declared constants', Color.YELLOW)
-        self.__logger.log(f'Safe distance:        {self._SAFE_DISTANCE}', Color.GRAY)
+        self.__logger.log(f'Front safe distance:  {self.__machine.front_safe_distance}', Color.GRAY)
+        self.__logger.log(f'Side safe distance:   {self.__machine.side_safe_distance}', Color.GRAY)
         self.__logger.log(f'Machine speed:        {self.__machine.speed}', Color.GRAY)
         self.__logger.log(f'Junction time:        {self.__machine.junction_time}', Color.GRAY)
         self.__logger.log(f'Machine rot speed:    {self.__machine.rot_speed}', Color.GRAY)
         self.__logger.log(f'Priority list:        {self.__machine.priority}\n', Color.GRAY)
 
+        self.__status = True
+
     # done
     def stop(self) -> None:
-        print()
-        self.__logger.log(f'Arresting controller\n', Color.YELLOW, newline=True)
+        self.__logger.log(f'Arresting', Color.YELLOW)
 
-        if self.__maze.analysis():
-            self.__logger.log(f'Maze analysis:        done', Color.GRAY)
+        if self.__status:
+            if self.__maze.analysis():
+                self.__logger.log(f'Maze analysis:        done', Color.GRAY)
 
-        self.__execute_motor(Command.STOP)
-        self.__new_led(False, True, None, True)
-        self.__new_buzzer(False, True)
+            self.__execute_motor(Command.STOP)
+            self.__new_led(False, True, None, True)
+            self.__new_buzzer(False, True)
 
-        self.__redis_message_handler.stop()
-        self.__redis.close()
+            self.__redis_message_handler.stop()
+            self.__redis.close()
 
-        self.__logger.log(f'Redis thread:         buried', Color.GRAY)
-        self.__logger.log(f'Redis connection:     closed', Color.GRAY)
+            self.__logger.log(f'Redis thread:         buried', Color.GRAY)
+            self.__logger.log(f'Redis connection:     closed', Color.GRAY)
 
-        if RemoteControllerData.is_enabled:
-            msg = self.__remote.stop()
-            self.__logger.log(f'{msg}', Color.GRAY)
-            self.__logger.log(f'Remote controller:    stopped', Color.GRAY)
+            if RemoteControllerData.is_enabled:
+                msg = self.__remote.stop()
+                self.__logger.log(f'{msg}', Color.GRAY)
+                self.__logger.log(f'Remote controller:    stopped', Color.GRAY)
 
-        self.__logger.log('Controller arrested!', Color.RED, newline=True)
+        self.__logger.log('Arrested', Color.YELLOW)
 
         self.__ending_animation()
 
@@ -158,10 +168,10 @@ class Controller:
         self.__machine.update()
 
         self._ROTATION_MAX_ATTEMPTS = self._CONTROLLER_DATA["MAX_ATTEMPTS"]
-        self._SAFE_DISTANCE         = self._CONTROLLER_DATA["SAFE_DIST"]
 
         self.__logger.log(f'Updated constants',   Color.YELLOW, newline=True)
-        self.__logger.log(f'Safe distance:        {self._SAFE_DISTANCE}', Color.GRAY)
+        self.__logger.log(f'Front safe distance:  {self.__machine.front_safe_distance}', Color.GRAY)
+        self.__logger.log(f'Side safe distance:   {self.__machine.side_safe_distance}', Color.GRAY)
         self.__logger.log(f'Machine speed:        {self.__machine.speed}', Color.GRAY)
         self.__logger.log(f'Junction time:        {self.__machine.junction_time}', Color.GRAY)
         self.__logger.log(f'Machine rot speed:    {self.__machine.rot_speed}', Color.GRAY)
@@ -220,7 +230,7 @@ class Controller:
             time_expired = False
 
             while not time_expired and (ControllerData.Machine.front() is None or
-                                        ControllerData.Machine.front() > self._SAFE_DISTANCE):
+                                        ControllerData.Machine.front() > self.__machine.front_safe_distance):
                 self.__execute_motor(Command.RUN)
                 if time.time() - start_time >= self.__machine.junction_time:
                     time_expired = True
@@ -598,15 +608,15 @@ class Controller:
             self.__machine.state = State.SENSING
 
             if self.__machine.mode == Mode.EXPLORING:
-                if front is None or front > self._SAFE_DISTANCE:
+                if front is None or front > self.__machine.front_safe_distance:
                     action = f_r_l_b_to_compass(ori)["FRONT"]
                     actions.insert(0, action)
                     com_actions.insert(0, [Command.RUN, action])
-                if left is None or left > self._SAFE_DISTANCE:
+                if left is None or left > self.__machine.side_safe_distance:
                     action = f_r_l_b_to_compass(ori)["LEFT"]
                     actions.insert(0, action)
                     com_actions.insert(0, [Command.ROTATE, action])
-                if right is None or right > self._SAFE_DISTANCE:
+                if right is None or right > self.__machine.side_safe_distance:
                     action = f_r_l_b_to_compass(ori)["RIGHT"]
                     actions.insert(0, action)
                     com_actions.insert(0, [Command.ROTATE, action])
@@ -667,17 +677,17 @@ class Controller:
             if self.__machine.position == Position.CORRIDOR:
                 if left is None or right is None:
                     com_actions.insert(0, [Command.GO_TO_JUNCTION, detect_target(ori)])
-                elif front is None or front > self._SAFE_DISTANCE:
+                elif front is None or front > self.__machine.front_safe_distance:
                     com_actions.insert(0, [Command.RUN, detect_target(ori)])
-                elif front <= self._SAFE_DISTANCE:
+                elif front <= self.__machine.front_safe_distance:
                     com_actions.insert(0, [Command.STOP, None])
 
             elif self.__machine.position == Position.JUNCTION:
                 if left is not None and right is not None:
                     self.__machine.position = Position.CORRIDOR
-                if front is None or front > self._SAFE_DISTANCE:
+                if front is None or front > self.__machine.front_safe_distance:
                     com_actions.insert(0, [Command.RUN, detect_target(ori)])
-                elif front <= self._SAFE_DISTANCE:
+                elif front <= self.__machine.front_safe_distance:
                     com_actions.insert(0, [Command.STOP, None])
 
         return actions, com_actions

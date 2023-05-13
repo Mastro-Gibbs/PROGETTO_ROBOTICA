@@ -11,6 +11,7 @@ from lib.librd.redisdata import RemoteControllerData as rcData
 from serial import Serial
 from serial.threaded import ReaderThread
 from serial.threaded import LineReader
+from serial.serialutil import SerialException
 
 
 class RCException(Exception):
@@ -84,8 +85,11 @@ class RemoteController:
     __runner: RemoteReader = None
 
     def begin(self):
-        self.__runner = RemoteReader(Serial('/dev/ttyUSB0', baudrate=9600), RemoteEmitter, 'RemoteDiscover')
-        self.__runner.start()
+        try:
+            self.__runner = RemoteReader(Serial('/dev/ttyUSB0', baudrate=9600), RemoteEmitter, 'RemoteDiscover')
+            self.__runner.start()
+        except SerialException as exg:
+            raise RCException(exg.args[1])
 
     def allow(self):
         self.__runner.allow()

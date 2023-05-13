@@ -231,8 +231,6 @@ class ControllerData(__RedisData):
         __data['ready'] = 0
         __goal = False
 
-        __safe = CFG.robot_conf_data()['SAFE_DIST']
-
         __max = 40
         __min = 5
 

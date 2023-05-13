@@ -63,15 +63,23 @@ class Agent:
     def __init__(self) -> None:
         self.__config_file_observer: ConfigFileObserver = ConfigFileObserver('data/config.conf', CFObserverMode.STAMP)
 
-        self.__logger = Logger('Agent', self.__LOGGER_DATA["SEVERITY"], Color.GREEN)
+        self.__logger = Logger('Agent     ', self.__LOGGER_DATA["SEVERITY"], Color.GREEN)
         self.__logger.set_logfile(self.__LOGGER_DATA["ALOGFILE"])
 
         self.__controller = Controller()
 
-    def begin(self) -> None:
-        self.__logger.log('Initializing agent', Color.YELLOW)
-        self.__controller.begin()
-        self.__logger.log('Agent initialized', Color.YELLOW)
+    def begin(self) -> bool:
+        self.__logger.log('Initializing', Color.YELLOW)
+
+        try:
+            self.__controller.begin()
+        except ControllerException as cexc:
+            self.__logger.log(f'Controller raised an exception: {cexc.args[0]}\n', Color.RED, newline=True)
+            return False
+
+        self.__logger.log('Initialized', Color.YELLOW)
+
+        return True
 
     def loop(self, alt=None) -> None:
         while not self.__controller.algorithm():
@@ -84,11 +92,11 @@ class Agent:
                 alt()
 
     def stop(self) -> None:
-        self.__logger.log('Arresting agent', Color.YELLOW, newline=True)
+        self.__logger.log('Arresting', Color.YELLOW)
 
         self.__controller.stop()
 
-        self.__logger.log('Agent arrested', Color.YELLOW, newline=True)
+        self.__logger.log('Arrested', Color.YELLOW)
 
 
 if __name__ == '__main__':
@@ -97,8 +105,8 @@ if __name__ == '__main__':
     try:
         agent = Agent()
 
-        agent.begin()
-        agent.loop()
+        if agent.begin():
+            agent.loop()
 
     except KeyboardInterrupt:
         pass
