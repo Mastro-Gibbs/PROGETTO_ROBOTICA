@@ -127,6 +127,13 @@ class Controller:
         self.__logger.log(f'Arresting', Color.YELLOW)
 
         if self.__status:
+            self.__machine.state = State.STOPPED
+            self.__machine.position = Position.END if self.__goal_reached() else self.__machine.position
+
+            self.__logger.log(f'Machine state:        {self.__machine.state}', Color.GRAY)
+            self.__logger.log(f'Machine position:     {self.__machine.position}', Color.GRAY)
+            self.__logger.log(f'VirtualBody command:  Command.STOP', Color.GRAY)
+
             if self.__maze.analysis():
                 self.__logger.log(f'Maze analysis:        done', Color.GRAY)
 
@@ -183,7 +190,6 @@ class Controller:
     # ending animation if maze were solved
     def __ending_animation(self) -> None:
         if self.__goal_reached():
-            self.__logger.log('Maze finished', Color.GREEN, newline=True, italic=True, blink=True)
             self.__new_led(status=True, emit=True)
 
             for i in range(0, 5, 1):
