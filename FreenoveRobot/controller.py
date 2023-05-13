@@ -156,9 +156,6 @@ class Controller:
 
     # ************************************* MISC SECTION ************************************** #
     #                                                                                           #
-    #                                                                                           #
-    #                                                                                           #
-    # ***************************************************************************************** #
 
     # done
     # Updater controller configuration
@@ -253,16 +250,7 @@ class Controller:
 
 
     # ************************************* REDIS SECTION ************************************* #
-    #                                       DONE                                                #
-    # @function                                                                                 #
-    # '__on_message' -> redis builtin thread body/scope                                         #
-    #                 read value from redis, set up instance vars.                              #
     #                                                                                           #
-    # '__send_command' -> write on redis db.                                                    #
-    #                 @param _cmd instance of RCMD: depending on param type send key and publish#
-    #                 @param _val -> value to send                                              #
-    #                                                                                           #
-    # ***************************************************************************************** #
 
     # DONE
     # callback to rc controller
@@ -351,10 +339,6 @@ class Controller:
 
     # *************************************** RC SECTION ************************************** #
     #                                         DONE                                              #
-    #                                                                                           #
-    #                                                                                           #
-    #                                                                                           #
-    # ***************************************************************************************** #
 
     # DONE
     def wakeup_remote(self, frlb: FRLB) -> None:
@@ -377,13 +361,6 @@ class Controller:
 
     # ************************************* PURE ALGORITHM SECTION ************************************* #
     #                                                                                                    #
-    # Tree step.                                                                                         #
-    # On each loop invoke algorithm.                                                                     #
-    # Algorithm will call 'update_tree'. This method will update tree size (add nodes).                  #
-    # Method 'control_policy' will make choices.                                                         #
-    # '__verify_gate' check if there is a gate.                                                          #
-    #                                                                                                    #
-    # ************************************************************************************************** #
 
     # TODO
     # Algorithm entry
@@ -717,13 +694,6 @@ class Controller:
 
     # ************************************* ROTATION SECTION ************************************* #
     #                                                                                              #
-    # @method __remote_rotate(args) wakeup remote, turn on leds, allow remote controller           #
-    # @args   (rotation_velocity, target)                                                          #
-    #                                                                                              #
-    # @method __mpu_rotate(args)    rotate with MPU6050 sensor, not stable                         #
-    # @args   (rotation_velocity, target)                                                          #
-    #                                                                                              #
-    # ******************************************************************************************** #
 
     # DONE
     def __remote_rotate(self, args: tuple):

@@ -112,13 +112,13 @@ class Node:
 
     @property
     def action_str(self):
-        if self.__action == Compass.NORD:
+        if self.__action == Compass.NORTH:
             return "N"
-        if self.__action == Compass.OVEST:
+        if self.__action == Compass.WEST:
             return "O"
-        if self.__action == Compass.EST:
+        if self.__action == Compass.EAST:
             return "E"
-        if self.__action == Compass.SUD:
+        if self.__action == Compass.SOUTH:
             return "S"
 
     @property
@@ -203,7 +203,7 @@ class Tree:
         key: is a node
         value: a dict of his children where each child has, as value, a string of three values:
             1) Left/Mid/Right
-            2) NORD/EST/OVEST/SUD
+            2) NORTH/EAST/WEST/SOUTH
             3) EXPLORED/OBSERVED/DEAD_END/FINAL
         """
         if self.__root is None:

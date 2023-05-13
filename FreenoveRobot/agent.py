@@ -109,7 +109,7 @@ if __name__ == '__main__':
             agent.loop()
 
     except KeyboardInterrupt:
-        pass
+        print()
 
     except ControllerException as ce:
         print(ce.args[0])

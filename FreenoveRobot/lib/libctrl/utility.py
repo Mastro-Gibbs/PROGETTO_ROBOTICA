@@ -37,32 +37,32 @@ class make:
 
 
 class Compass(float, Enum):
-    NORD = 0.0
-    SUD = 180.0
-    EST = 90.0
-    OVEST = -90.0
+    NORTH = 0.0
+    SOUTH = 180.0
+    EAST  = 90.0
+    WEST  = -90.0
 
     @staticmethod
     def string_to_compass(cmp: str):
-        if 'NORD' == cmp or 'N' == cmp:
-            return Compass.NORD
-        elif 'SUD' == cmp or 'S' == cmp:
-            return Compass.SUD
-        elif 'EST' == cmp or 'E' == cmp:
-            return Compass.EST
-        elif 'OVEST' == cmp or 'O' == cmp:
-            return Compass.OVEST
+        if 'NORTH' == cmp or 'N' == cmp:
+            return Compass.NORTH
+        elif 'SOUTH' == cmp or 'S' == cmp:
+            return Compass.SOUTH
+        elif 'EAST' == cmp or 'E' == cmp:
+            return Compass.EAST
+        elif 'WEST' == cmp or 'W' == cmp:
+            return Compass.WEST
 
     @staticmethod
     def compass_to_string(cmp):
-        if cmp == Compass.NORD:
-            return "NORD"
-        if cmp == Compass.OVEST:
-            return "OVEST"
-        if cmp == Compass.EST:
-            return "EST"
-        if cmp == Compass.SUD:
-            return "SUD"
+        if cmp == Compass.NORTH:
+            return "NORTH"
+        if cmp == Compass.WEST:
+            return "WEST"
+        if cmp == Compass.EAST:
+            return "EAST"
+        if cmp == Compass.SOUTH:
+            return "SOUTH"
 
     @staticmethod
     def compass_list_to_string_comma_sep(compass_list):
@@ -76,14 +76,14 @@ class Compass(float, Enum):
     def compass_list_to_concat_string(compass_list: list) -> str:
         compass_string = ""
         for cmp in compass_list:
-            if cmp == Compass.NORD:
+            if cmp == Compass.NORTH:
                 compass_string += "N"
-            if cmp == Compass.SUD:
+            if cmp == Compass.SOUTH:
                 compass_string += "S"
-            if cmp == Compass.EST:
+            if cmp == Compass.EAST:
                 compass_string += "E"
-            if cmp == Compass.OVEST:
-                compass_string += "O"
+            if cmp == Compass.WEST:
+                compass_string += "W"
         return compass_string
 
 
@@ -128,13 +128,13 @@ def detect_target(begin: float) -> Compass:
     """
 
     if -45.0 < begin <= 45.0:
-        target = Compass.NORD
+        target = Compass.NORTH
     elif 45.0 < begin <= 135.0:
-        target = Compass.EST
+        target = Compass.EAST
     elif 135.0 < begin <= 180 or -180 <= begin <= -135.0:
-        target = Compass.SUD
+        target = Compass.SOUTH
     else:
-        target = Compass.OVEST
+        target = Compass.WEST
 
     return target
 
@@ -154,25 +154,25 @@ def f_r_l_b_to_compass(curr_ori: float) -> dict:
     value: Est or Sud or Nord or West
     """
     if detect_target(curr_ori) == 0.0:  # EAST front
-        return {FRLB.FRONT: Compass.NORD, FRLB.RIGHT: Compass.EST, FRLB.LEFT: Compass.OVEST, FRLB.BACK: Compass.SUD}
-    elif detect_target(curr_ori) == 90.0:  # NORD front
-        return {FRLB.FRONT: Compass.EST, FRLB.RIGHT: Compass.SUD, FRLB.LEFT: Compass.NORD, FRLB.BACK: Compass.OVEST}
+        return {FRLB.FRONT: Compass.NORTH, FRLB.RIGHT: Compass.EAST, FRLB.LEFT: Compass.WEST, FRLB.BACK: Compass.SOUTH}
+    elif detect_target(curr_ori) == 90.0:  # NORTH front
+        return {FRLB.FRONT: Compass.EAST, FRLB.RIGHT: Compass.SOUTH, FRLB.LEFT: Compass.NORTH, FRLB.BACK: Compass.WEST}
     elif detect_target(curr_ori) == 180.0:  # WEST front
-        return {FRLB.FRONT: Compass.SUD, FRLB.RIGHT: Compass.OVEST, FRLB.LEFT: Compass.EST, FRLB.BACK: Compass.NORD}
-    else:  # SUD front
-        return {FRLB.FRONT: Compass.OVEST, FRLB.RIGHT: Compass.NORD, FRLB.LEFT: Compass.SUD, FRLB.BACK: Compass.EST}
+        return {FRLB.FRONT: Compass.SOUTH, FRLB.RIGHT: Compass.WEST, FRLB.LEFT: Compass.EAST, FRLB.BACK: Compass.NORTH}
+    else:  # SOUTH front
+        return {FRLB.FRONT: Compass.WEST, FRLB.RIGHT: Compass.NORTH, FRLB.LEFT: Compass.SOUTH, FRLB.BACK: Compass.EAST}
 
 
 def negate_compass(compass: float) -> Compass:
     """ Given a compass value it returns the negate value """
-    if compass == Compass.NORD:
-        return Compass.SUD
-    elif compass == Compass.SUD:
-        return Compass.NORD
-    elif compass == Compass.EST:
-        return Compass.OVEST
-    elif compass == Compass.OVEST:
-        return Compass.EST
+    if compass == Compass.NORTH:
+        return Compass.SOUTH
+    elif compass == Compass.SOUTH:
+        return Compass.NORTH
+    elif compass == Compass.EAST:
+        return Compass.WEST
+    elif compass == Compass.WEST:
+        return Compass.EAST
 
 
 class Severity(Enum):
