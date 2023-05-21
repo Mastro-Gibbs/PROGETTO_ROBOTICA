@@ -25,6 +25,18 @@ class Infrared:
         if not self.__discover.is_alive():
             self.__discover.start()
 
+    def __detect(self):
+        self.__left_status = False
+        self.__mid_status = False
+        self.__right_status = False
+
+        while True:
+            self.__left_status = True if self.__left_status else self.__left
+            self.__mid_status = True if self.__mid_status else self.__mid
+            self.__right_status = True if self.__right_status else self.__right
+
+            sleep(0.05)
+
     @property
     def __left(self) -> bool:
         return bool(GPIO.input(RC.IR_LEFT))
@@ -41,15 +53,4 @@ class Infrared:
     def status(self) -> tuple:
         return int(self.__left_status), int(self.__mid_status), int(self.__right_status)
 
-    def __detect(self):
-        self.__left_status = False
-        self.__mid_status = False
-        self.__right_status = False
-
-        while True:
-            self.__left_status = True if self.__left_status else self.__left
-            self.__mid_status = True if self.__mid_status else self.__mid
-            self.__right_status = True if self.__right_status else self.__right
-
-            sleep(0.05)
 

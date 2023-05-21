@@ -127,7 +127,7 @@ class Controller:
         self.__logger.log(f'Arresting', Color.YELLOW)
 
         if self.__status:
-            self.__machine.state = State.STOPPED
+            self.__machine.state    = State.STOPPED
             self.__machine.position = Position.END if self.__goal_reached() else self.__machine.position
 
             self.__logger.log(f'Machine state:        {self.__machine.state}', Color.GRAY)
