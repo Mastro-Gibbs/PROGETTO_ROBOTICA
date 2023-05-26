@@ -24,7 +24,7 @@ class VirtualBody:
     _LOGGER_DATA = CFG.logger_data()
 
     def __init__(self) -> None:
-        self.__logger = Logger('VirtualBody', self._LOGGER_DATA["SEVERITY"], Color.YELLOW)
+        self.__logger = Logger('VirtualBody  ', self._LOGGER_DATA["SEVERITY"], Color.YELLOW)
         self.__logger.set_logfile(self._LOGGER_DATA["BLOGFILE"])
 
         # physical_body instance
@@ -106,7 +106,7 @@ class VirtualBody:
         return success
 
     def begin(self, callback) -> bool:
-        self.__logger.log('Initializing VirtualBody', Color.YELLOW)
+        self.__logger.log('Initializing', Color.YELLOW)
 
         try:
             self.__body.begin(callback, self.__logger)
@@ -136,7 +136,7 @@ class VirtualBody:
                     self.__ultrasonic_thread.is_alive() and self.__redis_runner.is_alive():
                 self.__redis.set(BodyData.Key.SELF, json.dumps({'virtB': 1}, indent=0))
                 self.__redis.publish(BodyData.Topic.Body, BodyData.Key.SELF)
-                self.__logger.log('VirtualBody initialized\n', Color.YELLOW)
+                self.__logger.log('Initialized', Color.YELLOW)
                 return True
             else:
                 msg = self.__yaw_thread.bury()
@@ -146,10 +146,10 @@ class VirtualBody:
                     self.__ultrasonic_thread.is_alive() and self.__redis_runner.is_alive():
                 self.__redis.set(BodyData.Key.SELF, json.dumps({'virtB': 1}, indent=0))
                 self.__redis.publish(BodyData.Topic.Body, BodyData.Key.SELF)
-                self.__logger.log('VirtualBody initialized\n', Color.YELLOW)
+                self.__logger.log('Initialized', Color.YELLOW)
                 return True
 
-        self.__logger.log('VirtualBody initializing failed', Color.GRAY)
+        self.__logger.log('Initializing failed', Color.GRAY)
 
         self.__redis_runner.stop()
         self.__redis.close()
@@ -168,7 +168,7 @@ class VirtualBody:
             VirtualBody.__dummy_function()
 
     def stop(self) -> None:
-        self.__logger.log(f'Arresting VirtualBody\n', Color.YELLOW, newline=True)
+        self.__logger.log(f'Arresting', Color.YELLOW, newline=True)
         self.__body.virtual_destructor(self.__logger)
         self.__logger.reset_context()
 
@@ -186,7 +186,7 @@ class VirtualBody:
         msg = self.__ultrasonic_thread.bury()
         self.__logger.log(f'{msg}', Color.GRAY)
 
-        self.__logger.log(f'VirtualBody arrested\n', Color.YELLOW, newline=True)
+        self.__logger.log(f'Arrested', Color.YELLOW, newline=True)
 
     def __on_message(self, msg):
         _key = msg['data']

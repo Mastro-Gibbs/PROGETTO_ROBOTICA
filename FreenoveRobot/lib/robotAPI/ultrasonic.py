@@ -46,5 +46,19 @@ class Ultrasonic:
         distance_cm = sorted(distance_cm)
 
         return int(distance_cm[2])
+
+    @property
+    def fast_distance(self):
+        self.send_trigger_pulse()
+
+        self.wait_for_echo(True, 10000)
+        start = time()
+        self.wait_for_echo(False, 10000)
+
+        finish = time()
+
+        pulse_len = finish - start
+
+        return pulse_len / 0.000058
                 
     

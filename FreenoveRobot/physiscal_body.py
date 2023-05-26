@@ -50,7 +50,7 @@ class PhysicalBody:
             IT MUST BE INVOKED.
         """
         logger.switch_context('PhysicalBody')
-        logger.log('Arresting sensors', LoggerColor.YELLOW)
+        logger.log('Arresting', LoggerColor.YELLOW)
 
         msg = self.__wizard.bury()
         logger.log(f'{msg}', LoggerColor.GRAY)
@@ -68,7 +68,7 @@ class PhysicalBody:
 
         self.__strip.colorWipe(Color(0, 0, 0), 10)
 
-        logger.log('PhysicalBody arrested\n', LoggerColor.YELLOW)
+        logger.log('Arrested', LoggerColor.YELLOW)
 
     def begin(self, button_callback, logger: Logger) -> None:
         """
@@ -80,7 +80,7 @@ class PhysicalBody:
             Initialize sensors and actuators instances.
         """
         logger.switch_context('PhysicalBody')
-        logger.log('Initializing sensors', LoggerColor.YELLOW)
+        logger.log('Initializing', LoggerColor.YELLOW)
 
         if BodyData.Yaw.is_enabled():
             logger.log('Initializing MPU6050', LoggerColor.GRAY)
@@ -128,7 +128,7 @@ class PhysicalBody:
 
         self.__infrared.begin()
 
-        logger.log('Sensors successfully initialized\n', LoggerColor.YELLOW, newline=True)
+        logger.log('Initialized', LoggerColor.YELLOW, newline=True)
 
     def set_tuple_motor_model(self, data):
         rum, lum, rlm, llm = data
@@ -144,9 +144,9 @@ class PhysicalBody:
 
             @return tuple: (int, int, int) -> (left, front, right)
         """
-        _left = self.__left_sensor.distance
-        _front = self.__front_sensor.distance
-        _right = self.__right_sensor.distance
+        _left = self.__left_sensor.fast_distance
+        _front = self.__front_sensor.fast_distance
+        _right = self.__right_sensor.fast_distance
 
         return _left, _front, _right
 
