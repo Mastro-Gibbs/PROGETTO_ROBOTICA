@@ -112,13 +112,13 @@ class Node:
 
     @property
     def action_str(self):
-        if self.__action == Compass.NORD:
+        if self.__action == Compass.NORTH:
             return "N"
-        if self.__action == Compass.OVEST:
+        if self.__action == Compass.WEST:
             return "O"
-        if self.__action == Compass.EST:
+        if self.__action == Compass.EAST:
             return "E"
-        if self.__action == Compass.SUD:
+        if self.__action == Compass.SOUTH:
             return "S"
 
     @property

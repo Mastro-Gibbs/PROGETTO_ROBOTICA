@@ -1,4 +1,4 @@
-from tools.utility import Compass
+from lib.libctrl.utility import Compass
 from enum import Enum
 
 """
@@ -20,13 +20,20 @@ class DIRECTION(Enum):
     RIGHT = 3
 
 
+class Type(Enum):
+    OBSERVED = "OBSERVED"
+    EXPLORED = "EXPLORED"
+    DEAD_END = "DEAD_END"
+    FINAL = "FINAL"
+
+
 """
 The class Type is used to specify a property of a Node
 OBSERVED:
 1) A node is OBSERVED when it is first added and not explored yet.
 EXPLORED:
 1) A node is EXPLORED when it is first visited.
-2) It can have DEAD END children but at least one must be EXPLORED.
+2) It can have DEAD END children but at least one must be EXPLORED namely visited.
 DEAD END:
 1) A node is dead end if it has not children => it is a leaf.
 2) If all his children are dead end.
@@ -34,13 +41,6 @@ FINAL:
 1) Last node at the end of the maze.
 
 """
-
-
-class Type(Enum):
-    OBSERVED = "OBSERVED"
-    EXPLORED = "EXPLORED"
-    DEAD_END = "DEAD_END"
-    FINAL = "FINAL"
 
 
 class Node:
@@ -203,7 +203,7 @@ class Tree:
         key: is a node
         value: a dict of his children where each child has, as value, a string of three values:
             1) Left/Mid/Right
-            2) NORD/EST/OVEST/SUD
+            2) NORTH/EAST/WEST/SOUTH
             3) EXPLORED/OBSERVED/DEAD_END/FINAL
         """
         if self.__root is None:

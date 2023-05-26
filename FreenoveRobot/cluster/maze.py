@@ -19,7 +19,7 @@ class Maze:
         __status: bool = False
 
         __priority = __MACHINE_CONF__["PRIORITY_LIST"] \
-            if __MACHINE_CONF__["AUTO_PRIORITY_LIST"] != 0 \
+            if __MACHINE_CONF__["AUTO_PRIORITY_LIST"] == 0 \
             else Analyzer.analyze('data/data_analysis.conf')
 
         def __init__(self, outer_instance):
