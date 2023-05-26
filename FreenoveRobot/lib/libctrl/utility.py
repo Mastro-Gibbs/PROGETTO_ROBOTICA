@@ -1,6 +1,7 @@
 import os
 import datetime
 import configparser
+from io import StringIO
 
 from sys import stdout
 from enum import Enum
@@ -236,7 +237,7 @@ class Logger:
                 time = "[" + str(time.hour) + ":" + str(time.minute) + ":" + str(time.second) + "]"
 
                 if noheader:
-                    data_to_write = time + "[NOHEADER] -> " + msg + "\n"
+                    data_to_write = msg + "\n"
                 else:
                     data_to_write = time + " [" + self.__class_name + "] -> " + msg + "\n"
 
@@ -288,6 +289,40 @@ class Logger:
             return True
 
         return False
+
+
+class StringBuilder:
+    """ C++ style StringStream class. """
+    _file_str = None
+
+    def __init__(self):
+        """Constructor"""
+        self._file_str = StringIO()
+
+    def concat(self, string: str, end: str = ''):
+        """Build string (append param: string)
+        #PARAMS: -> string: str. Entity to append.
+                 -> end: str. End char or string.
+
+        #WARNING: to set '\n' must pass it with 'end' param.
+        """
+        self._file_str.write(string)
+        self._file_str.write(end)
+
+    def erase(self):
+        """#WARNING: Must be called to destroy previous built string
+
+        Erase current StringBuilder buffer.
+        """
+        del self._file_str
+        self._file_str = StringIO()
+
+    @property
+    def string(self) -> str:
+        return self._file_str.getvalue()
+
+    def __str__(self):
+        return self._file_str.getvalue()
 
 
 class CFG:

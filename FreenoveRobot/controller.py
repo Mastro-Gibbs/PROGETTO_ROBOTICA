@@ -11,7 +11,7 @@ from lib.libctrl.utility import f_r_l_b_to_compass
 from lib.libctrl.utility import negate_compass, detect_target
 from lib.libctrl.utility import Logger, CFG
 from lib.libctrl.utility import round_v, normalize_angle
-from lib.libctrl.utility import make, FRLB
+from lib.libctrl.utility import make, FRLB, StringBuilder
 
 from lib.libctrl.tree import Node, Type, DIRECTION
 
@@ -52,6 +52,9 @@ class Controller:
 
         self.__logger = Logger('Controller', self._LOGGER_DATA["SEVERITY"], Color.CYAN)
         self.__logger.set_logfile(self._LOGGER_DATA["CLOGFILE"])
+
+        self.__log_str: str     = str()
+        self.__log_str_old: str = str()
 
         try:
             self.__redis_message_handler = None
@@ -238,6 +241,8 @@ class Controller:
                 if time.time() - start_time >= self.__machine.junction_time:
                     time_expired = True
 
+            """time.sleep(self.__machine.junction_time)"""
+
             self.__execute_motor(Command.STOP)
             self.__machine.state = State.SENSING
             self.__machine.position = Position.JUNCTION
@@ -374,29 +379,36 @@ class Controller:
         if self.__virt_body_ready():
             self._INIT_TIME = time.time()
 
-            self.__logger.log(f'New algorithm iteration -> #{self._ITERATION}', Color.GREEN, newline=True)
-            self._ITERATION += 1
-
             # THINK
-            actions, observed_actions = self.__control_policy()
+            actions, observed_actions, cp_log = self.__control_policy()
             selected_action = self.__decision_making_policy(observed_actions)
             command, action = selected_action
 
-            self.__logger.log(f'Current left:         {ControllerData.Machine.left()}', Color.GRAY)
-            self.__logger.log(f'Current front:        {ControllerData.Machine.front()}', Color.GRAY)
-            self.__logger.log(f'Current right:        {ControllerData.Machine.right()}', Color.GRAY)
-            self.__logger.log(f'Current orientation:  {self.__rotation_factory.value}', Color.GRAY)
-            self.__logger.log(f'Goal:                 {ControllerData.Machine.goal()}, IRL: {ControllerData.Machine.left_ir()}, IRM: {ControllerData.Machine.mid_ir()}, IRR: {ControllerData.Machine.right_ir()}', Color.GRAY)
-            self.__logger.log(f'Detected actions:     {action}', Color.GRAY)
-            self.__logger.log(f'Detected commands:    {observed_actions}', Color.GRAY)
-            self.__logger.log(f'Selected command:     {selected_action}', Color.GRAY)
-            self.__logger.log(f'Machine state:        {self.__machine.state}', Color.GRAY)
-            self.__logger.log(f'Machine mode:         {self.__machine.mode}', Color.GRAY)
-            self.__logger.log(f'Machine position:     {self.__machine.position}', Color.GRAY)
-            self.__logger.log(f'VirtualBody command:  {command}', Color.GRAY)
+            self.__log_str += f'Current left:         {ControllerData.Machine.left()}\n'
+            self.__log_str += f'Current front:        {ControllerData.Machine.front()}\n'
+            self.__log_str += f'Current right:        {ControllerData.Machine.right()}\n'
+            self.__log_str += f'Current orientation:  {self.__rotation_factory.value}\n'
+            self.__log_str += f'Goal:                 {ControllerData.Machine.goal()}, IRL: {ControllerData.Machine.left_ir()}, IRM: {ControllerData.Machine.mid_ir()}, IRR: {ControllerData.Machine.right_ir()}\n'
+            self.__log_str += f'Detected actions:     {action}\n'
+            self.__log_str += f'Detected commands:    {observed_actions}\n'
+            self.__log_str += f'Selected command:     {selected_action}\n'
+            self.__log_str += f'Machine state:        {self.__machine.state}\n'
+            self.__log_str += f'Machine mode:         {self.__machine.mode}\n'
+            self.__log_str += f'Machine position:     {self.__machine.position}\n'
+            self.__log_str += f'VirtualBody command:  {command}\n'
+            self.__log_str += f'{cp_log}'
 
             # tree update
-            self.__update_tree(actions, action)
+            tree_log: str = self.__update_tree(actions, action)
+            self.__log_str += f'{tree_log}'
+
+            if self.__log_str != self.__log_str_old:
+                self.__logger.log(f'Algorithm iteration -> #{self._ITERATION}\n')
+                self.__logger.log(self.__log_str, Color.GRAY, noheader=True)
+                self.__log_str_old = self.__log_str
+
+            self._ITERATION += 1
+            self.__log_str = ''
 
             # ACT
             self.__do_action(selected_action)
@@ -411,18 +423,20 @@ class Controller:
 
         else:
             _curr_time = time.time()
-            self.__logger.log('Algorithm locked, waiting for VirtualBody..' + Color.WHITE.value +
-                              f' (time spent: {round(float(_curr_time - self._INIT_TIME), 1)}s)' +
-                              STDOUTDecor.DEFAULT.value, Color.RED, rewritable=True)
+            print('\rAlgorithm locked, waiting for VirtualBody..' + Color.WHITE.value +
+                  f' (time spent: {round(float(_curr_time - self._INIT_TIME), 1)}s)' +
+                  STDOUTDecor.DEFAULT.value, end='\r')
             time.sleep(0.1)
 
             return False
 
     # DONE
     # Tree updater
-    def __update_tree(self, actions, action_chosen) -> None:
+    def __update_tree(self, actions, action_chosen) -> str:
+        log_str: str = str()
+
         if not self.__machine.state == State.SENSING:
-            return
+            return log_str
 
         if self.__machine.mode == Mode.EXPLORING:
             nodes: list = list()
@@ -448,7 +462,7 @@ class Controller:
                     nodes.append('New Right')
 
             if len(nodes) != 0:
-                self.__logger.log(f'Added new nodes:      {nodes}', Color.GRAY)
+                log_str = f'Added new nodes:      {nodes}\n'
 
             self.__maze.tree.current.set_type(Type.EXPLORED)
 
@@ -467,7 +481,7 @@ class Controller:
             if self.__maze.tree.current.is_leaf:
                 self.__maze.tree.current.set_type(Type.DEAD_END)
                 self.__maze.incr_node_count()
-                self.__logger.log(f'Dead end node:        {self.__maze.tree.current}', Color.GREEN)
+                log_str = f'Dead end node:        {self.__maze.tree.current}\n'
 
                 cur = self.__maze.tree.current.parent
 
@@ -480,12 +494,12 @@ class Controller:
                      or self.__maze.tree.current.mid is None):
                 self.__maze.tree.current.set_type(Type.DEAD_END)
                 self.__maze.incr_dead_end()
-                self.__logger.log(f'Dead end nodes chain: {self.__maze.tree.current}', Color.GREEN)
+                log_str = f'Dead end nodes chain: {self.__maze.tree.current}\n'
 
                 cur = self.__maze.tree.current.parent
 
             else:
-                self.__logger.log("No leaf or DE children", Color.YELLOW, italic=True)
+                log_str = "No leaf or DE children\n"
 
                 if self.__maze.tree.current.has_left and self.__maze.tree.current.left.action == action_chosen:
                     cur = self.__maze.tree.current.left
@@ -494,10 +508,12 @@ class Controller:
                 elif self.__maze.tree.current.has_right and self.__maze.tree.current.right.action == action_chosen:
                     cur = self.__maze.tree.current.right
                 else:
-                    self.__logger.log("Tree exception raised", Color.DARKRED, True, True)
+                    log_str = "Tree exception raised\n"
                     raise ControllerException('Tree exception raised')
 
             self.__maze.tree.set_current(cur)
+
+        return log_str
 
     # DONE
     # Action maker
@@ -513,39 +529,36 @@ class Controller:
 
         actions = list()
         com_actions = list(list())
-
-        left = ControllerData.Machine.left()
-        front = ControllerData.Machine.front()
-        right = ControllerData.Machine.right()
-        ori = self.__rotation_factory.value
+        log_str: str = str()
 
         if self.__machine.state == State.STARTING and self.__machine.position == Position.UNKNOWN:
-            if front is None:
+            if ControllerData.Machine.front() is None:
                 # Ho il muro dietro (dato che nei vincoli non posso mettere il robot
                 # in una giunzione dove ci sono 4 direzioni/strade libere)
-                if (left is not None and right is not None) or (left is None and right is None):
+                if (ControllerData.Machine.left() is not None and ControllerData.Machine.right() is not None) or (
+                        ControllerData.Machine.left() is None and ControllerData.Machine.right() is None):
                     self.__machine.state = State.STARTING
                     self.__machine.position = Position.INITIAL
                     com_actions.insert(0, [Command.START, None])
                 else:
                     # Muro a sinistra
-                    if left is not None:
-                        action = detect_target(detect_target(ori) - 90)
+                    if ControllerData.Machine.left() is not None:
+                        action = detect_target(detect_target(self.__rotation_factory.value) - 90)
                         com_actions.insert(0, [Command.ROTATE, action])
 
                     # Muro a destra
-                    elif right is not None:
-                        action = detect_target(detect_target(ori) + 90)
+                    elif ControllerData.Machine.right() is not None:
+                        action = detect_target(detect_target(self.__rotation_factory.value) + 90)
                         com_actions.insert(0, [Command.ROTATE, action])
 
             # Faccio 180° per avere il muro dietro
-            elif front is not None:
-                if left is None or right is None:
-                    action = negate_compass(detect_target(ori))
+            elif ControllerData.Machine.front() is not None:
+                if ControllerData.Machine.left() is None or ControllerData.Machine.right() is None:
+                    action = negate_compass(detect_target(self.__rotation_factory.value))
                     com_actions.insert(0, [Command.ROTATE, action])
 
-                elif left is not None and right is not None:
-                    action = negate_compass(detect_target(ori))
+                elif ControllerData.Machine.left() is not None and ControllerData.Machine.right() is not None:
+                    action = negate_compass(detect_target(self.__rotation_factory.value))
                     com_actions.insert(0, [Command.ROTATE, action])
                     self.attempts_to_unstuck = 1
 
@@ -553,26 +566,26 @@ class Controller:
 
         elif self.__machine.state == State.STARTING and self.__machine.position == Position.INITIAL:
 
-            if front is None:
-                if left is not None and right is not None:
+            if ControllerData.Machine.front() is None:
+                if ControllerData.Machine.left() is not None and ControllerData.Machine.right() is not None:
                     self.__machine.state = State.SENSING
                     self.__machine.position = Position.CORRIDOR
                     self.attempts_to_unstuck = 0
 
-                elif left is None or right is None:
+                elif ControllerData.Machine.left() is None or ControllerData.Machine.right() is None:
                     self.__machine.state = State.SENSING
                     self.__machine.position = Position.JUNCTION
                     self.attempts_to_unstuck = 0
 
-            elif front is not None:
-                if left is None or right is None:
+            elif ControllerData.Machine.front() is not None:
+                if ControllerData.Machine.left() is None or ControllerData.Machine.right() is None:
                     self.__machine.state = State.SENSING
                     self.__machine.position = Position.CORRIDOR
                     self.attempts_to_unstuck = 0
 
-                elif left is not None and right is not None:
+                elif ControllerData.Machine.left() is not None and ControllerData.Machine.right() is not None:
                     if self.attempts_to_unstuck == 1:
-                        self.__logger.log("Robot in stuck. Cannot solve the maze.", Color.RED, True, True)
+                        log_str = "Robot in stuck. Cannot solve the maze.\n"
                         raise ControllerException("Robot in stuck. Cannot solve the maze.")
 
             com_actions.insert(0, [Command.START, None])
@@ -585,22 +598,22 @@ class Controller:
 
             else:
                 actions.insert(0, self.__maze.performed_commands[len(self.__maze.performed_commands) - 1])
-                com_actions.insert(0, [Command.RUN, detect_target(ori)])
+                com_actions.insert(0, [Command.RUN, detect_target(self.__rotation_factory.value)])
 
         elif self.__machine.state == State.STOPPED or self.__machine.state == State.SENSING:
             self.__machine.state = State.SENSING
 
             if self.__machine.mode == Mode.EXPLORING:
-                if front is None or front > self.__machine.front_safe_distance:
-                    action = f_r_l_b_to_compass(ori)["FRONT"]
+                if ControllerData.Machine.front() is None or ControllerData.Machine.front() > self.__machine.front_safe_distance:
+                    action = f_r_l_b_to_compass(self.__rotation_factory.value)["ControllerData.Machine.front()"]
                     actions.insert(0, action)
                     com_actions.insert(0, [Command.RUN, action])
-                if left is None or left > self.__machine.side_safe_distance:
-                    action = f_r_l_b_to_compass(ori)["LEFT"]
+                if ControllerData.Machine.left() is None or ControllerData.Machine.left() > self.__machine.side_safe_distance:
+                    action = f_r_l_b_to_compass(self.__rotation_factory.value)["ControllerData.Machine.left()"]
                     actions.insert(0, action)
                     com_actions.insert(0, [Command.ROTATE, action])
-                if right is None or right > self.__machine.side_safe_distance:
-                    action = f_r_l_b_to_compass(ori)["RIGHT"]
+                if ControllerData.Machine.right() is None or ControllerData.Machine.right() > self.__machine.side_safe_distance:
+                    action = f_r_l_b_to_compass(self.__rotation_factory.value)["ControllerData.Machine.right()"]
                     actions.insert(0, action)
                     com_actions.insert(0, [Command.ROTATE, action])
 
@@ -612,35 +625,37 @@ class Controller:
                     self.__machine.state = State.SENSING
 
             elif self.__machine.mode == Mode.ESCAPING:
-                if self.__maze.tree.current.left is not None and self.__maze.tree.current.left.type == Type.OBSERVED:
-                    action = self.__maze.tree.current.left.action
+                if self.__maze.tree.current.ControllerData.Machine.left() is not None and self.__maze.tree.current.ControllerData.Machine.left().type == Type.OBSERVED:
+                    action = self.__maze.tree.current.ControllerData.Machine.left().action
                     actions.insert(0, action)
-                    if action == detect_target(ori):
+                    if action == detect_target(self.__rotation_factory.value):
                         com_actions.insert(0, [Command.RUN, action])
                     else:
                         com_actions.insert(0, [Command.ROTATE, action])
                 if self.__maze.tree.current.mid is not None and self.__maze.tree.current.mid.type == Type.OBSERVED:
                     action = self.__maze.tree.current.mid.action
                     actions.insert(0, action)
-                    if action == detect_target(ori):
+                    if action == detect_target(self.__rotation_factory.value):
                         com_actions.insert(0, [Command.RUN, action])
                     else:
                         com_actions.insert(0, [Command.ROTATE, action])
-                if self.__maze.tree.current.right is not None and self.__maze.tree.current.right.type == Type.OBSERVED:
-                    action = self.__maze.tree.current.right.action
+                if self.__maze.tree.current.ControllerData.Machine.right() is not None and self.__maze.tree.current.ControllerData.Machine.right().type == Type.OBSERVED:
+                    action = self.__maze.tree.current.ControllerData.Machine.right().action
                     actions.insert(0, action)
-                    if action == detect_target(ori):
+                    if action == detect_target(self.__rotation_factory.value):
                         com_actions.insert(0, [Command.RUN, action])
                     else:
                         com_actions.insert(0, [Command.ROTATE, action])
 
                 if not actions:
-                    if (self.__maze.tree.current.left is None or self.__maze.tree.current.left.type == Type.DEAD_END) and \
-                            (self.__maze.tree.current.mid is None or self.__maze.tree.current.mid.type == Type.DEAD_END) and \
-                            (self.__maze.tree.current.right is None or self.__maze.tree.current.right.type == Type.DEAD_END) and \
+                    if (
+                            self.__maze.tree.current.ControllerData.Machine.left() is None or self.__maze.tree.current.ControllerData.Machine.left().type == Type.DEAD_END) and \
+                            (
+                                    self.__maze.tree.current.mid is None or self.__maze.tree.current.mid.type == Type.DEAD_END) and \
+                            (
+                                    self.__maze.tree.current.ControllerData.Machine.right() is None or self.__maze.tree.current.ControllerData.Machine.right().type == Type.DEAD_END) and \
                             self.__maze.tree.current.action is None:
-
-                        self.__logger.log("Tree error, robot is stuck", Color.DARKRED, True, True)
+                        log_str = "Tree error, robot is stuck\n"
                         raise ControllerException('Tree error, robot is stuck')
 
                     # Coming back, regressing
@@ -658,22 +673,22 @@ class Controller:
                 self.__machine.mode = Mode.EXPLORING
 
             if self.__machine.position == Position.CORRIDOR:
-                if left is None or right is None:
-                    com_actions.insert(0, [Command.GO_TO_JUNCTION, detect_target(ori)])
-                elif front is None or front > self.__machine.front_safe_distance:
-                    com_actions.insert(0, [Command.RUN, detect_target(ori)])
-                elif front <= self.__machine.front_safe_distance:
+                if ControllerData.Machine.left() is None or ControllerData.Machine.right() is None:
+                    com_actions.insert(0, [Command.GO_TO_JUNCTION, detect_target(self.__rotation_factory.value)])
+                elif ControllerData.Machine.front() is None or ControllerData.Machine.front() > self.__machine.front_safe_distance:
+                    com_actions.insert(0, [Command.RUN, detect_target(self.__rotation_factory.value)])
+                elif ControllerData.Machine.front() <= self.__machine.front_safe_distance:
                     com_actions.insert(0, [Command.STOP, None])
 
             elif self.__machine.position == Position.JUNCTION:
-                if left is not None and right is not None:
+                if ControllerData.Machine.left() is not None and ControllerData.Machine.right() is not None:
                     self.__machine.position = Position.CORRIDOR
-                if front is None or front > self.__machine.front_safe_distance:
-                    com_actions.insert(0, [Command.RUN, detect_target(ori)])
-                elif front <= self.__machine.front_safe_distance:
+                if ControllerData.Machine.front() is None or ControllerData.Machine.front() > self.__machine.front_safe_distance:
+                    com_actions.insert(0, [Command.RUN, detect_target(self.__rotation_factory.value)])
+                elif ControllerData.Machine.front() <= self.__machine.front_safe_distance:
                     com_actions.insert(0, [Command.STOP, None])
 
-        return actions, com_actions
+        return actions, com_actions, log_str
 
     # DONE
     def __decision_making_policy(self, com_actions) -> list:

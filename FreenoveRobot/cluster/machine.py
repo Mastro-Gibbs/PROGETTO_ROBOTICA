@@ -1,6 +1,6 @@
 from lib.libctrl.enums import Position, Mode, State
 from lib.libctrl.utility import CFG
-
+from cluster.analyzer import Analyzer
 
 class Machine:
     __MACHINE_CONF__ = CFG.robot_conf_data()
@@ -17,7 +17,9 @@ class Machine:
 
     __junction_time = __MACHINE_CONF__["JUNCTION_TIME"]
 
-    __priority_list = __MACHINE_CONF__['PRIORITY_LIST']
+    __priority_list = __MACHINE_CONF__["PRIORITY_LIST"] \
+        if __MACHINE_CONF__["AUTO_PRIORITY_LIST"] == 0 \
+        else Analyzer.analyze('data/data_analysis.conf')
 
     @property
     def mode(self):
