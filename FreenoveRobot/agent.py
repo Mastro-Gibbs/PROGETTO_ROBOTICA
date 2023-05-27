@@ -99,6 +99,9 @@ class Agent:
 
         self.__logger.log('Arrested', Color.YELLOW)
 
+    def extern_log(self, msg: str) -> None:
+        self.__logger.log(msg, Color.RED, _stdout=True)
+
     def show_abstract_maze(self) -> None:
         tree: Tree = self.__controller.abstract_tree().tree
         self.__logger.log(f'Abstract Tree: {tree.build_tree_dict()}', Color.GRAY)
@@ -117,7 +120,7 @@ if __name__ == '__main__':
         print()
 
     except ControllerException as ce:
-        print(ce.args[0])
+        agent.extern_log(ce.args[0])
 
     finally:
         if agent:
