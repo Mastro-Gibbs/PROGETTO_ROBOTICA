@@ -5,6 +5,7 @@ from builtins import open as file_observer
 from controller import Controller, ControllerException
 from lib.libctrl.utility import Logger, CFG
 from lib.libctrl.enums import Color
+from lib.libctrl.tree import Tree
 
 from os import stat
 
@@ -98,6 +99,10 @@ class Agent:
 
         self.__logger.log('Arrested', Color.YELLOW)
 
+    def show_abstract_maze(self) -> None:
+        tree: Tree = self.__controller.abstract_tree().tree
+        self.__logger.log(f'Abstract Tree: {tree.build_tree_dict()}', Color.GRAY)
+
 
 if __name__ == '__main__':
     agent = None
@@ -116,4 +121,5 @@ if __name__ == '__main__':
 
     finally:
         if agent:
+            agent.show_abstract_maze()
             agent.stop()

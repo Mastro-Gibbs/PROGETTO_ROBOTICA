@@ -236,12 +236,14 @@ class ControllerData(__RedisData):
 
         @classmethod
         def on_values(cls, data):
-            data = json.loads(data)
+            try:
+                data = json.loads(data)
+                cls.__data.update(data)
 
-            cls.__data.update(data)
-
-            if int(cls.__data['irL']) and int(cls.__data['irM']) and int(cls.__data['irR']):
-                cls.__goal = True
+                if int(cls.__data['irL']) and int(cls.__data['irM']) and int(cls.__data['irR']):
+                    cls.__goal = True
+            except TypeError:
+                pass
 
         @classmethod
         def front(cls):

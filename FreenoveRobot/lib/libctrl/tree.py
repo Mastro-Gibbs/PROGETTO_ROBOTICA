@@ -115,7 +115,7 @@ class Node:
         if self.__action == Compass.NORTH:
             return "N"
         if self.__action == Compass.WEST:
-            return "O"
+            return "W"
         if self.__action == Compass.EAST:
             return "E"
         if self.__action == Compass.SOUTH:
