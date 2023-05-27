@@ -12,32 +12,32 @@ sign = "[" + str(date.year) + "-" + str(date.month) + "-" + str(date.day) + "_" 
 
 
 class Compass(float, Enum):
-    NORD = 90.0
-    SUD = -90.0
-    EST = 0.0
-    OVEST = 180.0
+    NORTH = 90.0
+    SOUTH = -90.0
+    EAST = 0.0
+    WEST = 180.0
 
     @staticmethod
     def string_to_compass(cmp: str):
-        if 'NORD' == cmp or 'N' == cmp:
-            return Compass.NORD
-        elif 'SUD' == cmp or 'S' == cmp:
-            return Compass.SUD
-        elif 'EST' == cmp or 'E' == cmp:
-            return Compass.EST
-        elif 'OVEST' == cmp or 'O' == cmp:
-            return Compass.OVEST
+        if 'NORTH' == cmp or 'N' == cmp:
+            return Compass.NORTH
+        elif 'SOUTH' == cmp or 'S' == cmp:
+            return Compass.SOUTH
+        elif 'EAST' == cmp or 'E' == cmp:
+            return Compass.EAST
+        elif 'WEST' == cmp or 'W' == cmp:
+            return Compass.WEST
 
     @staticmethod
     def compass_to_string(cmp):
-        if cmp == Compass.NORD:
-            return "NORD"
-        if cmp == Compass.OVEST:
-            return "OVEST"
-        if cmp == Compass.EST:
-            return "EST"
-        if cmp == Compass.SUD:
-            return "SUD"
+        if cmp == Compass.NORTH:
+            return "NORTH"
+        if cmp == Compass.WEST:
+            return "WEST"
+        if cmp == Compass.EAST:
+            return "EAST"
+        if cmp == Compass.SOUTH:
+            return "SOUTH"
 
     @staticmethod
     def compass_list_to_string_comma_sep(compass_list):
@@ -51,14 +51,14 @@ class Compass(float, Enum):
     def compass_list_to_concat_string(compass_list: list) -> str:
         compass_string = ""
         for cmp in compass_list:
-            if cmp == Compass.NORD:
+            if cmp == Compass.NORTH:
                 compass_string += "N"
-            if cmp == Compass.SUD:
+            if cmp == Compass.SOUTH:
                 compass_string += "S"
-            if cmp == Compass.EST:
+            if cmp == Compass.EAST:
                 compass_string += "E"
-            if cmp == Compass.OVEST:
-                compass_string += "O"
+            if cmp == Compass.WEST:
+                compass_string += "W"
         return compass_string
 
 
@@ -105,13 +105,13 @@ def detect_target(begin: float) -> Compass | None:
         return None
 
     if -45.0 < begin <= 45.0:
-        target = Compass.EST
+        target = Compass.EAST
     elif 45.0 < begin <= 135.0:
-        target = Compass.NORD
+        target = Compass.NORTH
     elif 135.0 < begin <= 180 or -180 <= begin <= -135.0:
-        target = Compass.OVEST
+        target = Compass.WEST
     else:
-        target = Compass.SUD
+        target = Compass.SOUTH
 
     return target
 
@@ -121,28 +121,28 @@ def f_r_l_b_to_compass(curr_ori: float) -> {}:
     Front Right Left Back to compass.
     It returns a dict according to the robot orientation where:
     key: Front or Right or Left or Back
-    value: Est or Sud or Nord or West
+    value: East or South or North or West
     """
     if detect_target(curr_ori) == 0:  # EAST front
-        return {"FRONT": Compass.EST, "RIGHT": Compass.SUD, "LEFT": Compass.NORD, "BACK": Compass.OVEST}
-    elif detect_target(curr_ori) == 90:  # NORD front
-        return {"FRONT": Compass.NORD, "RIGHT": Compass.EST, "LEFT": Compass.OVEST, "BACK": Compass.SUD}
+        return {"FRONT": Compass.EAST, "RIGHT": Compass.SOUTH, "LEFT": Compass.NORTH, "BACK": Compass.WEST}
+    elif detect_target(curr_ori) == 90:  # NORTH front
+        return {"FRONT": Compass.NORTH, "RIGHT": Compass.EAST, "LEFT": Compass.WEST, "BACK": Compass.SOUTH}
     elif detect_target(curr_ori) == 180:  # WEST front
-        return {"FRONT": Compass.OVEST, "RIGHT": Compass.NORD, "LEFT": Compass.SUD, "BACK": Compass.EST}
-    else:  # SUD front
-        return {"FRONT": Compass.SUD, "RIGHT": Compass.OVEST, "LEFT": Compass.EST, "BACK": Compass.NORD}
+        return {"FRONT": Compass.WEST, "RIGHT": Compass.NORTH, "LEFT": Compass.SOUTH, "BACK": Compass.EAST}
+    else:  # SOUTH front
+        return {"FRONT": Compass.SOUTH, "RIGHT": Compass.WEST, "LEFT": Compass.EAST, "BACK": Compass.NORTH}
 
 
 def negate_compass(compass: float) -> Compass:
     """ Given a compass value it returns the negate value """
-    if compass == Compass.NORD:
-        return Compass.SUD
-    elif compass == Compass.SUD:
-        return Compass.NORD
-    elif compass == Compass.EST:
-        return Compass.OVEST
-    elif compass == Compass.OVEST:
-        return Compass.EST
+    if compass == Compass.NORTH:
+        return Compass.SOUTH
+    elif compass == Compass.SOUTH:
+        return Compass.NORTH
+    elif compass == Compass.EAST:
+        return Compass.WEST
+    elif compass == Compass.WEST:
+        return Compass.EAST
 
 
 class StringBuilder:
@@ -280,7 +280,6 @@ class Logger:
     def is_loggable(severity: str, comparator: str) -> bool:
         if severity == "none":
             return False
-
         if severity == "high":
             return True
         elif severity == "mid" and comparator != "high":
@@ -333,7 +332,7 @@ class CFG:
         file_name = "data_analysis.conf"
         conf_file = path + file_name
 
-        # Verifica se data_analysis.conf esiste altrimenti lo crea
+        # It verifies if data_analysis.conf already exist otherwise creates it
         if os.path.isfile(conf_file):
             print(f"\nFile {file_name} loaded")
             config.read(conf_file)

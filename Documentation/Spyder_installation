@@ -1,0 +1,17 @@
+Spyder
+
+--Linux
+python3 -m venv spyder-env
+source spyder-env/bin/activate
+pip install spyder numpy scipy pandas matplotlib sympy cython
+
+pip install networkx pydot
+
+
+// pydot è deprecato, meglio usare nx.nx_agraph.graphviz_layout
+// Installare i seg applicativi
+sudo apt install python3-dev graphviz graphviz-dev libgraphviz-dev pkg-config
+pip install pygraphviz
+
+
+

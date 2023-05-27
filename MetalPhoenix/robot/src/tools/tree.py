@@ -115,7 +115,7 @@ class Node:
         if self.__action == Compass.NORTH:
             return "N"
         if self.__action == Compass.WEST:
-            return "O"
+            return "W"
         if self.__action == Compass.EAST:
             return "E"
         if self.__action == Compass.SOUTH:
@@ -203,7 +203,7 @@ class Tree:
         key: is a node
         value: a dict of his children where each child has, as value, a string of three values:
             1) Left/Mid/Right
-            2) NORD/EST/OVEST/SUD
+            2) NORTH/EAST/WEST/SUD
             3) EXPLORED/OBSERVED/DEAD_END/FINAL
         """
         if self.__root is None:

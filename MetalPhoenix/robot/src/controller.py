@@ -45,14 +45,6 @@ class Command(Enum):
     BALANCE = 4
 
 
-"""
-ESCAPING
-Tornare indietro quando c'è un dead end. Navigo a ritroso e verifico se i figli del nodo corrente sono nodi OBSERVED 
-o EXPLORED. Nodi OBSERVED hanno priorità più alta ad essere scelti rispetto a quelli EXPLORED. 
-Se non ci sono né OBSERVED né EXPLORED allora il nodo successivo è il parent di quello corrente.
-"""
-
-
 class Controller:
     def __init__(self):
 
@@ -566,7 +558,7 @@ class Controller:
         elif INTELLIGENCE == "high":
             ...
 
-        for direction in self.priority_list:  # [ S, N, O, E ]
+        for direction in self.priority_list:  # [ S, N, W, E ]
             for com_action in com_actions:  # [[Command.ROTATE, Compass.NORD], [...], [...] ]
                 action = com_action[1]
                 if direction == action:
@@ -594,8 +586,8 @@ class Controller:
         elif com_action[0] == Command.STOP:
             if Logger.is_loggable(LOG_SEVERITY, "mid"):
                 self.__class_logger.log(" ** COMMAND STOP ** ", "gray")
-
             self._body.stop()
+
             self._state = State.STOPPED
 
             return True
@@ -642,6 +634,7 @@ class Controller:
             self._body.stop()
             self.rotate_to_final_g(self._rot_speed, com_action[1])
             self._body.stop()
+            time.sleep(0.5)
 
             return True
 
@@ -684,7 +677,7 @@ class Controller:
         self._state, self._position, self._mode = self.store.load()
 
     def rotate_to_final_g(self, vel, final_g):
-        """ Rotate function that rotates the robot until it reaches final_g """
+        """ Rotation function that rotates the robot until it reaches final_g """
         self._body.stop()
 
         init_g = self._body.get_orientation_deg()
@@ -729,13 +722,13 @@ class Controller:
     def __rotate(self, vel, c: Clockwise, degrees):
         """
         Function that given vel, Clockwise and rotation degrees computes
-        the rotation of the Robot around the z axis
+        the rotation of the Robot around the z axis.
         The orientation of the robot must reach the interval [degrees - delta, degrees + delta]
         """
         degrees = abs(degrees)
         init_g = self._body.get_orientation_deg()
 
-        delta = 0.8
+        delta = 0.8  # usually 0.8
         stop = False
         archived = False
         performed_deg = 0.0
@@ -811,7 +804,7 @@ class Controller:
 
         if Logger.is_loggable(LOG_SEVERITY, "mid"):
             self.__class_logger.log(
-                f" >> curr state of the sensors: "
+                f" >> interval: "
                 f"[{round_v(limit_g_sx)}, {round_v(limit_g_dx)}], curr_g: {round_v(curr_g)}", "gray")
 
         limit_range = [limit_g_sx, limit_g_dx]
@@ -927,13 +920,9 @@ class Controller:
 
         if self._body.get_gate():
             self._maze_solved = True
+            self.tree.current.set_name("FINAL")
             self.tree.current.set_type(Type.FINAL)
-            self.__class_logger.log(" :D SO HAPPY :D ", "green", True, True)
             self.__class_logger.log(" >> MAZE SOLVED << ", "green", italic=True)
-            self.__class_logger.log(" ~~ WATCHING THE LIGHTS ~~ ", "green", True, True)
-            self.__class_logger.log(" ~~ SAYING GOODBYE TO DEAD END CHILDREN :( ~~ ", "green", True)
-            self.__class_logger.log(" ~~ THANKS TO DEVELOPERS THAT HAVE DONE THIS  ~~ ", "green", True)
-            self.__class_logger.log(" ^^ FLYING TO THE HEAVEN ^^ ", "green", True, True)
             self.__class_logger.log("Tree: " + str(self.tree.build_tree_dict()), "green", True, True)
             self.__class_logger.log("Performed commands: " + str(self.performed_commands), "green", True, True)
             self.__class_logger.log("Trajectory: " + str(self.trajectory), "green", True, True)

@@ -10,6 +10,12 @@ tree_dict = {'root': {'M_n2': '(M , N , E)'}, 'M_n2': {'L_n3': '(L , O , E)'}, '
 performed_commands = [<Compass.NORD: 90.0>, <Compass.OVEST: 180.0>, <Compass.SUD: -90.0>, <Compass.OVEST: 180.0>, <Compass.NORD: 90.0>, <Compass.EST: 0.0>, <Compass.NORD: 90.0>, None, <Compass.SUD: -90.0>, <Compass.OVEST: 180.0>, <Compass.SUD: -90.0>, <Compass.EST: 0.0>, <Compass.NORD: 90.0>, None, <Compass.SUD: -90.0>, <Compass.EST: 0.0>, <Compass.NORD: 90.0>, <Compass.OVEST: 180.0>, <Compass.SUD: -90.0>, <Compass.OVEST: 180.0>, <Compass.NORD: 90.0>, <Compass.EST: 0.0>, <Compass.NORD: 90.0>, <Compass.EST: 0.0>, <Compass.SUD: -90.0>, None, <Compass.NORD: 90.0>, <Compass.OVEST: 180.0>, <Compass.SUD: -90.0>, <Compass.OVEST: 180.0>, <Compass.SUD: -90.0>, <Compass.OVEST: 180.0>, <Compass.SUD: -90.0>, <Compass.OVEST: 180.0>, <Compass.NORD: 90.0>, <Compass.EST: 0.0>, <Compass.NORD: 90.0>, <Compass.OVEST: 180.0>, <Compass.NORD: 90.0>, <Compass.EST: 0.0>, <Compass.NORD: 90.0>, <Compass.OVEST: 180.0>, <Compass.NORD: 90.0>]
 trajectory = [<Compass.NORD: 90.0>, <Compass.OVEST: 180.0>, <Compass.SUD: -90.0>, <Compass.OVEST: 180.0>, <Compass.NORD: 90.0>, <Compass.EST: 0.0>, <Compass.NORD: 90.0>, <Compass.SUD: -90.0>, <Compass.OVEST: 180.0>, <Compass.SUD: -90.0>, <Compass.EST: 0.0>, <Compass.NORD: 90.0>, <Compass.SUD: -90.0>, <Compass.EST: 0.0>, <Compass.NORD: 90.0>, <Compass.OVEST: 180.0>, <Compass.SUD: -90.0>, <Compass.OVEST: 180.0>, <Compass.NORD: 90.0>, <Compass.EST: 0.0>, <Compass.NORD: 90.0>, <Compass.EST: 0.0>, <Compass.SUD: -90.0>, <Compass.NORD: 90.0>, <Compass.OVEST: 180.0>, <Compass.SUD: -90.0>, <Compass.OVEST: 180.0>, <Compass.SUD: -90.0>, <Compass.OVEST: 180.0>, <Compass.SUD: -90.0>, <Compass.OVEST: 180.0>, <Compass.NORD: 90.0>, <Compass.EST: 0.0>, <Compass.NORD: 90.0>, <Compass.OVEST: 180.0>, <Compass.NORD: 90.0>, <Compass.EST: 0.0>, <Compass.NORD: 90.0>, <Compass.OVEST: 180.0>, <Compass.NORD: 90.0>]
 
+
+
+
+
+
+
 [Maze_1_SWEN_0]
 maze_solved = True
 execution_time_sec = 333.8322
@@ -22,27 +28,5 @@ tree_dict = {'root': {'M_n2': '(M , N , E)'}, 'M_n2': {'L_n3': '(L , W , E)'}, '
 performed_commands = [<Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.NORTH: 90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, None, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, None, <Compass.SOUTH: -90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.NORTH: 90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, <Compass.EAST: 0.0>, <Compass.SOUTH: -90.0>, None, <Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.NORTH: 90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, None, <Compass.NORTH: 90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, <Compass.NORTH: 90.0>]
 trajectory = [<Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.NORTH: 90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, None, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, None, <Compass.SOUTH: -90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.NORTH: 90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, <Compass.EAST: 0.0>, <Compass.SOUTH: -90.0>, None, <Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.NORTH: 90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, None, <Compass.NORTH: 90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, <Compass.NORTH: 90.0>]
 
-[Maze_1_NWES_5]
-maze_solved = True
-execution_time_sec = 29.083
-intelligence = low
-auto_balancing = off
-priority_list = NORTH, WEST, EAST, SOUTH
-number_of_nodes = 5
-number_of_dead_end = 0
-tree_dict = {'root': {'M_n3': '(M , W , O)', 'R_n2': '(R , N , E)'}, 'M_n3': {}, 'R_n2': {'L_n4': '(L , W , E)'}, 'L_n4': {'FINAL': '(R , N , F)'}, 'FINAL': {}}
-performed_commands = [<Compass.WEST: 180.0>, None, <Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, None, <Compass.NORTH: 90.0>]
-trajectory = [<Compass.WEST: 180.0>, None, <Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, None, <Compass.NORTH: 90.0>]
 
-[Maze_1_SWEN_1]
-maze_solved = False
-execution_time_sec = 72.5325
-intelligence = low
-auto_balancing = off
-priority_list = SOUTH, WEST, EAST, NORTH
-number_of_nodes = 11
-number_of_dead_end = 4
-tree_dict = {'root': {'M_n2': '(M , N , E)'}, 'M_n2': {'L_n3': '(L , W , E)'}, 'L_n3': {'L_n5': '(L , S , E)', 'R_n4': '(R , N , O)'}, 'L_n5': {'R_n6': '(R , W , E)'}, 'R_n6': {'M_n8': '(M , W , D)', 'R_n7': '(R , N , O)'}, 'M_n8': {'R_n9': '(R , N , D)'}, 'R_n9': {'R_n10': '(R , E , D)'}, 'R_n10': {'L_n11': '(L , N , D)'}, 'L_n11': {}, 'R_n7': {}, 'R_n4': {}}
-performed_commands = [<Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.NORTH: 90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, None, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>]
-trajectory = [<Compass.NORTH: 90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.NORTH: 90.0>, <Compass.EAST: 0.0>, <Compass.NORTH: 90.0>, None, <Compass.SOUTH: -90.0>, <Compass.WEST: 180.0>, <Compass.SOUTH: -90.0>]
 
