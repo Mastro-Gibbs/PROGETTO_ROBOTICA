@@ -1,9 +1,0 @@
-[10:53:17] [PhysicalBody][INFO] -> LOG SEVERYTY: NONE
-
-[10:53:17] [PhysicalBody][INFO] -> PHYSICAL BODY LAUNCHED
-[10:53:17] [PhysicalBody][INFO] -> COPPELIA CONNECTION INITIALIZED
-
-[10:53:22] [PhysicalBody][CRITICAL] -> Component /Freenove4wd/robot_cam error
-
-[10:53:27] [PhysicalBody][INFO] -> COPPELIA CONNECTION STOPPED
-[10:53:27] [PhysicalBody][INFO] -> PHYSICAL BODY STOPPED
