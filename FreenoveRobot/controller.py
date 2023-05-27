@@ -191,7 +191,12 @@ class Controller:
     # done
     # Check if maze was solved.
     def __goal_reached(self) -> bool:
-        return ControllerData.Machine.goal()
+        status: bool = ControllerData.Machine.goal() and self.__machine.position == Position.JUNCTION
+
+        if status:
+            self.__maze.tree.current.set_type(Type.FINAL)
+
+        return status
 
     # done
     # ending animation if maze were solved
@@ -439,85 +444,87 @@ class Controller:
     def __update_tree(self, actions, action_chosen) -> str:
         log_str: str = str()
 
-        if not self.__machine.state == State.SENSING:
-            return log_str
+        if not self.__goal_reached():
 
-        if self.__machine.mode == Mode.EXPLORING:
-            nodes: list = list()
-            for action in actions:
+            if not self.__machine.state == State.SENSING:
+                return log_str
+
+            if self.__machine.mode == Mode.EXPLORING:
+                nodes: list = list()
+                for action in actions:
+                    dict_ = f_r_l_b_to_compass(self.__rotation_factory.value)
+                    if dict_["FRONT"] == action:
+                        node = Node("M_" + self.__maze.tree.generate_node_id(), action)
+                        self.__maze.tree.append(node, DIRECTION.MID)
+                        self.__maze.tree.regress()
+                        self.__maze.incr_node_count()
+                        nodes.append('New Mid')
+                    if dict_["LEFT"] == action:
+                        node = Node("L_" + self.__maze.tree.generate_node_id(), action)
+                        self.__maze.tree.append(node, DIRECTION.LEFT)
+                        self.__maze.tree.regress()
+                        self.__maze.incr_node_count()
+                        nodes.append('New Left')
+                    if dict_["RIGHT"] == action:
+                        node = Node("R_" + self.__maze.tree.generate_node_id(), action)
+                        self.__maze.tree.append(node, DIRECTION.RIGHT)
+                        self.__maze.tree.regress()
+                        self.__maze.incr_node_count()
+                        nodes.append('New Right')
+
+                if len(nodes) != 0:
+                    log_str += f'Added new nodes:      {nodes}\n'
+
+                self.__maze.tree.current.set_type(Type.EXPLORED)
+
                 dict_ = f_r_l_b_to_compass(self.__rotation_factory.value)
-                if dict_["FRONT"] == action:
-                    node = Node("M_" + self.__maze.tree.generate_node_id(), action)
-                    self.__maze.tree.append(node, DIRECTION.MID)
-                    self.__maze.tree.regress()
+                if dict_["FRONT"] == action_chosen:
+                    self.__maze.tree.set_current(self.__maze.tree.current.mid)
+                elif dict_["LEFT"] == action_chosen:
+                    self.__maze.tree.set_current(self.__maze.tree.current.left)
+                elif dict_["RIGHT"] == action_chosen:
+                    self.__maze.tree.set_current(self.__maze.tree.current.right)
+
+            elif self.__machine.mode == Mode.ESCAPING:
+                cur = None
+
+                # The node is a leaf
+                if self.__maze.tree.current.is_leaf:
+                    self.__maze.tree.current.set_type(Type.DEAD_END)
                     self.__maze.incr_node_count()
-                    nodes.append('New Mid')
-                if dict_["LEFT"] == action:
-                    node = Node("L_" + self.__maze.tree.generate_node_id(), action)
-                    self.__maze.tree.append(node, DIRECTION.LEFT)
-                    self.__maze.tree.regress()
-                    self.__maze.incr_node_count()
-                    nodes.append('New Left')
-                if dict_["RIGHT"] == action:
-                    node = Node("R_" + self.__maze.tree.generate_node_id(), action)
-                    self.__maze.tree.append(node, DIRECTION.RIGHT)
-                    self.__maze.tree.regress()
-                    self.__maze.incr_node_count()
-                    nodes.append('New Right')
+                    log_str += f'Dead end node:        {self.__maze.tree.current}\n'
 
-            if len(nodes) != 0:
-                log_str += f'Added new nodes:      {nodes}\n'
+                    cur = self.__maze.tree.current.parent
 
-            self.__maze.tree.current.set_type(Type.EXPLORED)
+                # The children are all DEAD END
+                elif ((self.__maze.tree.current.has_left and self.__maze.tree.current.left.type == Type.DEAD_END) or
+                      self.__maze.tree.current.left is None) and \
+                        ((self.__maze.tree.current.has_right and self.__maze.tree.current.right.type == Type.DEAD_END)
+                         or self.__maze.tree.current.right is None) and \
+                        ((self.__maze.tree.current.has_mid and self.__maze.tree.current.mid.type == Type.DEAD_END)
+                         or self.__maze.tree.current.mid is None):
+                    self.__maze.tree.current.set_type(Type.DEAD_END)
+                    self.__maze.incr_dead_end()
+                    log_str += f'Dead end nodes chain: {self.__maze.tree.current}\n'
 
-            dict_ = f_r_l_b_to_compass(self.__rotation_factory.value)
-            if dict_["FRONT"] == action_chosen:
-                self.__maze.tree.set_current(self.__maze.tree.current.mid)
-            elif dict_["LEFT"] == action_chosen:
-                self.__maze.tree.set_current(self.__maze.tree.current.left)
-            elif dict_["RIGHT"] == action_chosen:
-                self.__maze.tree.set_current(self.__maze.tree.current.right)
+                    cur = self.__maze.tree.current.parent
 
-        elif self.__machine.mode == Mode.ESCAPING:
-            cur = None
-
-            # The node is a leaf
-            if self.__maze.tree.current.is_leaf:
-                self.__maze.tree.current.set_type(Type.DEAD_END)
-                self.__maze.incr_node_count()
-                log_str += f'Dead end node:        {self.__maze.tree.current}\n'
-
-                cur = self.__maze.tree.current.parent
-
-            # The children are all DEAD END
-            elif ((self.__maze.tree.current.has_left and self.__maze.tree.current.left.type == Type.DEAD_END) or
-                  self.__maze.tree.current.left is None) and \
-                    ((self.__maze.tree.current.has_right and self.__maze.tree.current.right.type == Type.DEAD_END)
-                     or self.__maze.tree.current.right is None) and \
-                    ((self.__maze.tree.current.has_mid and self.__maze.tree.current.mid.type == Type.DEAD_END)
-                     or self.__maze.tree.current.mid is None):
-                self.__maze.tree.current.set_type(Type.DEAD_END)
-                self.__maze.incr_dead_end()
-                log_str += f'Dead end nodes chain: {self.__maze.tree.current}\n'
-
-                cur = self.__maze.tree.current.parent
-
-            else:
-                log_str += "No leaf or DE children\n"
-
-                if self.__maze.tree.current.has_left and self.__maze.tree.current.left.action == action_chosen:
-                    cur = self.__maze.tree.current.left
-                elif self.__maze.tree.current.has_mid and self.__maze.tree.current.mid.action == action_chosen:
-                    cur = self.__maze.tree.current.mid
-                elif self.__maze.tree.current.has_right and self.__maze.tree.current.right.action == action_chosen:
-                    cur = self.__maze.tree.current.right
                 else:
-                    log_str += "Tree exception raised\n"
-                    raise ControllerException('Tree exception raised')
+                    log_str += "No leaf or DE children\n"
 
-            self.__maze.tree.set_current(cur)
+                    if self.__maze.tree.current.has_left and self.__maze.tree.current.left.action == action_chosen:
+                        cur = self.__maze.tree.current.left
+                    elif self.__maze.tree.current.has_mid and self.__maze.tree.current.mid.action == action_chosen:
+                        cur = self.__maze.tree.current.mid
+                    elif self.__maze.tree.current.has_right and self.__maze.tree.current.right.action == action_chosen:
+                        cur = self.__maze.tree.current.right
+                    else:
+                        log_str += "Tree exception raised\n"
+                        raise ControllerException('Tree exception raised')
 
-        log_str += f'Current node:         {self.__maze.tree.current}\n'
+                self.__maze.tree.set_current(cur)
+
+            log_str += f'Current node:         {self.__maze.tree.current}\n'
 
         return log_str
 

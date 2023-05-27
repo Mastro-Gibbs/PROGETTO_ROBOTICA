@@ -252,9 +252,7 @@ class VirtualBody:
             sleep(0.005)
 
     def __infrared_discover(self):
-        _SENSOR_RETURN_TRUE = False
-
-        while not _SENSOR_RETURN_TRUE:
+        while True:
             _irL, _irM, _irR = self.__body.infrared_status()
 
             BodyData.Infrared.on_values(_irL, _irM, _irR)
@@ -262,9 +260,6 @@ class VirtualBody:
             if BodyData.Infrared.changed():
                 self.__redis.set(BodyData.Key.Ultrasonic, BodyData.Infrared.values())
                 self.__redis.publish(BodyData.Topic.Body, BodyData.Key.Ultrasonic)
-
-            if _irL and _irM and _irR:
-                _SENSOR_RETURN_TRUE = True
 
             sleep(0.005)
 

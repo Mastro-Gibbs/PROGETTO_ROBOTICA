@@ -12,8 +12,8 @@ class Infrared:
         GPIO.setup(RC.IR_MID, GPIO.IN)
         GPIO.setup(RC.IR_RIGHT, GPIO.IN)
 
-        self.__left_status: bool = False
-        self.__mid_status: bool = False
+        self.__left_status: bool  = False
+        self.__mid_status: bool   = False
         self.__right_status: bool = False
 
         self.__discover = RobotThread(target=self.__detect, name='ir_discover')
@@ -26,16 +26,16 @@ class Infrared:
             self.__discover.start()
 
     def __detect(self):
-        self.__left_status = False
-        self.__mid_status = False
+        self.__left_status  = False
+        self.__mid_status   = False
         self.__right_status = False
 
         while True:
-            self.__left_status = True if self.__left_status else self.__left
-            self.__mid_status = True if self.__mid_status else self.__mid
-            self.__right_status = True if self.__right_status else self.__right
+            self.__left_status  = self.__left
+            self.__mid_status   = self.__mid
+            self.__right_status = self.__right
 
-            sleep(0.05)
+            sleep(0.01)
 
     @property
     def __left(self) -> bool:

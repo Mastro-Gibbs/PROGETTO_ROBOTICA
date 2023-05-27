@@ -220,18 +220,18 @@ class ControllerData(__RedisData):
 
     class Machine:
         __data: dict = dict()
-        __data['irL'] = 0
-        __data['irM'] = 0
-        __data['irR'] = 0
+        __data['irL']   = 0
+        __data['irM']   = 0
+        __data['irR']   = 0
         __data['proxL'] = 0
         __data['proxF'] = 0
         __data['proxR'] = 0
         __data['Zaxis'] = None
         __data['virtB'] = 0
         __data['ready'] = 0
-        __goal = False
+        __goal: bool    = False
 
-        __max = 17
+        __max = 1
         __min = 5
 
         @classmethod
@@ -240,8 +240,8 @@ class ControllerData(__RedisData):
                 data = json.loads(data)
                 cls.__data.update(data)
 
-                if int(cls.__data['irL']) and int(cls.__data['irM']) and int(cls.__data['irR']):
-                    cls.__goal = True
+                cls.__goal = True if int(cls.__data['irL']) and int(cls.__data['irM']) and int(cls.__data['irR']) else False
+
             except TypeError:
                 pass
 
