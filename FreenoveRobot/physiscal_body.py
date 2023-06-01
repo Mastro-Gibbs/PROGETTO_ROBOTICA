@@ -161,7 +161,6 @@ class PhysicalBody:
         """
         return self.__infrared.status
 
-
     def trill(self, freq: int = -1, duty: int = -1) -> None:
         """
             Lets it make a sound.

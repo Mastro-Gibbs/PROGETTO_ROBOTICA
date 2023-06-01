@@ -2,6 +2,7 @@ from lib.libctrl.enums import Position, Mode, State
 from lib.libctrl.utility import CFG
 from cluster.analyzer import Analyzer
 
+
 class Machine:
     __MACHINE_CONF__ = CFG.robot_conf_data()
 
