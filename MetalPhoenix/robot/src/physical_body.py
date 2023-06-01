@@ -4,7 +4,6 @@ from tools.coppeliaAPI.simConst import *
 import tools.coppeliaAPI.sim as sim
 from tools.coppelia import *
 from tools.utility import Logger, CFG
-# from redis import Redis
 
 
 LOG_SEVERITY = CFG.logger_data()["SEVERITY"]
