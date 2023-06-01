@@ -4,44 +4,45 @@ import hashlib
 import builtins
 from tools.utility import Logger, CFG
 
-c = Controller()
 
-hash_ = None
-hash_old = hash_
-
-GOAL_REACHED = False
-
-logger = Logger(class_name="Agent", color="yellow")
-logger.set_logfile(CFG.logger_data()["ALOGFILE"])
+class agent:
+    controller: Controller = Controller()
 
 
-def run():
-    global hash_
-    global hash_old
-    global GOAL_REACHED
+    def __init__(self) -> None:
+        self.__logger:     Logger   = Logger(class_name="Agent", color="yellow")
+        self.__logger.set_logfile(CFG.logger_data()["ALOGFILE"])
 
-    logger.log("AGENT LAUNCHED", "green", italic=True)
+        self.__goal_reached: bool = False
 
-    start_time = time.time()
-
-    while not GOAL_REACHED:
-        GOAL_REACHED = c.algorithm()
-
-        with builtins.open("../resources/data/config.conf", "rb") as f:
-            hash_ = hashlib.md5(f.read()).hexdigest()
-
-        if hash_old != hash_:
-            logger.log("Config file changed", "yellow", italic=True)
-            hash_old = hash_
-            c.load_cfg_values()
-
-        end_time = time.time()
-        c.execution_time = end_time - start_time
+        self.__hash     = None
+        self.__hash_old = self.__hash
 
 
-def stop():
-    global GOAL_REACHED
-    GOAL_REACHED = True
+    def run(self):
+        self.__logger.log("AGENT LAUNCHED", "green", italic=True)
 
-    c.virtual_destructor()
-    logger.log("AGENT STOPPED", "yellow", italic=True)
+        start_time = time.time()
+
+        while not self.__goal_reached:
+            self.__goal_reached = self.controller.algorithm()
+
+            with builtins.open("../resources/data/config.conf", "rb") as f:
+                self.__hash = hashlib.md5(f.read()).hexdigest()
+
+            if self.__hash_old != self.__hash:
+                self.__logger.log("Config file changed", "yellow", italic=True)
+                self.__hash_old = self.__hash
+                self.controller.load_cfg_values()
+
+            end_time = time.time()
+            self.controller.execution_time = end_time - start_time
+
+
+    def stop(self):
+        self.__goal_reached = True
+
+        self.controller.virtual_destructor()
+        self.__logger.log("AGENT STOPPED", "yellow", italic=True)
+
+
