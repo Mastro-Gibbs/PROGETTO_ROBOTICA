@@ -2,11 +2,13 @@ import json
 
 from lib.libctrl.utility import __REDIS_CFG__, __SENSOR_CFG__, FRLB, CFG
 
+
 def maxify(value) -> int:
     if value > 150:
         return 150
     else:
         return value
+
 
 class __RedisData:
     class Connection:
@@ -288,7 +290,6 @@ class ControllerData(__RedisData):
         @classmethod
         def set_ready(cls, value: int):
             cls.__data['ready'] = value
-
 
     class Motor(__Value):
         __rum = None
