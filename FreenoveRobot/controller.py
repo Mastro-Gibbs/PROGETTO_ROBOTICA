@@ -74,7 +74,8 @@ class Controller:
         self.__machine: Machine = Machine()
         self.__maze: Maze       = Maze()
 
-        self.__prev_action      = None
+        self.__prev_action               = None
+        self.__prev_selcted_action: list = list()
 
     # done
     def begin(self) -> None:
@@ -422,10 +423,14 @@ class Controller:
             # ACT
             self.__do_action(selected_action)
 
-            if self.__prev_action != action:
-                self.__maze.performed_commands.append(action)
-                if action in self.__machine.priority:
-                    self.__maze.trajectory.append(action)
+            # Saving performed commands and actions
+            if self.__prev_selcted_action != selected_action:
+                self.__maze.performed_commands.append(command)
+                self.__maze.performed_commands_action.append(selected_action)
+                self.__prev_selcted_action = selected_action
+            # Saving trajectory
+            if action is not None and self.__prev_action != action:
+                self.__maze.trajectory.append(action)
                 self.__prev_action = action
 
             return self.__goal_reached()

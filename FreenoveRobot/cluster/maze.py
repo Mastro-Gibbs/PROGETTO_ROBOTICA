@@ -7,6 +7,7 @@ class Maze:
     __tree: Tree = Tree()
     __trajectory: list = list()
     __performed_coms: list = list()
+    __performed_coms_act: list = list()
 
     class Analysis:
         __MACHINE_CONF__ = CFG.robot_conf_data()
@@ -110,6 +111,10 @@ class Maze:
 
     @property
     def performed_commands(self) -> list:
+        return self.__performed_coms
+
+    @property
+    def performed_commands_action(self) -> list:
         return self.__performed_coms
 
     def analysis(self) -> bool:
