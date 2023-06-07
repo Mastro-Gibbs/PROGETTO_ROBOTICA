@@ -1,7 +1,7 @@
-from agent import agent
+from agent import Agent
 """ Main program """
 
-__agent: agent = agent()
+__agent: Agent = Agent()
 
 try:
     __agent.run()
@@ -9,25 +9,16 @@ try:
 
 except KeyboardInterrupt:
     print()
-    print("TIME: ", agent.controller.execution_time)
-
-    print("Number of nodes: ", agent.controller.number_of_nodes)
-    print("Number of dead end: ", agent.controller.number_of_dead_end)
-    print("Priority list: ", agent.controller.priority_list, "\n")
-    print("Tree: ", agent.controller.tree.build_tree_dict(), "\n")
-    print("Trajectory: ", agent.controller.trajectory, "\n")
-    print("Performed commands: ", agent.controller.performed_commands, "\n")
-    print("Performed commands and actions: ", agent.controller.performed_com_actions, "\n")
+    print("TIME: ", Agent.controller.execution_time)
+    print("Number of nodes: ", Agent.controller.number_of_nodes)
+    print("Number of dead end: ", Agent.controller.number_of_dead_end, "\n")
+    print("Priority list: ", Agent.controller.priority_list, "\n")
+    print("Tree: ", Agent.controller.tree.build_tree_dict(), "\n")
+    print("Trajectory: ", Agent.controller.trajectory, "\n")
+    print("Performed commands: ", Agent.controller.performed_commands, "\n")
+    print("Performed commands and actions: ", Agent.controller.performed_com_actions, "\n")
     print("---- Exporting data ... ----")
-    agent.controller.write_data_analysis()
+    Agent.controller.write_data_analysis()
     print()
-    print("---- DONE! ----")
-    print()
-
-    """
-    print("Left values: ", agent.controller.left_values, "\n")
-    print("Front values: ", controller.front_values, "\n")
-    print("Right values: ", controller.right_values, "\n")
-    """
-    print()
+    print("---- DONE! ----", "\n")
     __agent.stop()
