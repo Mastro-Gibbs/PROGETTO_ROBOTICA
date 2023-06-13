@@ -64,6 +64,10 @@ class Controller:
         self.intelligence = self.robot_config_data["INTELLIGENCE"]
         self.auto_balancing = self.robot_config_data["AUTO_BALANCING"]
 
+        self.__class_logger.log(f'>>> Declared constants <<<', "green")
+        for k, v in self.robot_config_data.items():
+            self.__class_logger.log(f"{k} : {v}", "green")
+
         self._speed_m_on_sec = self.speed * 0.25 / (self.speed // 5)
         self.junction_sim_time = 0.25 / self._speed_m_on_sec  # Time it takes to position in the center of a junction
 
@@ -96,6 +100,7 @@ class Controller:
         self.maze_name = "Maze" + "_" + str(self.maze_number) + "_" + \
                          (Compass.compass_list_to_concat_string(self.priority_list) if self.intelligence == "low"
                           else "RANDOM")
+        self.__class_logger.log("Maze name: " + str(self.maze_name), "green")
         self.execution_time = 0
         self.number_of_nodes = 1
         self.number_of_dead_end = 0
