@@ -423,6 +423,7 @@ class Controller:
             # ACT
             self.__do_action(selected_action)
 
+            """
             # Saving performed commands and actions
             if self.__prev_selcted_action != selected_action:
                 self.__maze.performed_commands.append(command)
@@ -432,8 +433,17 @@ class Controller:
             if action is not None and self.__prev_action != action:
                 self.__maze.trajectory.append(action)
                 self.__prev_action = action
+            """
+
+            if self.__prev_action != action:
+                self.__maze.performed_commands.append(action)
+                if action in self.__machine.priority:
+                    self.__maze.trajectory.append(action)
+                self.__prev_action = action
+
 
             return self.__goal_reached()
+
 
         else:
             _curr_time = time.time()
@@ -491,7 +501,7 @@ class Controller:
                 self.__maze.tree.set_current(self.__maze.tree.current.right)
 
         elif self.__machine.mode == Mode.ESCAPING:
-            log_str += f'Currnode pre update:          {self.__maze.tree.current}\n'
+            log_str += f'Currnode pre update:  {self.__maze.tree.current}\n'
             cur = None
 
             # The node is a leaf
@@ -529,7 +539,7 @@ class Controller:
 
             self.__maze.tree.set_current(cur)
 
-        log_str += f'Currnode post update:         {self.__maze.tree.current}\n'
+        log_str += f'Currnode post update:  {self.__maze.tree.current}\n'
 
         return log_str
 

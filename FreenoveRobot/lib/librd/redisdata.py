@@ -233,7 +233,7 @@ class ControllerData(__RedisData):
         __data['ready'] = 0
         __goal: bool    = False
 
-        __max = 1
+        __max = 18
         __min = 5
 
         @classmethod
