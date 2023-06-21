@@ -70,8 +70,8 @@ class Controller:
         self._speed_m_on_sec = self.speed * 0.25 / (self.speed // 5)  # //: floor of the value obtained by the division
         self.junction_sim_time = 0.25 / self._speed_m_on_sec
         # New
-        self._speed_m_on_sec = self.speed * 0.2 / 5
-        self.junction_sim_time = 0.25 / self._speed_m_on_sec
+        # self._speed_m_on_sec = self.speed * 0.2 / 5
+        # self.junction_sim_time = 0.25 / self._speed_m_on_sec
 
         # Variables of the robot orientation, proximity sensors and gate sensor
         self.orientation = None
@@ -93,6 +93,7 @@ class Controller:
         self.tree = Tree()
 
         # Variables used for balancing
+        self.max_side_distance = 0.16
         self.attempts_to_unstuck = 0
         self.cycle = 0
         self.store = Store()
@@ -190,7 +191,7 @@ class Controller:
             self.performed_com_actions.append(com_action)
             self.prev_com_action = com_action
         # Saving trajectory
-        if performed and action is not None and self.prev_action != action:
+        if performed and com_action[0] is not Command.ROTATE and action is not None and self.prev_action != action:
             self.trajectory.append(action)
             self.prev_action = action
 
@@ -381,13 +382,13 @@ class Controller:
                     if left is not None:
                         action = detect_target(detect_target(self.orientation) - 90)
                         com_actions.insert(0, [Command.ROTATE, action])
-                        self.__class_logger.log("WALL ON THE LEFT", "yellow", True, True)
+                        self.__class_logger.log("--WALL ON THE LEFT", "yellow", True, True)
 
                     # Wall on the right
                     elif right is not None:
                         action = detect_target(detect_target(self.orientation) + 90)
                         com_actions.insert(0, [Command.ROTATE, action])
-                        self.__class_logger.log("WALL ON THE RIGHT", "yellow", True, True)
+                        self.__class_logger.log("--WALL ON THE RIGHT", "yellow", True, True)
 
             # The robot now has to rotate of 180° to have the wall behind
             elif front is not None:
@@ -667,7 +668,7 @@ class Controller:
 
             self.rotate_to_final_g(self.rot_speed, action)
 
-            while self._body.get_proxF() < self.safe_side_distance:
+            while self._body.get_proxF() < self.max_side_distance:
                 self._body.move_backward(5)
                 # print("Front value:" + str(self._body.get_proxF()))
             self._body.stop()
