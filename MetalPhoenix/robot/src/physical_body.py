@@ -91,8 +91,8 @@ class PhysicalBody:
         self.__sim.end_connection()
 
     def virtual_destructor(self):
-        self.__class_logger.log("COPPELIA CONNECTION STOPPED", "green", italic=True)
-        self.__class_logger.log("PHYSICAL BODY STOPPED", "green", italic=True)
+        self.__class_logger.log("COPPELIA CONNECTION STOPPED", "red", italic=True)
+        self.__class_logger.log("PHYSICAL BODY STOPPED", "red", italic=True)
 
     def move_forward(self, vel) -> None:
         """Move forward robot wheels

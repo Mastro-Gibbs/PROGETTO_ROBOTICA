@@ -108,7 +108,7 @@ class Controller:
         self.execution_time = 0
         self.number_of_nodes = 1
         self.number_of_dead_end = 0
-        self._maze_solved = False
+        self.maze_solved = False
 
         self.__class_logger.log(f'>>> Declared constants <<<', "green")
         for k, v in self.robot_config_data.items():
@@ -117,11 +117,11 @@ class Controller:
 
     def virtual_destructor(self):
         self._body.virtual_destructor()
-        self.__class_logger.log("CONTROLLER STOPPED", "green", italic=True)
+        self.__class_logger.log("CONTROLLER STOPPED", "red", italic=True)
 
     def write_data_analysis(self):
         priority_list = Compass.compass_list_to_string_comma_sep(self.priority_list)
-        CFG.write_data_analysis(self.maze_name, self._maze_solved, round_v(self.execution_time), self.speed,
+        CFG.write_data_analysis(self.maze_name, self.maze_solved, round_v(self.execution_time), self.speed,
                                 self.rot_speed, self.safe_distance, self.safe_side_distance, self.max_rot_attempts,
                                 self.number_of_nodes, self.number_of_dead_end, self.tree.build_tree_dict(),
                                 self.trajectory, self.performed_commands, self.performed_com_actions, self.intelligence,
@@ -923,21 +923,17 @@ class Controller:
 
     def goal_reached(self) -> bool:
         """
-        It is used to check if the robot has found the exit of the maze
-        The exit of the maze is identified using the gate
-        It updates the last node of the tree as FINAL node
+        It is used to check if the robot has found the exit of the maze.
+        The exit of the maze is identified using the gate.
+        It updates the last node of the tree as FINAL node.
         """
 
         if self._body.get_gate():
-            self._maze_solved = True
+            self.maze_solved = True
             self.tree.current.set_name("FINAL")
             self.tree.current.set_type(Type.FINAL)
-            self.__class_logger.log(" >> MAZE SOLVED << ", "green", italic=True)
-            self.__class_logger.log("Tree: " + str(self.tree.build_tree_dict()), "green", True, True)
-            self.__class_logger.log("Trajectory: " + str(self.trajectory), "green", True, True)
-            self.__class_logger.log("Performed commands: " + str(self.performed_commands), "green", True, True)
-            self.__class_logger.log("Performed commands and actions: " + str(self.performed_com_actions), "green", True, True)
-
+            self.print_data(maze_solved=self.maze_solved)
+            self.write_data_analysis()
             return True
 
         return False
@@ -959,6 +955,20 @@ class Controller:
 
         PhysicalBody.load_cfg_values()
 
+    def print_data(self, maze_solved):
+        if maze_solved:
+            self.__class_logger.log(" >> MAZE SOLVED << ", "green", italic=True)
+        else:
+            self.__class_logger.log(" >> MAZE NOT SOLVED << ", "red", italic=True)
+
+        self.__class_logger.log("TIME: " + str(self.execution_time), "green", True, True)
+        self.__class_logger.log("Number of nodes: " + str(self.number_of_nodes), "green", True, True)
+        self.__class_logger.log("Number of dead end: " + str(self.number_of_dead_end), "green", True, True)
+        self.__class_logger.log("Tree: " + str(self.tree.build_tree_dict()), "green", True, True)
+        self.__class_logger.log("Trajectory: " + str(self.trajectory), "green", True, True)
+        self.__class_logger.log("Performed commands: " + str(self.performed_commands), "green", True, True)
+        self.__class_logger.log("Performed commands and actions: " + str(self.performed_com_actions), "green", True,
+                                True)
 
 class Store:
     def __init__(self):

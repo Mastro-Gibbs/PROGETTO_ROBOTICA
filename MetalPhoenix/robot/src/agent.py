@@ -29,30 +29,17 @@ class Agent:
                 self.check_and_update_from_config_file()
             end_time = time.time()
             self.controller.execution_time = end_time - start_time
-            self.controller.write_data_analysis()
 
         except KeyboardInterrupt:
             end_time = time.time()
             self.controller.execution_time = end_time - start_time
-            print()
-            print("TIME: ", self.controller.execution_time)
-            print("Number of nodes: ", self.controller.number_of_nodes)
-            print("Number of dead end: ", self.controller.number_of_dead_end, "\n")
-            print("Priority list: ", self.controller.priority_list, "\n")
-            print("Tree: ", self.controller.tree.build_tree_dict(), "\n")
-            print("Trajectory: ", self.controller.trajectory, "\n")
-            print("Performed commands: ", self.controller.performed_commands, "\n")
-            print("Performed commands and actions: ", self.controller.performed_com_actions, "\n")
-            print("---- Exporting data ... ----")
-            self.controller.write_data_analysis()
-            print()
-            print("---- DONE! ----", "\n")
+            self.controller.print_data(self.controller.maze_solved)
             self.stop()
 
     def stop(self):
         self.__goal_reached = True
         self.controller.virtual_destructor()
-        self.__logger.log("AGENT STOPPED", "yellow", italic=True)
+        self.__logger.log("AGENT STOPPED", "red", italic=True)
 
     def check_and_update_from_config_file(self):
         self.read_conf_file()
