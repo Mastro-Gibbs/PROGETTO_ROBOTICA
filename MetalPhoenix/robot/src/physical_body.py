@@ -23,8 +23,8 @@ class PhysicalBody:
         print()  # \n
         self.__class_logger = Logger(class_name="PhysicalBody", color="purple")
         self.__class_logger.set_logfile(CFG.logger_data()["BLOGFILE"])
-        self.__class_logger.log(f"LOG SEVERYTY: {str.upper(LOG_SEVERITY)}\n", color="dkgreen")
         self.__class_logger.log("PHYSICAL BODY LAUNCHED", color="green", italic=True)
+        self.__class_logger.log(f"LOG SEVERYTY: {str.upper(LOG_SEVERITY)}", color="green")
 
         self.__sim = SimConnection(ip=CFG.physical_data()["IP"], port=CFG.physical_data()["PORT"])
 
@@ -32,7 +32,7 @@ class PhysicalBody:
             self.__sim.begin_connection()
             self.__sim.start_simulation()
 
-            self.__class_logger.log("COPPELIA CONNECTION INITIALIZED", italic=True)
+            self.__class_logger.log("COPPELIA CONNECTION INITIALIZED\n", italic=True)
 
             # SENSORS
             self.__cam_handler = self.__sim.get_object_handle("/Freenove4wd/robot_cam")

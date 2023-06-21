@@ -324,9 +324,12 @@ class CFG:
         ...
 
     @staticmethod
-    def write_data_analysis(maze_name, maze_solved, execution_time,  number_of_nodes,
-                            number_of_dead_end, tree_dict, trajectory, performed_commands,
-                            performed_com_actions, intelligence, auto_balancing, priority_list):
+    def write_data_analysis(maze_name, maze_solved, execution_time,  speed,
+                            rot_speed, safe_dist, safe_side_dist, max_rot_attempts,
+                            number_of_nodes, number_of_dead_end, tree_dict, trajectory,
+                            performed_commands, performed_com_actions, intelligence, auto_balancing,
+                            priority_list):
+
         config = configparser.ConfigParser()
         path = "../resources/data/"
         file_name = "data_analysis.conf"
@@ -354,6 +357,11 @@ class CFG:
         config[section_name] = {
             "maze_solved": maze_solved,
             "execution_time_sec": execution_time,
+            "speed": speed,
+            "rotation_speed": rot_speed,
+            "safe_distance": safe_dist,
+            "safe_side_distance": safe_side_dist,
+            "max_rotations_attempts": max_rot_attempts,
             "intelligence": intelligence,
             "auto_balancing": auto_balancing,
             "priority_list": priority_list,
@@ -363,7 +371,6 @@ class CFG:
             "trajectory": trajectory,
             "performed_commands": performed_commands,
             "performed_com_actions": performed_com_actions
-
         }
 
         """

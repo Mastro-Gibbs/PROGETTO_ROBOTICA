@@ -44,16 +44,18 @@ class Controller:
         self.__class_logger = Logger(class_name="Controller", color="cyan")
         self.__class_logger.set_logfile(CFG.logger_data()["CLOGFILE"])
         self._severity = CFG.logger_data()["SEVERITY"]
-        self.__class_logger.log(f"LOG SEVERITY: {str.upper(self._severity)}\n", color="dkgreen")
         self.__class_logger.log("CONTROLLER LAUNCHED", color="green", italic=True)
+        self.__class_logger.log(f"LOG SEVERITY: {str.upper(self._severity)}", color="green")
 
         self._body = PhysicalBody()
         self._body.stop()
 
+        # Initial states
         self._state = State.STARTING
         self._position = Position.UNKNOWN
         self._mode = Mode.EXPLORING
 
+        # Initializing robot's variables and the values are taken from the config file
         self.robot_config_data = CFG.robot_conf_data()
         self.speed = self.robot_config_data["SPEED"]
         self.rot_speed = self.robot_config_data["ROT_SPEED"]
@@ -64,24 +66,24 @@ class Controller:
         self.intelligence = self.robot_config_data["INTELLIGENCE"]
         self.auto_balancing = self.robot_config_data["AUTO_BALANCING"]
 
-        self.__class_logger.log(f'>>> Declared constants <<<', "green")
-        for k, v in self.robot_config_data.items():
-            self.__class_logger.log(f"{k} : {v}", "green")
+        # Junction Time. Time it takes to position in the center of a junction
+        self._speed_m_on_sec = self.speed * 0.25 / (self.speed // 5)  # //: floor of the value obtained by the division
+        self.junction_sim_time = 0.25 / self._speed_m_on_sec
+        # New
+        self._speed_m_on_sec = self.speed * 0.2 / 5
+        self.junction_sim_time = 0.25 / self._speed_m_on_sec
 
-        self._speed_m_on_sec = self.speed * 0.25 / (self.speed // 5)
-        self.junction_sim_time = 0.25 / self._speed_m_on_sec  # Time it takes to position in the center of a junction
-
+        # Variables of the robot orientation, proximity sensors and gate sensor
         self.orientation = None
         self.left_value = None
         self.front_value = None
         self.right_value = None
         self.gate = False
 
+        # Lists of values of the proximity sensors
         self.front_values = list()
         self.left_values = list()
         self.right_values = list()
-
-        self.target = 0
 
         self.trajectory = list()
         self.performed_commands = list()
@@ -90,6 +92,7 @@ class Controller:
         self.prev_com_action = list()
         self.tree = Tree()
 
+        # Variables used for balancing
         self.attempts_to_unstuck = 0
         self.cycle = 0
         self.store = Store()
@@ -106,25 +109,23 @@ class Controller:
         self.number_of_dead_end = 0
         self._maze_solved = False
 
+        self.__class_logger.log(f'>>> Declared constants <<<', "green")
+        for k, v in self.robot_config_data.items():
+            self.__class_logger.log(f"{k} : {v}", "green")
+        time.sleep(2)
+
     def virtual_destructor(self):
         self._body.virtual_destructor()
         self.__class_logger.log("CONTROLLER STOPPED", "green", italic=True)
 
     def write_data_analysis(self):
         priority_list = Compass.compass_list_to_string_comma_sep(self.priority_list)
-        CFG.write_data_analysis(self.maze_name,
-                                self._maze_solved,
-                                round_v(self.execution_time),
-                                self.number_of_nodes,
-                                self.number_of_dead_end,
-                                self.tree.build_tree_dict(),
-                                self.trajectory,
-                                self.performed_commands,
-                                self.performed_com_actions,
-                                self.intelligence,
+        CFG.write_data_analysis(self.maze_name, self._maze_solved, round_v(self.execution_time), self.speed,
+                                self.rot_speed, self.safe_distance, self.safe_side_distance, self.max_rot_attempts,
+                                self.number_of_nodes, self.number_of_dead_end, self.tree.build_tree_dict(),
+                                self.trajectory, self.performed_commands, self.performed_com_actions, self.intelligence,
                                 "on" if self.auto_balancing == "on" else "off",
-                                priority_list if self.intelligence == "low" else "random"
-                                )
+                                priority_list if self.intelligence == "low" else "random")
 
     def read_sensors(self):
         self.left_value = self._body.get_proxL()
@@ -156,8 +157,7 @@ class Controller:
             self.__class_logger.log(" >>>>  EXITING  <<<< ", "dkred", italic=True)
             self.virtual_destructor()
             exit(-1)
-        command = com_action[0]
-        action = com_action[1]
+        command, action = com_action
 
         if Logger.is_loggable(self._severity, "low"):
             self.__class_logger.log(f"--MODE: {self._mode}")
@@ -347,7 +347,7 @@ class Controller:
                                         str(self.left_value), "yellow", True, True)
                 # Saving the current state only if it is diff. from BALANCING.
                 # It may happen that is necessary two or more balancing, and we have to save
-                # only the state before balancing.
+                # only the state before balancing that must be restored after balancing.
                 if self._state != State.BALANCING:
                     self.save_current_state()
                 self._state = State.BALANCING
@@ -590,7 +590,8 @@ class Controller:
             if Logger.is_loggable(self._severity, "mid"):
                 self.__class_logger.log(" ** COMMAND STOP ** ", "gray")
             self._body.stop()
-
+            time.sleep(0.2)
+            print(self._body.get_proxF())
             self._state = State.STOPPED
 
             return True
@@ -612,6 +613,15 @@ class Controller:
 
             start_time = time.time()
             time_expired = False
+            """
+            while self._body.get_proxR() is None:
+                ...
+
+            end_time = time.time() - start_time
+
+            print("End time: ", end_time)
+            exit(-1)
+            """
 
             while not time_expired and (self._body.get_proxF() is None or self._body.get_proxF() > self.safe_distance):
                 self._body.move_forward(self.speed)
