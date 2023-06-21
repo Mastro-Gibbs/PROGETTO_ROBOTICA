@@ -66,12 +66,17 @@ class Controller:
         self.intelligence = self.robot_config_data["INTELLIGENCE"]
         self.auto_balancing = self.robot_config_data["AUTO_BALANCING"]
 
+        # TIMERS
         # Junction Time. Time it takes to position in the center of a junction
         self._speed_m_on_sec = self.speed * 0.25 / (self.speed // 5)  # //: floor of the value obtained by the division
         self.junction_sim_time = 0.25 / self._speed_m_on_sec
         # New
         # self._speed_m_on_sec = self.speed * 0.2 / 5
         # self.junction_sim_time = 0.25 / self._speed_m_on_sec
+
+        # Start and end timers
+        self.start_time = None
+        self.end_time = None
 
         # Variables of the robot orientation, proximity sensors and gate sensor
         self.orientation = None
@@ -114,6 +119,8 @@ class Controller:
         for k, v in self.robot_config_data.items():
             self.__class_logger.log(f"{k} : {v}", "green")
         time.sleep(2)
+
+        self.start_time = time.time()
 
     def virtual_destructor(self):
         self._body.virtual_destructor()
@@ -925,10 +932,12 @@ class Controller:
         """
         It is used to check if the robot has found the exit of the maze.
         The exit of the maze is identified using the gate.
-        It updates the last node of the tree as FINAL node.
+        It updates the execution time and the last node of the tree as FINAL node.
         """
 
         if self._body.get_gate():
+            self.end_time = time.time()
+            self.execution_time = self.end_time - self.start_time
             self.maze_solved = True
             self.tree.current.set_name("FINAL")
             self.tree.current.set_type(Type.FINAL)
@@ -952,7 +961,8 @@ class Controller:
         self.priority_list = self.robot_config_data["PRIORITY_LIST"]
         self.intelligence = self.robot_config_data["INTELLIGENCE"]
         self.auto_balancing = self.robot_config_data["AUTO_BALANCING"]
-
+        # self.maze_number = self.robot_config_data["MAZE_NUMBER"]
+        self._severity = self.robot_config_data["SEVERITY"]
         PhysicalBody.load_cfg_values()
 
     def print_data(self, maze_solved):
@@ -961,7 +971,8 @@ class Controller:
         else:
             self.__class_logger.log(" >> MAZE NOT SOLVED << ", "red", italic=True)
 
-        self.__class_logger.log("TIME: " + str(self.execution_time), "green", True, True)
+        self.__class_logger.log("Maze name: " + str(self.maze_name), "green", True, True)
+        self.__class_logger.log("Execution time: " + str(self.execution_time), "green", True, True)
         self.__class_logger.log("Number of nodes: " + str(self.number_of_nodes), "green", True, True)
         self.__class_logger.log("Number of dead end: " + str(self.number_of_dead_end), "green", True, True)
         self.__class_logger.log("Tree: " + str(self.tree.build_tree_dict()), "green", True, True)
@@ -969,6 +980,7 @@ class Controller:
         self.__class_logger.log("Performed commands: " + str(self.performed_commands), "green", True, True)
         self.__class_logger.log("Performed commands and actions: " + str(self.performed_com_actions), "green", True,
                                 True)
+
 
 class Store:
     def __init__(self):

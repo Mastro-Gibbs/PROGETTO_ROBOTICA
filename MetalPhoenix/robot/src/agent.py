@@ -21,19 +21,16 @@ class Agent:
         self.__logger.log("AGENT LAUNCHED", "green", italic=True)
 
         self.read_conf_file()
-        start_time = time.time()
 
         try:
             while not self.__goal_reached:
                 self.__goal_reached = self.controller.algorithm()
                 self.check_and_update_from_config_file()
-            end_time = time.time()
-            self.controller.execution_time = end_time - start_time
 
         except KeyboardInterrupt:
-            end_time = time.time()
-            self.controller.execution_time = end_time - start_time
+            self.controller.execution_time = time.time() - self.controller.start_time
             self.controller.print_data(self.controller.maze_solved)
+            self.controller.write_data_analysis()
             self.stop()
 
     def stop(self):

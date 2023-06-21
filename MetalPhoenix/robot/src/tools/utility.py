@@ -316,7 +316,9 @@ class CFG:
             "MAX_ROT_ATTEMPTS": int(psr["ROBOT"]["max_rot_attempts"]),
             "PRIORITY_LIST": priority_list,
             "INTELLIGENCE": psr["ROBOT"]["intelligence"],
-            "AUTO_BALANCING": psr["ROBOT"]["auto_balancing"]
+            "AUTO_BALANCING": psr["ROBOT"]["auto_balancing"],
+            "MAZE_NUMBER": psr["MAZE"]["maze_number"],
+            "SEVERITY": psr["UTILITY"]["severity"]
         }
 
     @staticmethod
