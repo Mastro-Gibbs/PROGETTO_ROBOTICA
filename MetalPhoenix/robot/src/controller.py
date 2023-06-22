@@ -68,10 +68,12 @@ class Controller:
 
         # TIMERS
         # Junction Time. Time it takes to position in the center of a junction
-        self._speed_m_on_sec = self.speed * 0.25 / (self.speed // 5)  # //: floor of the value obtained by the division
-        self.junction_sim_time = 0.25 / self._speed_m_on_sec
-        # New
-        # self._speed_m_on_sec = self.speed * 0.2 / 5
+        # Original version:
+        self._speed_m_on_sec = self.speed * 0.17 / 5
+        self.junction_sim_time = 0.23 / self._speed_m_on_sec
+        # Modified version:
+        # //: floor of the value obtained by the division
+        # self._speed_m_on_sec = self.speed * 0.25 / (self.speed // 5)
         # self.junction_sim_time = 0.25 / self._speed_m_on_sec
 
         # Start and end timers
@@ -389,12 +391,14 @@ class Controller:
                     if left is not None:
                         action = detect_target(detect_target(self.orientation) - 90)
                         com_actions.insert(0, [Command.ROTATE, action])
+                        self._state = State.ROTATING
                         self.__class_logger.log("--WALL ON THE LEFT", "yellow", True, True)
 
                     # Wall on the right
                     elif right is not None:
                         action = detect_target(detect_target(self.orientation) + 90)
                         com_actions.insert(0, [Command.ROTATE, action])
+                        self._state = State.ROTATING
                         self.__class_logger.log("--WALL ON THE RIGHT", "yellow", True, True)
 
             # The robot now has to rotate of 180° to have the wall behind
@@ -402,11 +406,17 @@ class Controller:
                 if left is None or right is None:
                     action = negate_compass(detect_target(self.orientation))
                     com_actions.insert(0, [Command.ROTATE, action])
+                    self._state = State.ROTATING
 
                 elif left is not None and right is not None:
                     action = negate_compass(detect_target(self.orientation))
                     com_actions.insert(0, [Command.ROTATE, action])
+                    self._state = State.ROTATING
                     self.attempts_to_unstuck = 1
+
+        elif self._state == State.ROTATING and self._position == Position.UNKNOWN:
+            self._state = State.STARTING
+            com_actions.insert(0, [Command.START, None])
 
         # In this case the robot has always the wall behind
         elif self._state == State.STARTING and self._position == Position.INITIAL:

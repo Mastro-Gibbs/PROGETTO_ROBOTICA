@@ -1,0 +1,74 @@
+CoppeliaSim
+---Model Info---
+FreeNove4wd
+    Bounding box size:
+        X[m] = 4.0000e-02
+        Y[m] = 1.6589e-01
+        Z[m] = 4.0000e-02
+    Scaling factors:
+        X = 1
+        Y = 1
+        Z = 1
+Base_plate_stl
+    Bounding box size:
+        X[m] = 1.4250e-01 (non serve)
+        Y[m] = 1.5000e-01 (0.15m di larghezza parte metallica)
+        Z[m] = 2.5856e-01 (0.25m di lunghezza parte metallica)
+    Scaling factors:
+        X = 1
+        Y = 1
+        Z = 1
+
+Distanza tra due muri: 0.45 [m]
+
+Freenove4wd:
+
+       0.25m
+        #
+        #
+    #########  0.15 m
+        #
+        #
+
+CRITICAL_SIDE_DISTANCE = 0.070
+
+
+For testing JUNCTIONTIME:
+Nel costruttore:
+self.flag = None
+self.t = None
+self.t_total = None
+
+def algorithm(self):
+""" Algorithm used to explore and solve the maze """
+
+self.cycle = self.cycle + 1
+
+self.__class_logger.log(" >>>>>> NEW ALGORITHM CYCLE <<<<<< ", "green", newline=True)
+
+if self.goal_reached():
+    return True
+
+# SENSE
+self.read_sensors()
+self.left_values.append(self.left_value)
+self.front_values.append(self.front_value)
+self.right_values.append(self.right_value)
+
+self._body.move_forward(self.speed)
+
+if self.right_value is None and self.flag is None:
+    self.flag = 1
+    self.t = time.time()
+    print(self.t)
+
+if self.flag == 1 and self.right_value is not None:
+    self.t_total = time.time() - self.t
+    print(self.t_total)
+    exit(-1)
+self._body.move_forward(self.speed)
+
+return False
+
+
+
