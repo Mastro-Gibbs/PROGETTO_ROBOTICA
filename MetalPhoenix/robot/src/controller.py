@@ -66,15 +66,10 @@ class Controller:
         self.intelligence = self.robot_config_data["INTELLIGENCE"]
         self.auto_balancing = self.robot_config_data["AUTO_BALANCING"]
 
-        # TIMERS
         # Junction Time. Time it takes to position in the center of a junction
-        # Original version:
-        self._speed_m_on_sec = self.speed * 0.17 / 5
-        self.junction_sim_time = 0.23 / self._speed_m_on_sec
-        # Modified version:
-        # //: floor of the value obtained by the division
-        # self._speed_m_on_sec = self.speed * 0.25 / (self.speed // 5)
-        # self.junction_sim_time = 0.25 / self._speed_m_on_sec
+        self.junction_sim_time = None
+        self._speed_m_on_sec = None
+        self.compute_junction_time()
 
         # Start and end timers
         self.start_time = None
@@ -127,6 +122,16 @@ class Controller:
     def virtual_destructor(self):
         self._body.virtual_destructor()
         self.__class_logger.log("CONTROLLER STOPPED", "red", italic=True)
+
+    def compute_junction_time(self):
+        """ Method that computes the Junction Time. Time the robot takes to position in the center of a junction """
+        # Original version:
+        self._speed_m_on_sec = self.speed * 0.17 / 5
+        self.junction_sim_time = 0.23 / self._speed_m_on_sec
+        # Modified version:
+        # //: floor of the value obtained by the division
+        # self._speed_m_on_sec = self.speed * 0.25 / (self.speed // 5)
+        # self.junction_sim_time = 0.25 / self._speed_m_on_sec
 
     def write_data_analysis(self):
         priority_list = Compass.compass_list_to_string_comma_sep(self.priority_list)
@@ -965,6 +970,7 @@ class Controller:
         self.auto_balancing = self.robot_config_data["AUTO_BALANCING"]
         # self.maze_number = self.robot_config_data["MAZE_NUMBER"]
         self._severity = self.robot_config_data["SEVERITY"]
+        self.compute_junction_time()
         PhysicalBody.load_cfg_values()
 
     def print_data(self, maze_solved):
